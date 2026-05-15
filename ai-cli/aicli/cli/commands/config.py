@@ -20,7 +20,10 @@ def config_command(
         typer.Option(
             "--set",
             "-s",
-            help="Set a role model using role=model. May be repeated.",
+            help=(
+                "Set a role model using role=model or role=provider:model. "
+                "May be repeated."
+            ),
         ),
     ] = None,
     output_json: Annotated[
@@ -51,7 +54,7 @@ def config_command(
         raise typer.Exit(1) from exc
 
     if output_json:
-        typer.echo(json.dumps(models.model_dump(mode="json"), indent=2))
+        typer.echo(json.dumps(models.legacy_model_dump(), indent=2))
         return
 
     typer.echo(_format_models(models))
@@ -72,7 +75,15 @@ def _apply_model_updates(models: ModelsConfig, set_values: list[str]) -> ModelsC
             msg = f"Unknown role '{role_name}'. Allowed roles: {allowed}."
             raise CommandUsageError(msg) from exc
 
-        updated = updated.with_model(role, model_name.strip() or None)
+        provider_name, parsed_model_name = _parse_assignment_value(model_name)
+        if provider_name is None:
+            updated = updated.with_model(role, parsed_model_name)
+        else:
+            updated = updated.with_assignment(
+                role,
+                provider=provider_name,
+                model=parsed_model_name,
+            )
 
     return updated
 
@@ -83,3 +94,15 @@ def _format_models(models: ModelsConfig) -> str:
         value = models.model_for(role) or "<unset>"
         lines.append(f"  {role.value:<12} {value}")
     return "\n".join(lines)
+
+
+def _parse_assignment_value(value: str) -> tuple[str | None, str | None]:
+    normalized_value = value.strip()
+    if not normalized_value:
+        return None, None
+
+    provider_name, separator, model_name = normalized_value.partition(":")
+    if separator and provider_name.strip():
+        return provider_name.strip(), model_name.strip() or None
+
+    return None, normalized_value
