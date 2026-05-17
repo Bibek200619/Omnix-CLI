@@ -10,6 +10,8 @@ from aicli import __version__
 from aicli.cli.commands.chat import chat_command
 from aicli.cli.commands.config import config_command
 from aicli.cli.commands.init import init_command
+from aicli.cli.commands.models import models_command
+from aicli.cli.commands.ping import ping_command
 from aicli.core.logging import configure_logging
 
 
@@ -47,6 +49,8 @@ def main_callback(
 app.command("init")(init_command)
 app.command("config")(config_command)
 app.command("chat")(chat_command)
+app.command("models")(models_command)
+app.command("ping")(ping_command)
 
 
 if __name__ == "__main__":
