@@ -29,7 +29,7 @@ def chat_command(
         ),
     ] = Path("."),
 ) -> None:
-    """Send a message to the Phase 0 Master Agent."""
+    """Send a message to the state-aware Master Agent."""
 
     state_manager = StateManager(workspace)
     memory_manager = MemoryManager(state_manager)
