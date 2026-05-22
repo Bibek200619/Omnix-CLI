@@ -17,6 +17,8 @@ from omnix_cli.cli.commands.init import init_command
 from omnix_cli.cli.commands.memory import memory_command
 from omnix_cli.cli.commands.models import models_command
 from omnix_cli.cli.commands.ping import ping_command
+from omnix_cli.cli.commands.plan import plan_command
+from omnix_cli.cli.commands.tasks import tasks_command
 from omnix_cli.core.logging import configure_logging
 
 
@@ -61,6 +63,8 @@ app.command("ping")(ping_command)
 app.command("memory")(memory_command)
 app.command("goals")(goals_command)
 app.command("decisions")(decisions_command)
+app.command("plan")(plan_command)
+app.command("tasks")(tasks_command)
 
 
 if __name__ == "__main__":
