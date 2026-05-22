@@ -18,7 +18,7 @@ Implemented:
 - `aicli goals`
 - `aicli decisions`
 
-Deferred:
+Deferred at the end of Phase 2:
 
 - Planner, Architect, worker, Integration, and QA agents
 - Task decomposition

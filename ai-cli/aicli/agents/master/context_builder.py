@@ -84,7 +84,12 @@ class MasterContextBuilder:
         return (
             "Blueprint Summary:\n"
             f"Stack: {stack_text}\n"
+            f"Goals: {len(blueprint.goals)}\n"
             f"Pages: {len(blueprint.pages)}\n"
+            f"Features: {len(blueprint.features)}\n"
+            f"Entities: {len(blueprint.entities)}\n"
+            f"Modules: {len(blueprint.modules)}\n"
+            f"Architecture Notes: {len(blueprint.architecture_notes)}\n"
             f"Routes: {len(blueprint.routes)}\n"
             f"Database Objects: {len(blueprint.database)}\n"
             f"APIs: {len(blueprint.apis)}\n"
