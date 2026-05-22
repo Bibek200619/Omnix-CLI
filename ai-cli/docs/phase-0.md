@@ -25,9 +25,8 @@ Deferred:
 
 ## Architecture Decisions
 
-The package uses `aicli` as the importable Python module and `aicli` as the
-console command. The repository folder remains `ai-cli` to match the requested
-product structure.
+The package uses `omnix_cli` as the importable Python module and `omnix` as the
+console command. The repository is branded as `omnix-cli`.
 
 Project state lives in `.project/` so generated application files can remain
 separate from orchestration metadata. All reads and writes pass through

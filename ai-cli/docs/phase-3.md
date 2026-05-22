@@ -11,8 +11,8 @@ Implemented:
 - Blueprint generation from goals, decisions, memory, and existing blueprint state
 - Blueprint refinement through merge-based evolution
 - Strict architecture blueprint validation before persistence
-- `aicli architect`
-- `aicli blueprint`
+- `omnix architect`
+- `omnix blueprint`
 
 Deferred:
 
@@ -43,13 +43,13 @@ Phase 3 adds architecture-level fields:
 - `future_enhancements`
 
 The schema remains backward compatible with previous phase state files. Empty
-blueprints created by `aicli init` still load, but `aicli architect` validates
+blueprints created by `omnix init` still load, but `omnix architect` validates
 that a complete architecture blueprint has a project name, at least one feature,
 at least one entity, at least one module, and architecture notes before saving.
 
 ## Architect Agent Flow
 
-`aicli architect` runs this flow:
+`omnix architect` runs this flow:
 
 1. Load current goals, decisions, memory, and blueprint.
 2. Build structured Architect context.

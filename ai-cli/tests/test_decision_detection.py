@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from aicli.agents.master.memory_manager import detect_decisions
+from omnix_cli.agents.master.memory_manager import detect_decisions
 
 
 def test_detect_decision_from_will_use_phrase() -> None:

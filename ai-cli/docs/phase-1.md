@@ -13,8 +13,8 @@ Implemented:
 - Typed provider exceptions
 - Centralized `.env` settings via `pydantic-settings`
 - Backward-compatible model configuration schema
-- `aicli models`
-- `aicli ping <role>`
+- `omnix models`
+- `omnix ping <role>`
 
 Deferred:
 
@@ -42,8 +42,8 @@ and makes role-to-provider assignments replaceable.
 ```
 
 The schema still accepts Phase 0 string values such as `"master": "gpt-5"`.
-The existing `aicli config --set role=model` command remains valid. Use
-`aicli config --set role=provider:model` to configure provider-backed pings.
+The existing `omnix config --set role=model` command remains valid. Use
+`omnix config --set role=provider:model` to configure provider-backed pings.
 
 Provider secrets are loaded from environment variables or `.env`, never from
 `.project` state files.

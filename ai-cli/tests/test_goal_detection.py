@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from aicli.agents.master.memory_manager import detect_goal
+from omnix_cli.agents.master.memory_manager import detect_goal
 
 
 def test_detect_goal_from_direct_build_request() -> None:

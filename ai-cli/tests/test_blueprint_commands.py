@@ -6,18 +6,18 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from aicli.cli.main import app
-from aicli.core.settings import Settings
-from aicli.core.state_manager import StateManager
-from aicli.providers.registry import ProviderRegistry
-from aicli.schemas.blueprint import (
+from omnix_cli.cli.main import app
+from omnix_cli.core.settings import Settings
+from omnix_cli.core.state_manager import StateManager
+from omnix_cli.providers.registry import ProviderRegistry
+from omnix_cli.schemas.blueprint import (
     ArchitectureNote,
     EntityDefinition,
     FeatureDefinition,
     ModuleDefinition,
     ProjectBlueprint,
 )
-from aicli.schemas.tasks import AgentRole
+from omnix_cli.schemas.tasks import AgentRole
 from tests.test_architect_agent import MockArchitectProvider
 
 runner = CliRunner()
@@ -86,7 +86,7 @@ def test_architect_command_runs_configured_provider_and_persists_blueprint(
     registry = ProviderRegistry(settings=Settings())
     registry.register("mock", MockArchitectProvider)
     monkeypatch.setattr(
-        "aicli.agents.architect.agent.build_default_provider_registry",
+        "omnix_cli.agents.architect.agent.build_default_provider_registry",
         lambda settings: registry,
     )
 

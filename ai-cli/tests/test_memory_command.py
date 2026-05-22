@@ -4,7 +4,7 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from aicli.cli.main import app
+from omnix_cli.cli.main import app
 
 runner = CliRunner()
 
