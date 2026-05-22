@@ -21,3 +21,7 @@ class ProjectNotInitializedError(AicliError):
 
 class ProjectStateValidationError(AicliError):
     """Raised when persisted project state fails schema validation."""
+
+
+class BlueprintValidationError(AicliError):
+    """Raised when an architecture blueprint is incomplete or invalid."""
