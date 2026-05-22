@@ -5,10 +5,10 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from aicli.cli.main import app
-from aicli.schemas.blueprint import ProjectBlueprint
-from aicli.schemas.memory import ProjectMemory
-from aicli.schemas.models import ModelsConfig
+from omnix_cli.cli.main import app
+from omnix_cli.schemas.blueprint import ProjectBlueprint
+from omnix_cli.schemas.memory import ProjectMemory
+from omnix_cli.schemas.models import ModelsConfig
 
 runner = CliRunner()
 

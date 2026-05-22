@@ -6,14 +6,14 @@ import json
 import httpx
 import pytest
 
-from aicli.core.settings import Settings
-from aicli.providers.base import BaseProvider
-from aicli.providers.exceptions import (
+from omnix_cli.core.settings import Settings
+from omnix_cli.providers.base import BaseProvider
+from omnix_cli.providers.exceptions import (
     ProviderAuthenticationError,
     ProviderConfigurationError,
 )
-from aicli.providers.openai import OpenAIProvider
-from aicli.providers.registry import ProviderRegistry, build_default_provider_registry
+from omnix_cli.providers.openai import OpenAIProvider
+from omnix_cli.providers.registry import ProviderRegistry, build_default_provider_registry
 
 
 class MockProvider(BaseProvider):

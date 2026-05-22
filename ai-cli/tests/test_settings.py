@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from aicli.core.settings import Settings
+from omnix_cli.core.settings import Settings
 
 
 def test_settings_load_api_keys_from_environment(monkeypatch) -> None:

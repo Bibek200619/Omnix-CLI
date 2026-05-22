@@ -6,20 +6,20 @@ from pathlib import Path
 
 import pytest
 
-from aicli.agents.architect import ArchitectAgent
-from aicli.core.exceptions import BlueprintValidationError
-from aicli.core.state_manager import StateManager
-from aicli.memory.memory_manager import MemoryManager
-from aicli.providers.base import BaseProvider
-from aicli.providers.registry import ProviderRegistry
-from aicli.schemas.blueprint import (
+from omnix_cli.agents.architect import ArchitectAgent
+from omnix_cli.core.exceptions import BlueprintValidationError
+from omnix_cli.core.state_manager import StateManager
+from omnix_cli.memory.memory_manager import MemoryManager
+from omnix_cli.providers.base import BaseProvider
+from omnix_cli.providers.registry import ProviderRegistry
+from omnix_cli.schemas.blueprint import (
     ArchitectureNote,
     EntityDefinition,
     FeatureDefinition,
     ModuleDefinition,
     ProjectBlueprint,
 )
-from aicli.schemas.tasks import AgentRole
+from omnix_cli.schemas.tasks import AgentRole
 
 
 class MockArchitectProvider(BaseProvider):
@@ -71,7 +71,7 @@ def test_architect_agent_generates_valid_blueprint_from_goals(tmp_path: Path) ->
     assert "Build a CRM platform" in MockArchitectProvider.last_prompt
     assert "Use FastAPI" in MockArchitectProvider.last_prompt
     assert MockArchitectProvider.last_system_prompt is not None
-    assert "You are the Architect Agent of AI-CLI" in MockArchitectProvider.last_system_prompt
+    assert "You are the Architect Agent of Omnix CLI" in MockArchitectProvider.last_system_prompt
     assert memory.agent_outputs[0].role == "architect"
     assert memory.agent_outputs[0].content["phase"] == "3"
 
