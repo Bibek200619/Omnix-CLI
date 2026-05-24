@@ -8,10 +8,12 @@ import typer
 
 from omnix_cli import __version__
 from omnix_cli.cli.commands.architect import architect_command
+from omnix_cli.cli.commands.artifacts import artifact_view_command, artifacts_command
 from omnix_cli.cli.commands.blueprint import blueprint_command
 from omnix_cli.cli.commands.chat import chat_command
 from omnix_cli.cli.commands.config import config_command
 from omnix_cli.cli.commands.decisions import decisions_command
+from omnix_cli.cli.commands.execute import execute_command
 from omnix_cli.cli.commands.goals import goals_command
 from omnix_cli.cli.commands.init import init_command
 from omnix_cli.cli.commands.memory import memory_command
@@ -65,6 +67,9 @@ app.command("goals")(goals_command)
 app.command("decisions")(decisions_command)
 app.command("plan")(plan_command)
 app.command("tasks")(tasks_command)
+app.command("execute")(execute_command)
+app.command("artifacts")(artifacts_command)
+app.command("artifact")(artifact_view_command)
 
 
 if __name__ == "__main__":
