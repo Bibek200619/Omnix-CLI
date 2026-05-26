@@ -16,8 +16,13 @@ class ArtifactType(StrEnum):
     FRONTEND_PAGE = "frontend_page"
     UI_CONCEPT = "ui_concept"
     FRONTEND_STRUCTURE = "frontend_structure"
+    # Backend types
+    BACKEND_SERVICE = "backend_service"
+    API_DESIGN = "api_design"
+    DOMAIN_MODEL = "domain_model"
+    BUSINESS_LOGIC = "business_logic"
+    SERVICE_CONTRACT = "service_contract"
     # Future types
-    BACKEND_LOGIC = "backend_logic"
     DATABASE_SCHEMA = "database_schema"
 
 
