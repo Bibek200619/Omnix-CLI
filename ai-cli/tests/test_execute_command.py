@@ -20,6 +20,7 @@ from omnix_cli.schemas.tasks import (
     TaskStatus,
 )
 from tests.test_backend_agent import MockBackendProvider
+from tests.test_database_agent import MockDatabaseProvider
 from tests.test_frontend_agent import MockFrontendProvider
 
 runner = CliRunner()
@@ -124,6 +125,56 @@ def test_execute_backend_task(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -
     assert artifacts[0].task_id == "task_002"
 
 
+def test_execute_database_task(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    state_manager = StateManager(tmp_path)
+    state_manager.init_project(project_name="Test")
+    
+    # Configure database agent
+    state_manager.save_models(
+        state_manager.load_models().with_assignment(
+            AgentRole.DATABASE,
+            provider="mock",
+            model="db-model",
+        )
+    )
+    
+    # Create a database task
+    task = TaskDefinition(
+        id="task_003",
+        title="Design Schema",
+        description="DB schema design.",
+        assigned_agent=TaskAssignedAgent.DATABASE,
+        priority=TaskPriority.HIGH,
+        status=TaskStatus.READY,
+        blueprint_reference="db",
+    )
+    state_manager.save_tasks(TaskPlan(tasks=[task]))
+    
+    # Mock registry and provider
+    registry = ProviderRegistry()
+    registry.register("mock", MockDatabaseProvider)
+    from tests.test_database_agent import MockDatabaseProvider as DBP
+    DBP.response = json.dumps({
+        "title": "DB Schema",
+        "content": "SQL Code"
+    })
+    
+    from omnix_cli.agents.database import agent as agent_module
+    monkeypatch.setattr(agent_module, "build_default_provider_registry", lambda _: registry)
+
+    result = runner.invoke(app, ["execute", "task_003", "-w", str(tmp_path)])
+    
+    assert result.exit_code == 0
+    assert "Executing task 'Design Schema' (task_003) using Database Agent..." in result.stdout
+    assert "Artifact Generated Successfully!" in result.stdout
+    assert "Artifact ID:   art_task_003_1" in result.stdout
+    
+    # Check if artifact exists
+    artifacts = state_manager.list_artifacts()
+    assert len(artifacts) == 1
+    assert artifacts[0].task_id == "task_003"
+
+
 def test_execute_task_not_found(tmp_path: Path) -> None:
     state_manager = StateManager(tmp_path)
     state_manager.init_project(project_name="Test")
@@ -139,12 +190,12 @@ def test_execute_unsupported_agent(tmp_path: Path) -> None:
     
     task = TaskDefinition(
         id="task_001",
-        title="DB Task",
-        assigned_agent=TaskAssignedAgent.DATABASE,
-        blueprint_reference="db",
+        title="QA Task",
+        assigned_agent=TaskAssignedAgent.QA,
+        blueprint_reference="qa",
     )
     state_manager.save_tasks(TaskPlan(tasks=[task]))
     
     result = runner.invoke(app, ["execute", "task_001", "-w", str(tmp_path)])
     assert result.exit_code == 0, f"STDOUT: {result.stdout}\nSTDERR: {result.stderr}"
-    assert "Agent 'database' is not yet supported" in result.stderr
+    assert "Agent 'qa' is not yet supported" in result.stderr
