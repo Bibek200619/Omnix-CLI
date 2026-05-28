@@ -28,6 +28,12 @@ class ArtifactType(StrEnum):
     MIGRATION_PLAN = "migration_plan"
     DATA_MODEL = "data_model"
     INDEXING_STRATEGY = "indexing_strategy"
+    # Routing types
+    ROUTE_MAP = "route_map"
+    NAVIGATION_STRUCTURE = "navigation_structure"
+    API_ROUTE_DEFINITION = "api_route_definition"
+    PERMISSION_FLOW = "permission_flow"
+    WORKFLOW_MAP = "workflow_map"
     # Future types
     DATABASE_SCHEMA = "database_schema"
 
