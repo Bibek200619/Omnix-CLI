@@ -22,6 +22,12 @@ class ArtifactType(StrEnum):
     DOMAIN_MODEL = "domain_model"
     BUSINESS_LOGIC = "business_logic"
     SERVICE_CONTRACT = "service_contract"
+    # Database types
+    SCHEMA_DESIGN = "schema_design"
+    RELATIONSHIP_MODEL = "relationship_model"
+    MIGRATION_PLAN = "migration_plan"
+    DATA_MODEL = "data_model"
+    INDEXING_STRATEGY = "indexing_strategy"
     # Future types
     DATABASE_SCHEMA = "database_schema"
 
