@@ -22,6 +22,7 @@ from omnix_cli.schemas.tasks import (
 from tests.test_backend_agent import MockBackendProvider
 from tests.test_database_agent import MockDatabaseProvider
 from tests.test_frontend_agent import MockFrontendProvider
+from tests.test_routing_agent import MockRoutingProvider
 
 runner = CliRunner()
 
@@ -173,6 +174,56 @@ def test_execute_database_task(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) 
     artifacts = state_manager.list_artifacts()
     assert len(artifacts) == 1
     assert artifacts[0].task_id == "task_003"
+
+
+def test_execute_routing_task(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    state_manager = StateManager(tmp_path)
+    state_manager.init_project(project_name="Test")
+    
+    # Configure routing agent
+    state_manager.save_models(
+        state_manager.load_models().with_assignment(
+            AgentRole.ROUTING,
+            provider="mock",
+            model="rt-model",
+        )
+    )
+    
+    # Create a routing task
+    task = TaskDefinition(
+        id="task_004",
+        title="Design Nav",
+        description="Nav routing design.",
+        assigned_agent=TaskAssignedAgent.ROUTING,
+        priority=TaskPriority.HIGH,
+        status=TaskStatus.READY,
+        blueprint_reference="nav",
+    )
+    state_manager.save_tasks(TaskPlan(tasks=[task]))
+    
+    # Mock registry and provider
+    registry = ProviderRegistry()
+    registry.register("mock", MockRoutingProvider)
+    from tests.test_routing_agent import MockRoutingProvider as RBP
+    RBP.response = json.dumps({
+        "title": "Nav Map",
+        "content": "Route Definitions"
+    })
+    
+    from omnix_cli.agents.routing import agent as agent_module
+    monkeypatch.setattr(agent_module, "build_default_provider_registry", lambda _: registry)
+
+    result = runner.invoke(app, ["execute", "task_004", "-w", str(tmp_path)])
+    
+    assert result.exit_code == 0
+    assert "Executing task 'Design Nav' (task_004) using Routing Agent..." in result.stdout
+    assert "Artifact Generated Successfully!" in result.stdout
+    assert "Artifact ID:   art_task_004_1" in result.stdout
+    
+    # Check if artifact exists
+    artifacts = state_manager.list_artifacts()
+    assert len(artifacts) == 1
+    assert artifacts[0].task_id == "task_004"
 
 
 def test_execute_task_not_found(tmp_path: Path) -> None:
