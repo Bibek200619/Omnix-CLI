@@ -15,6 +15,12 @@ from omnix_cli.core.exceptions import (
 )
 from omnix_cli.schemas.artifacts import Artifact
 from omnix_cli.schemas.blueprint import ProjectBlueprint
+from omnix_cli.schemas.integration import (
+    ConflictReport,
+    DependencyGraph,
+    IntegratedPackage,
+    IntegrationReport,
+)
 from omnix_cli.schemas.memory import ProjectMemory
 from omnix_cli.schemas.models import ModelsConfig
 from omnix_cli.schemas.tasks import TaskPlan
@@ -23,6 +29,7 @@ ModelT = TypeVar("ModelT", bound=BaseModel)
 
 PROJECT_DIR_NAME = ".project"
 ARTIFACTS_DIR_NAME = "artifacts"
+INTEGRATION_DIR_NAME = "integration"
 BLUEPRINT_FILE = "project.blueprint.json"
 MEMORY_FILE = "project.memory.json"
 MODELS_FILE = "models.json"
@@ -36,6 +43,7 @@ class StateManager:
         self.workspace = workspace.expanduser().resolve()
         self.project_dir = self.workspace / PROJECT_DIR_NAME
         self.artifacts_dir = self.project_dir / ARTIFACTS_DIR_NAME
+        self.integration_dir = self.project_dir / INTEGRATION_DIR_NAME
         self.blueprint_path = self.project_dir / BLUEPRINT_FILE
         self.memory_path = self.project_dir / MEMORY_FILE
         self.models_path = self.project_dir / MODELS_FILE
@@ -157,6 +165,60 @@ class StateManager:
         if not existing:
             return 1
         return max(a.version for a in existing) + 1
+
+    # Integration Management
+
+    def save_integrated_package(self, package: IntegratedPackage) -> None:
+        """Save the integrated package."""
+        path = self.integration_dir / "integrated_package.json"
+        self._write_model(path, package)
+
+    def load_integrated_package(self) -> IntegratedPackage:
+        """Load the integrated package."""
+        path = self.integration_dir / "integrated_package.json"
+        if not path.exists():
+            msg = "Integrated package not found. Run 'omnix integrate' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, IntegratedPackage)
+
+    def save_dependency_graph(self, graph: DependencyGraph) -> None:
+        """Save the dependency graph."""
+        path = self.integration_dir / "dependency_graph.json"
+        self._write_model(path, graph)
+
+    def load_dependency_graph(self) -> DependencyGraph:
+        """Load the dependency graph."""
+        path = self.integration_dir / "dependency_graph.json"
+        if not path.exists():
+            msg = "Dependency graph not found. Run 'omnix integrate' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, DependencyGraph)
+
+    def save_integration_report(self, report: IntegrationReport) -> None:
+        """Save the integration report."""
+        path = self.integration_dir / "integration_report.json"
+        self._write_model(path, report)
+
+    def load_integration_report(self) -> IntegrationReport:
+        """Load the integration report."""
+        path = self.integration_dir / "integration_report.json"
+        if not path.exists():
+            msg = "Integration report not found. Run 'omnix integrate' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, IntegrationReport)
+
+    def save_conflict_report(self, report: ConflictReport) -> None:
+        """Save the conflict report."""
+        path = self.integration_dir / "conflict_report.json"
+        self._write_model(path, report)
+
+    def load_conflict_report(self) -> ConflictReport:
+        """Load the conflict report."""
+        path = self.integration_dir / "conflict_report.json"
+        if not path.exists():
+            msg = "Conflict report not found. Run 'omnix integrate' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, ConflictReport)
 
     def _load_model(self, path: Path, model_type: type[ModelT]) -> ModelT:
         if not path.exists():

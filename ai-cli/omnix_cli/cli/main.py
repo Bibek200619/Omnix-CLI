@@ -16,6 +16,7 @@ from omnix_cli.cli.commands.decisions import decisions_command
 from omnix_cli.cli.commands.execute import execute_command
 from omnix_cli.cli.commands.goals import goals_command
 from omnix_cli.cli.commands.init import init_command
+from omnix_cli.cli.commands.integration import integrate_command, integration_summary_command
 from omnix_cli.cli.commands.memory import memory_command
 from omnix_cli.cli.commands.models import models_command
 from omnix_cli.cli.commands.ping import ping_command
@@ -68,6 +69,8 @@ app.command("decisions")(decisions_command)
 app.command("plan")(plan_command)
 app.command("tasks")(tasks_command)
 app.command("execute")(execute_command)
+app.command("integrate")(integrate_command)
+app.command("integration")(integration_summary_command)
 app.command("artifacts")(artifacts_command)
 app.command("artifact")(artifact_view_command)
 
