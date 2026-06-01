@@ -16,6 +16,7 @@ from omnix_cli.core.exceptions import (
 from omnix_cli.schemas.blueprint import ProjectBlueprint
 from omnix_cli.schemas.memory import ProjectMemory
 from omnix_cli.schemas.models import ModelsConfig
+from omnix_cli.schemas.tasks import TaskPlan
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
@@ -23,6 +24,7 @@ PROJECT_DIR_NAME = ".project"
 BLUEPRINT_FILE = "project.blueprint.json"
 MEMORY_FILE = "project.memory.json"
 MODELS_FILE = "models.json"
+TASKS_FILE = "tasks.json"
 
 
 class StateManager:
@@ -34,6 +36,7 @@ class StateManager:
         self.blueprint_path = self.project_dir / BLUEPRINT_FILE
         self.memory_path = self.project_dir / MEMORY_FILE
         self.models_path = self.project_dir / MODELS_FILE
+        self.tasks_path = self.project_dir / TASKS_FILE
 
     def init_project(
         self,
@@ -43,7 +46,12 @@ class StateManager:
     ) -> None:
         """Create the Phase 0 project state files."""
 
-        existing_files = [self.blueprint_path, self.memory_path, self.models_path]
+        existing_files = [
+            self.blueprint_path,
+            self.memory_path,
+            self.models_path,
+            self.tasks_path,
+        ]
         if not force and any(path.exists() for path in existing_files):
             msg = (
                 f"Project state already exists at {self.project_dir}. "
@@ -56,10 +64,12 @@ class StateManager:
         blueprint = ProjectBlueprint(project_name=project_name, description=description)
         memory = ProjectMemory(project_name=project_name)
         models = ModelsConfig()
+        tasks = TaskPlan()
 
         self.save_blueprint(blueprint)
         self.save_memory(memory)
         self.save_models(models)
+        self.save_tasks(tasks)
 
     def load_blueprint(self) -> ProjectBlueprint:
         """Load and validate `project.blueprint.json`."""
@@ -90,6 +100,18 @@ class StateManager:
         """Validate and persist `models.json`."""
 
         self._write_model(self.models_path, ModelsConfig.model_validate(models))
+
+    def load_tasks(self) -> TaskPlan:
+        """Load and validate `tasks.json`."""
+
+        if not self.tasks_path.exists() and self.project_dir.exists():
+            return TaskPlan()
+        return self._load_model(self.tasks_path, TaskPlan)
+
+    def save_tasks(self, tasks: TaskPlan) -> None:
+        """Validate and persist `tasks.json`."""
+
+        self._write_model(self.tasks_path, TaskPlan.model_validate(tasks))
 
     def _load_model(self, path: Path, model_type: type[ModelT]) -> ModelT:
         if not path.exists():

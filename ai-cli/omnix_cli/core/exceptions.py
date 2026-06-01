@@ -25,3 +25,7 @@ class ProjectStateValidationError(OmnixError):
 
 class BlueprintValidationError(OmnixError):
     """Raised when an architecture blueprint is incomplete or invalid."""
+
+
+class TaskValidationError(OmnixError):
+    """Raised when a task plan is incomplete or invalid."""

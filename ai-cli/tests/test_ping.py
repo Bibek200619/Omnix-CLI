@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
 import omnix_cli.cli.commands.ping as ping_module
@@ -30,7 +31,7 @@ class MockProvider(BaseProvider):
 
 def test_ping_uses_role_provider_configuration(
     tmp_path: Path,
-    monkeypatch,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     runner.invoke(app, ["init", "--workspace", str(tmp_path)])
     runner.invoke(
