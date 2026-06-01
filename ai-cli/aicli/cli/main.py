@@ -7,6 +7,8 @@ from typing import Annotated
 import typer
 
 from aicli import __version__
+from aicli.cli.commands.architect import architect_command
+from aicli.cli.commands.blueprint import blueprint_command
 from aicli.cli.commands.chat import chat_command
 from aicli.cli.commands.config import config_command
 from aicli.cli.commands.decisions import decisions_command
@@ -52,6 +54,8 @@ def main_callback(
 app.command("init")(init_command)
 app.command("config")(config_command)
 app.command("chat")(chat_command)
+app.command("architect")(architect_command)
+app.command("blueprint")(blueprint_command)
 app.command("models")(models_command)
 app.command("ping")(ping_command)
 app.command("memory")(memory_command)
