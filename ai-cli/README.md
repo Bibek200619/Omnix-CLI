@@ -31,9 +31,19 @@ Phase 2 is implemented. It provides:
 - `aicli goals`
 - `aicli decisions`
 
-Future phases add planning, architecture generation, worker agents, integration,
-QA, and repair loops. Phase boundaries are enforced in code: the Master Agent
-records and discusses project context but does not generate project code.
+Phase 3 is implemented. It provides:
+
+- Architect Agent
+- Blueprint schema expansion
+- Blueprint generation and refinement
+- Strict architecture blueprint validation
+- `aicli architect`
+- `aicli blueprint`
+
+Future phases add planning, worker agents, integration, QA, and repair loops.
+Phase boundaries are enforced in code: the Master Agent records and discusses
+project context, while the Architect Agent generates architecture blueprints but
+does not generate project code.
 
 ## Development
 
@@ -56,6 +66,9 @@ aicli config --json
 aicli models
 aicli ping master
 aicli chat "Build authentication"
+aicli config --set architect=openai:gpt-5
+aicli architect
+aicli blueprint
 aicli memory
 aicli goals
 aicli decisions
