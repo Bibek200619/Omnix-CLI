@@ -5,9 +5,9 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from aicli.cli.main import app
-from aicli.schemas.models import ModelsConfig
-from aicli.schemas.tasks import AgentRole
+from omnix_cli.cli.main import app
+from omnix_cli.schemas.models import ModelsConfig
+from omnix_cli.schemas.tasks import AgentRole
 
 runner = CliRunner()
 

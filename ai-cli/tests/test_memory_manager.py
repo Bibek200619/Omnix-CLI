@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from aicli.core.state_manager import StateManager
-from aicli.memory.memory_manager import MemoryManager
-from aicli.schemas.memory import ConversationRole, GoalStatus
+from omnix_cli.core.state_manager import StateManager
+from omnix_cli.memory.memory_manager import MemoryManager
+from omnix_cli.schemas.memory import ConversationRole, GoalStatus
 
 
 def test_memory_manager_persists_conversations_goals_and_decisions(tmp_path: Path) -> None:
