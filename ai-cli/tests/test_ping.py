@@ -4,11 +4,11 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-import aicli.cli.commands.ping as ping_module
-from aicli.cli.main import app
-from aicli.core.settings import Settings
-from aicli.providers.base import BaseProvider
-from aicli.providers.registry import ProviderRegistry
+import omnix_cli.cli.commands.ping as ping_module
+from omnix_cli.cli.main import app
+from omnix_cli.core.settings import Settings
+from omnix_cli.providers.base import BaseProvider
+from omnix_cli.providers.registry import ProviderRegistry
 
 runner = CliRunner()
 

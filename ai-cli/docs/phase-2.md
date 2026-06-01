@@ -14,9 +14,9 @@ Implemented:
 - Persistent goals
 - Persistent decisions
 - Rule-based goal and decision detection
-- `aicli memory`
-- `aicli goals`
-- `aicli decisions`
+- `omnix memory`
+- `omnix goals`
+- `omnix decisions`
 
 Deferred at the end of Phase 2:
 
@@ -45,7 +45,7 @@ Phase 2 memory stores:
 
 ## Master Agent Flow
 
-`aicli chat` now runs this flow:
+`omnix chat` now runs this flow:
 
 1. Load memory and blueprint.
 2. Save the user conversation.

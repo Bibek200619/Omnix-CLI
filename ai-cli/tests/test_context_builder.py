@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from aicli.agents.master.context_builder import MasterContextBuilder
-from aicli.core.state_manager import StateManager
-from aicli.memory.memory_manager import MemoryManager
-from aicli.schemas.memory import ConversationRole
+from omnix_cli.agents.master.context_builder import MasterContextBuilder
+from omnix_cli.core.state_manager import StateManager
+from omnix_cli.memory.memory_manager import MemoryManager
+from omnix_cli.schemas.memory import ConversationRole
 
 
 def test_context_builder_includes_blueprint_and_memory(tmp_path: Path) -> None:
