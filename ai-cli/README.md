@@ -20,9 +20,20 @@ Phase 1 is implemented. It provides:
 - `aicli models`
 - `aicli ping <role>`
 
+Phase 2 is implemented. It provides:
+
+- State-aware Master Agent
+- Persistent conversation history
+- Persistent project goals
+- Persistent project decisions
+- Structured Master Agent context from blueprint and memory
+- `aicli memory`
+- `aicli goals`
+- `aicli decisions`
+
 Future phases add planning, architecture generation, worker agents, integration,
 QA, and repair loops. Phase boundaries are enforced in code: the Master Agent
-records chat intent but does not generate project code.
+records and discusses project context but does not generate project code.
 
 ## Development
 
@@ -45,6 +56,9 @@ aicli config --json
 aicli models
 aicli ping master
 aicli chat "Build authentication"
+aicli memory
+aicli goals
+aicli decisions
 ```
 
 By default commands operate in the current working directory. Use

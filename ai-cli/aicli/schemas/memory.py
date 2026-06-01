@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -22,6 +23,53 @@ class ArchitecturalDecision(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
+    title: str = Field(min_length=1)
+    rationale: str = ""
+    created_at: datetime = Field(default_factory=utc_now)
+
+
+class GoalStatus(StrEnum):
+    """Long-term project goal status."""
+
+    ACTIVE = "active"
+    COMPLETED = "completed"
+    ARCHIVED = "archived"
+
+
+class ConversationRole(StrEnum):
+    """Roles persisted in project conversation history."""
+
+    USER = "user"
+    ASSISTANT = "assistant"
+
+
+class ProjectGoal(BaseModel):
+    """Long-term objective tracked by the Master Agent."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(min_length=1)
+    title: str = Field(min_length=1)
+    created_at: datetime = Field(default_factory=utc_now)
+    status: GoalStatus = GoalStatus.ACTIVE
+
+
+class ConversationEntry(BaseModel):
+    """Persisted conversation message."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    role: ConversationRole
+    content: str = Field(min_length=1)
+    timestamp: datetime = Field(default_factory=utc_now)
+
+
+class ProjectDecision(BaseModel):
+    """Project decision tracked by the Master Agent."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(min_length=1)
     title: str = Field(min_length=1)
     rationale: str = ""
     created_at: datetime = Field(default_factory=utc_now)
@@ -87,6 +135,9 @@ class ProjectMemory(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     project_name: str = ""
+    goals: list[ProjectGoal] = Field(default_factory=list)
+    conversations: list[ConversationEntry] = Field(default_factory=list)
+    decisions: list[ProjectDecision] = Field(default_factory=list)
     architectural_decisions: list[ArchitecturalDecision] = Field(default_factory=list)
     completed_tasks: list[CompletedTask] = Field(default_factory=list)
     known_issues: list[KnownIssue] = Field(default_factory=list)
