@@ -11,7 +11,14 @@ from omnix_cli.schemas.blueprint import (
 )
 from omnix_cli.schemas.memory import ProjectMemory
 from omnix_cli.schemas.models import ModelsConfig
-from omnix_cli.schemas.tasks import AgentRole, TaskDefinition, TaskStatus
+from omnix_cli.schemas.tasks import (
+    AgentRole,
+    TaskAssignedAgent,
+    TaskDefinition,
+    TaskPlan,
+    TaskPriority,
+    TaskStatus,
+)
 
 __all__ = [
     "AgentRole",
@@ -24,6 +31,9 @@ __all__ = [
     "PageDefinition",
     "ProjectBlueprint",
     "ProjectMemory",
+    "TaskAssignedAgent",
     "TaskDefinition",
+    "TaskPlan",
+    "TaskPriority",
     "TaskStatus",
 ]

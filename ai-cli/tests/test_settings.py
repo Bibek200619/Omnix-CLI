@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+import pytest
+
 from omnix_cli.core.settings import Settings
 
 
-def test_settings_load_api_keys_from_environment(monkeypatch) -> None:
+def test_settings_load_api_keys_from_environment(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.setenv("OPENAI_API_KEY", "openai-test-key")
     monkeypatch.setenv("ANTHROPIC_API_KEY", "anthropic-test-key")
     monkeypatch.setenv("GOOGLE_API_KEY", "google-test-key")
@@ -19,7 +23,7 @@ def test_settings_load_api_keys_from_environment(monkeypatch) -> None:
     assert settings.deepseek_api_key == "deepseek-test-key"
 
 
-def test_settings_do_not_require_api_keys(monkeypatch) -> None:
+def test_settings_do_not_require_api_keys(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
