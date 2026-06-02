@@ -15,6 +15,11 @@ from omnix_cli.core.exceptions import (
 )
 from omnix_cli.schemas.artifacts import Artifact
 from omnix_cli.schemas.blueprint import ProjectBlueprint
+from omnix_cli.schemas.execution import (
+    ExecutionHistory,
+    ExecutionPlan,
+    ExecutionReport,
+)
 from omnix_cli.schemas.integration import (
     ConflictReport,
     DependencyGraph,
@@ -46,6 +51,7 @@ INTEGRATION_DIR_NAME = "integration"
 QA_DIR_NAME = "qa"
 QA_HISTORY_DIR_NAME = "history"
 REPAIR_DIR_NAME = "repair"
+EXECUTION_DIR_NAME = "execution"
 BLUEPRINT_FILE = "project.blueprint.json"
 MEMORY_FILE = "project.memory.json"
 MODELS_FILE = "models.json"
@@ -63,6 +69,7 @@ class StateManager:
         self.qa_dir = self.project_dir / QA_DIR_NAME
         self.qa_history_dir = self.qa_dir / QA_HISTORY_DIR_NAME
         self.repair_dir = self.project_dir / REPAIR_DIR_NAME
+        self.execution_dir = self.project_dir / EXECUTION_DIR_NAME
         self.blueprint_path = self.project_dir / BLUEPRINT_FILE
         self.memory_path = self.project_dir / MEMORY_FILE
         self.models_path = self.project_dir / MODELS_FILE
@@ -391,6 +398,50 @@ class StateManager:
             msg = "Repair history not found. Run 'omnix repair' first."
             raise ProjectNotInitializedError(msg)
         return self._load_model(path, RepairHistory)
+
+    # Execution Management
+
+    def save_execution_plan(self, plan: ExecutionPlan) -> None:
+        """Persist the execution plan."""
+        self.execution_dir.mkdir(parents=True, exist_ok=True)
+        self._write_model(self.execution_dir / "execution_plan.json", plan)
+
+    def load_execution_plan(self) -> ExecutionPlan:
+        """Load the latest execution plan."""
+        path = self.execution_dir / "execution_plan.json"
+        if not path.exists():
+            msg = "Execution plan not found. Run 'omnix execute-all' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, ExecutionPlan)
+
+    def save_execution_report(self, report: ExecutionReport) -> None:
+        """Persist the execution report and archive it by run ID."""
+        self.execution_dir.mkdir(parents=True, exist_ok=True)
+        self._write_model(self.execution_dir / "execution_report.json", report)
+        self._write_model(
+            self.execution_dir / f"execution_report.{report.run_id}.json", report
+        )
+
+    def load_execution_report(self) -> ExecutionReport:
+        """Load the latest execution report."""
+        path = self.execution_dir / "execution_report.json"
+        if not path.exists():
+            msg = "Execution report not found. Run 'omnix execute-all' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, ExecutionReport)
+
+    def save_execution_history(self, history: ExecutionHistory) -> None:
+        """Persist the execution history — append-only, never overwrites runs."""
+        self.execution_dir.mkdir(parents=True, exist_ok=True)
+        self._write_model(self.execution_dir / "execution_history.json", history)
+
+    def load_execution_history(self) -> ExecutionHistory:
+        """Load the full execution history."""
+        path = self.execution_dir / "execution_history.json"
+        if not path.exists():
+            msg = "Execution history not found. Run 'omnix execute-all' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, ExecutionHistory)
 
     def _load_model(self, path: Path, model_type: type[ModelT]) -> ModelT:
         if not path.exists():
