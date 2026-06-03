@@ -14,6 +14,7 @@ from omnix_cli.cli.commands.chat import chat_command
 from omnix_cli.cli.commands.config import config_command
 from omnix_cli.cli.commands.decisions import decisions_command
 from omnix_cli.cli.commands.execute import execute_command
+from omnix_cli.cli.commands.execute_all import execute_all_command, execution_command
 from omnix_cli.cli.commands.goals import goals_command
 from omnix_cli.cli.commands.init import init_command
 from omnix_cli.cli.commands.integration import integrate_command, integration_summary_command
@@ -71,6 +72,8 @@ app.command("decisions")(decisions_command)
 app.command("plan")(plan_command)
 app.command("tasks")(tasks_command)
 app.command("execute")(execute_command)
+app.command("execute-all")(execute_all_command)
+app.command("execution")(execution_command)
 app.command("integrate")(integrate_command)
 app.command("integration")(integration_summary_command)
 app.command("qa")(qa_command)

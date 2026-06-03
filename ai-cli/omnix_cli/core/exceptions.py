@@ -29,3 +29,11 @@ class BlueprintValidationError(OmnixError):
 
 class TaskValidationError(OmnixError):
     """Raised when a task plan is incomplete or invalid."""
+
+
+class ExecutionPlanError(OmnixError):
+    """Raised when an execution plan cannot be built from the task graph."""
+
+
+class CyclicDependencyError(ExecutionPlanError):
+    """Raised when the task dependency graph contains a cycle."""
