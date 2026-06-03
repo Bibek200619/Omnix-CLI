@@ -15,6 +15,7 @@ from omnix_cli.core.exceptions import (
 )
 from omnix_cli.schemas.artifacts import Artifact
 from omnix_cli.schemas.blueprint import ProjectBlueprint
+from omnix_cli.schemas.build import BuildHistory, BuildReport, FinalProjectPackage
 from omnix_cli.schemas.execution import (
     ExecutionHistory,
     ExecutionPlan,
@@ -52,10 +53,15 @@ QA_DIR_NAME = "qa"
 QA_HISTORY_DIR_NAME = "history"
 REPAIR_DIR_NAME = "repair"
 EXECUTION_DIR_NAME = "execution"
+BUILD_DIR_NAME = "build"
+BUILD_RUNS_DIR_NAME = "build_runs"
 BLUEPRINT_FILE = "project.blueprint.json"
 MEMORY_FILE = "project.memory.json"
 MODELS_FILE = "models.json"
 TASKS_FILE = "tasks.json"
+BUILD_REPORT_FILE = "build_report.json"
+BUILD_HISTORY_FILE = "build_history.json"
+FINAL_PROJECT_PACKAGE_FILE = "final_project_package.json"
 
 
 class StateManager:
@@ -70,10 +76,15 @@ class StateManager:
         self.qa_history_dir = self.qa_dir / QA_HISTORY_DIR_NAME
         self.repair_dir = self.project_dir / REPAIR_DIR_NAME
         self.execution_dir = self.project_dir / EXECUTION_DIR_NAME
+        self.build_dir = self.project_dir / BUILD_DIR_NAME
+        self.build_runs_dir = self.build_dir / BUILD_RUNS_DIR_NAME
         self.blueprint_path = self.project_dir / BLUEPRINT_FILE
         self.memory_path = self.project_dir / MEMORY_FILE
         self.models_path = self.project_dir / MODELS_FILE
         self.tasks_path = self.project_dir / TASKS_FILE
+        self.build_report_path = self.build_dir / BUILD_REPORT_FILE
+        self.build_history_path = self.build_dir / BUILD_HISTORY_FILE
+        self.final_project_package_path = self.build_dir / FINAL_PROJECT_PACKAGE_FILE
 
     def init_project(
         self,
@@ -442,6 +453,90 @@ class StateManager:
             msg = "Execution history not found. Run 'omnix execute-all' first."
             raise ProjectNotInitializedError(msg)
         return self._load_model(path, ExecutionHistory)
+
+    # Build Management
+
+    def get_next_build_run_id(self) -> str:
+        """Return the next append-only autonomous build run ID."""
+
+        numbers: list[int] = []
+
+        try:
+            history = self.load_build_history()
+        except (ProjectNotInitializedError, ProjectStateValidationError):
+            history = BuildHistory()
+
+        for run in history.runs:
+            number = self._parse_build_run_number(run.run_id)
+            if number is not None:
+                numbers.append(number)
+
+        if self.build_runs_dir.exists():
+            for path in self.build_runs_dir.iterdir():
+                if not path.is_dir():
+                    continue
+                number = self._parse_build_run_number(path.name)
+                if number is not None:
+                    numbers.append(number)
+
+        next_number = max(numbers) + 1 if numbers else 1
+        return f"build_{next_number:04d}"
+
+    def save_build_report(self, report: BuildReport) -> None:
+        """Persist the latest build report and archive it under its run ID."""
+
+        validated = BuildReport.model_validate(report)
+        self.build_dir.mkdir(parents=True, exist_ok=True)
+        run_dir = self.build_runs_dir / validated.run_id
+        self._write_model(self.build_report_path, validated)
+        self._write_model(run_dir / BUILD_REPORT_FILE, validated)
+
+    def load_build_report(self) -> BuildReport:
+        """Load the latest autonomous build report."""
+
+        if not self.build_report_path.exists():
+            msg = "Build report not found. Run 'omnix build \"<goal>\"' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(self.build_report_path, BuildReport)
+
+    def save_build_history(self, history: BuildHistory) -> None:
+        """Persist autonomous build history."""
+
+        self.build_dir.mkdir(parents=True, exist_ok=True)
+        self._write_model(self.build_history_path, BuildHistory.model_validate(history))
+
+    def load_build_history(self) -> BuildHistory:
+        """Load the autonomous build history."""
+
+        if not self.build_history_path.exists():
+            msg = "Build history not found. Run 'omnix build \"<goal>\"' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(self.build_history_path, BuildHistory)
+
+    def save_final_project_package(self, package: FinalProjectPackage) -> None:
+        """Persist the latest final project package and archive it by build run."""
+
+        validated = FinalProjectPackage.model_validate(package)
+        self.build_dir.mkdir(parents=True, exist_ok=True)
+        run_dir = self.build_runs_dir / validated.build_metadata.run_id
+        self._write_model(self.final_project_package_path, validated)
+        self._write_model(run_dir / FINAL_PROJECT_PACKAGE_FILE, validated)
+
+    def load_final_project_package(self) -> FinalProjectPackage:
+        """Load the latest final project package."""
+
+        if not self.final_project_package_path.exists():
+            msg = "Final project package not found. Run 'omnix build \"<goal>\"' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(self.final_project_package_path, FinalProjectPackage)
+
+    def _parse_build_run_number(self, run_id: str) -> int | None:
+        if not run_id.startswith("build_"):
+            return None
+        suffix = run_id.removeprefix("build_")
+        if not suffix.isdigit():
+            return None
+        return int(suffix)
 
     def _load_model(self, path: Path, model_type: type[ModelT]) -> ModelT:
         if not path.exists():
