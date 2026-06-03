@@ -49,6 +49,7 @@ class ModelsConfig(BaseModel):
     routing: ModelAssignment | None = None
     integration: ModelAssignment | None = None
     qa: ModelAssignment | None = None
+    repair: ModelAssignment | None = None
 
     @field_validator("*", mode="before")
     @classmethod

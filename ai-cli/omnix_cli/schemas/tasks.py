@@ -49,6 +49,7 @@ class AgentRole(StrEnum):
     ROUTING = "routing"
     INTEGRATION = "integration"
     QA = "qa"
+    REPAIR = "repair"
 
 
 class TaskStatus(StrEnum):
