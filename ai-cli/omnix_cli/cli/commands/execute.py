@@ -8,6 +8,7 @@ from typing import Annotated
 
 import typer
 
+from omnix_cli.agents.backend.agent import BackendAgent
 from omnix_cli.agents.frontend.agent import FrontendAgent
 from omnix_cli.core.exceptions import OmnixError
 from omnix_cli.core.state_manager import StateManager
@@ -42,19 +43,24 @@ def execute_command(
             typer.secho(f"Task '{task_id}' not found.", fg=typer.colors.RED, err=True)
             raise typer.Exit(1)
         
-        if task.assigned_agent.value != AgentRole.FRONTEND.value:
+        supported_agents = {AgentRole.FRONTEND.value, AgentRole.BACKEND.value}
+        if task.assigned_agent.value not in supported_agents:
             typer.secho(
                 f"Agent '{task.assigned_agent}' is not yet supported for execution. "
-                "Only 'frontend' tasks can be executed in Phase 5A.",
+                "Only 'frontend' and 'backend' tasks can be executed in Phase 5B.",
                 fg=typer.colors.YELLOW,
                 err=True,
             )
             raise typer.Exit(0)
 
         try:
-            typer.echo(f"Executing task '{task.title}' ({task_id}) using Frontend Agent...")
+            if task.assigned_agent.value == AgentRole.FRONTEND.value:
+                typer.echo(f"Executing task '{task.title}' ({task_id}) using Frontend Agent...")
+                agent: FrontendAgent | BackendAgent = FrontendAgent(state_manager)
+            else:
+                typer.echo(f"Executing task '{task.title}' ({task_id}) using Backend Agent...")
+                agent = BackendAgent(state_manager)
             
-            agent = FrontendAgent(state_manager)
             result = await agent.execute_task(task)
             
             typer.secho("\nArtifact Generated Successfully!", fg=typer.colors.GREEN, bold=True)
