@@ -31,7 +31,6 @@ from omnix_cli.schemas.tasks import (
     TaskStatus,
 )
 
-
 # ---------------------------------------------------------------------------
 # Minimal mock worker agent
 # ---------------------------------------------------------------------------
@@ -511,6 +510,7 @@ def test_execution_history_run_id_increments() -> None:
 
 def test_completion_rate_zero_tasks() -> None:
     from datetime import datetime
+
     from omnix_cli.schemas.execution import ExecutionReport, ExecutionRunStatus, ExecutionStrategy
     report = ExecutionReport(
         project_name="X",
@@ -530,6 +530,7 @@ def test_completion_rate_zero_tasks() -> None:
 
 def test_completion_rate_partial() -> None:
     from datetime import datetime
+
     from omnix_cli.schemas.execution import ExecutionReport, ExecutionRunStatus, ExecutionStrategy
     report = ExecutionReport(
         project_name="X",
@@ -554,8 +555,9 @@ def test_completion_rate_partial() -> None:
 
 def test_execute_all_cli_success(tmp_path: Path) -> None:
     from typer.testing import CliRunner
-    from omnix_cli.cli.main import app
+
     import omnix_cli.agents.coordinator.coordinator as coord_module
+    from omnix_cli.cli.main import app
 
     sm = _sm(tmp_path)
     tasks = [
@@ -587,6 +589,7 @@ def test_execute_all_cli_success(tmp_path: Path) -> None:
 
 def test_execute_all_cli_cyclic_error(tmp_path: Path) -> None:
     from typer.testing import CliRunner
+
     from omnix_cli.cli.main import app
 
     sm = _sm(tmp_path)
@@ -601,6 +604,7 @@ def test_execute_all_cli_cyclic_error(tmp_path: Path) -> None:
 
 def test_execution_display_no_report(tmp_path: Path) -> None:
     from typer.testing import CliRunner
+
     from omnix_cli.cli.main import app
 
     _sm(tmp_path)
@@ -612,8 +616,8 @@ def test_execution_display_no_report(tmp_path: Path) -> None:
 
 def test_execution_display_after_run(tmp_path: Path) -> None:
     from typer.testing import CliRunner
+
     from omnix_cli.cli.main import app
-    import omnix_cli.agents.coordinator.coordinator as coord_module
 
     sm = _sm(tmp_path)
     sm.save_tasks(TaskPlan(tasks=[_task("t1")]))

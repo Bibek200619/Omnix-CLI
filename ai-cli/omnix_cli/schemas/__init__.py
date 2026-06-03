@@ -9,6 +9,13 @@ from omnix_cli.schemas.blueprint import (
     PageDefinition,
     ProjectBlueprint,
 )
+from omnix_cli.schemas.build import (
+    BuildConfig,
+    BuildHistory,
+    BuildReport,
+    BuildStatus,
+    FinalProjectPackage,
+)
 from omnix_cli.schemas.memory import ProjectMemory
 from omnix_cli.schemas.models import ModelsConfig
 from omnix_cli.schemas.tasks import (
@@ -23,8 +30,13 @@ from omnix_cli.schemas.tasks import (
 __all__ = [
     "AgentRole",
     "ArchitectureNote",
+    "BuildConfig",
+    "BuildHistory",
+    "BuildReport",
+    "BuildStatus",
     "EntityDefinition",
     "FeatureDefinition",
+    "FinalProjectPackage",
     "GoalDefinition",
     "ModelsConfig",
     "ModuleDefinition",
