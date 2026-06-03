@@ -13,6 +13,7 @@ from omnix_cli.core.exceptions import (
     ProjectNotInitializedError,
     ProjectStateValidationError,
 )
+from omnix_cli.schemas.artifacts import Artifact
 from omnix_cli.schemas.blueprint import ProjectBlueprint
 from omnix_cli.schemas.memory import ProjectMemory
 from omnix_cli.schemas.models import ModelsConfig
@@ -21,6 +22,7 @@ from omnix_cli.schemas.tasks import TaskPlan
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
 PROJECT_DIR_NAME = ".project"
+ARTIFACTS_DIR_NAME = "artifacts"
 BLUEPRINT_FILE = "project.blueprint.json"
 MEMORY_FILE = "project.memory.json"
 MODELS_FILE = "models.json"
@@ -33,6 +35,7 @@ class StateManager:
     def __init__(self, workspace: Path) -> None:
         self.workspace = workspace.expanduser().resolve()
         self.project_dir = self.workspace / PROJECT_DIR_NAME
+        self.artifacts_dir = self.project_dir / ARTIFACTS_DIR_NAME
         self.blueprint_path = self.project_dir / BLUEPRINT_FILE
         self.memory_path = self.project_dir / MEMORY_FILE
         self.models_path = self.project_dir / MODELS_FILE
@@ -60,6 +63,7 @@ class StateManager:
             raise ProjectAlreadyInitializedError(msg)
 
         self.project_dir.mkdir(parents=True, exist_ok=True)
+        self.artifacts_dir.mkdir(parents=True, exist_ok=True)
 
         blueprint = ProjectBlueprint(project_name=project_name, description=description)
         memory = ProjectMemory(project_name=project_name)
@@ -112,6 +116,47 @@ class StateManager:
         """Validate and persist `tasks.json`."""
 
         self._write_model(self.tasks_path, TaskPlan.model_validate(tasks))
+
+    def list_artifacts(self) -> list[Artifact]:
+        """List all persisted artifacts."""
+
+        if not self.artifacts_dir.exists():
+            return []
+
+        artifacts: list[Artifact] = []
+        for path in self.artifacts_dir.glob("*.json"):
+            try:
+                artifact = self._load_model(path, Artifact)
+                artifacts.append(artifact)
+            except (ProjectStateValidationError, ProjectNotInitializedError):
+                continue
+        return sorted(artifacts, key=lambda a: a.generated_at, reverse=True)
+
+    def load_artifact(self, artifact_id: str) -> Artifact | None:
+        """Load a specific artifact by ID."""
+
+        # Search for the artifact file. Since we support versioning,
+        # there might be multiple files with the same base ID but different versions.
+        # For now, let's assume the filename matches the ID exactly if we use unique IDs.
+        # Or we can search through the directory.
+        for path in self.artifacts_dir.glob(f"{artifact_id}.json"):
+            return self._load_model(path, Artifact)
+        return None
+
+    def save_artifact(self, artifact: Artifact) -> None:
+        """Validate and persist an artifact."""
+
+        self.artifacts_dir.mkdir(parents=True, exist_ok=True)
+        artifact_path = self.artifacts_dir / f"{artifact.id}.json"
+        self._write_model(artifact_path, Artifact.model_validate(artifact))
+
+    def get_next_artifact_version(self, task_id: str) -> int:
+        """Determine the next version number for a task's artifacts."""
+
+        existing = [a for a in self.list_artifacts() if a.task_id == task_id]
+        if not existing:
+            return 1
+        return max(a.version for a in existing) + 1
 
     def _load_model(self, path: Path, model_type: type[ModelT]) -> ModelT:
         if not path.exists():
