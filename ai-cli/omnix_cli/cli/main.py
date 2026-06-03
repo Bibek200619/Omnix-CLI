@@ -21,6 +21,8 @@ from omnix_cli.cli.commands.memory import memory_command
 from omnix_cli.cli.commands.models import models_command
 from omnix_cli.cli.commands.ping import ping_command
 from omnix_cli.cli.commands.plan import plan_command
+from omnix_cli.cli.commands.qa import qa_command, quality_command
+from omnix_cli.cli.commands.repair import repair_command, repairs_command
 from omnix_cli.cli.commands.tasks import tasks_command
 from omnix_cli.core.logging import configure_logging
 
@@ -71,6 +73,10 @@ app.command("tasks")(tasks_command)
 app.command("execute")(execute_command)
 app.command("integrate")(integrate_command)
 app.command("integration")(integration_summary_command)
+app.command("qa")(qa_command)
+app.command("quality")(quality_command)
+app.command("repair")(repair_command)
+app.command("repairs")(repairs_command)
 app.command("artifacts")(artifacts_command)
 app.command("artifact")(artifact_view_command)
 

@@ -23,6 +23,19 @@ from omnix_cli.schemas.integration import (
 )
 from omnix_cli.schemas.memory import ProjectMemory
 from omnix_cli.schemas.models import ModelsConfig
+from omnix_cli.schemas.qa import (
+    CoverageReport,
+    GapReport,
+    QASummary,
+    QualityReport,
+    RiskReport,
+)
+from omnix_cli.schemas.repair import (
+    RepairArtifact,
+    RepairHistory,
+    RepairPlan,
+    RepairReport,
+)
 from omnix_cli.schemas.tasks import TaskPlan
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
@@ -30,6 +43,9 @@ ModelT = TypeVar("ModelT", bound=BaseModel)
 PROJECT_DIR_NAME = ".project"
 ARTIFACTS_DIR_NAME = "artifacts"
 INTEGRATION_DIR_NAME = "integration"
+QA_DIR_NAME = "qa"
+QA_HISTORY_DIR_NAME = "history"
+REPAIR_DIR_NAME = "repair"
 BLUEPRINT_FILE = "project.blueprint.json"
 MEMORY_FILE = "project.memory.json"
 MODELS_FILE = "models.json"
@@ -44,6 +60,9 @@ class StateManager:
         self.project_dir = self.workspace / PROJECT_DIR_NAME
         self.artifacts_dir = self.project_dir / ARTIFACTS_DIR_NAME
         self.integration_dir = self.project_dir / INTEGRATION_DIR_NAME
+        self.qa_dir = self.project_dir / QA_DIR_NAME
+        self.qa_history_dir = self.qa_dir / QA_HISTORY_DIR_NAME
+        self.repair_dir = self.project_dir / REPAIR_DIR_NAME
         self.blueprint_path = self.project_dir / BLUEPRINT_FILE
         self.memory_path = self.project_dir / MEMORY_FILE
         self.models_path = self.project_dir / MODELS_FILE
@@ -219,6 +238,159 @@ class StateManager:
             msg = "Conflict report not found. Run 'omnix integrate' first."
             raise ProjectNotInitializedError(msg)
         return self._load_model(path, ConflictReport)
+
+    # QA Management
+
+    def get_next_qa_version(self) -> int:
+        """Determine the next version number for QA reports."""
+
+        if not self.qa_history_dir.exists():
+            return 1
+
+        versions = []
+        for path in self.qa_history_dir.glob("qa_summary.v*.json"):
+            try:
+                # Extract version from filename like qa_summary.v1.json
+                parts = path.name.split(".")
+                if len(parts) >= 2 and parts[1].startswith("v"):
+                    versions.append(int(parts[1][1:]))
+            except (ValueError, IndexError):
+                continue
+
+        return max(versions) + 1 if versions else 1
+
+    def save_qa_reports(
+        self,
+        summary: QASummary,
+        quality: QualityReport,
+        coverage: CoverageReport,
+        gap: GapReport,
+        risk: RiskReport,
+    ) -> None:
+        """Save latest QA reports and archive them to history."""
+
+        self.qa_dir.mkdir(parents=True, exist_ok=True)
+        self.qa_history_dir.mkdir(parents=True, exist_ok=True)
+
+        version = summary.version
+
+        # Save latest
+        self._write_model(self.qa_dir / "qa_summary.json", summary)
+        self._write_model(self.qa_dir / "quality_report.json", quality)
+        self._write_model(self.qa_dir / "coverage_report.json", coverage)
+        self._write_model(self.qa_dir / "gap_report.json", gap)
+        self._write_model(self.qa_dir / "risk_report.json", risk)
+
+        # Save to history
+        self._write_model(self.qa_history_dir / f"qa_summary.v{version}.json", summary)
+        self._write_model(self.qa_history_dir / f"quality_report.v{version}.json", quality)
+        self._write_model(self.qa_history_dir / f"coverage_report.v{version}.json", coverage)
+        self._write_model(self.qa_history_dir / f"gap_report.v{version}.json", gap)
+        self._write_model(self.qa_history_dir / f"risk_report.v{version}.json", risk)
+
+    def load_qa_summary(self) -> QASummary:
+        """Load the latest QA summary."""
+        path = self.qa_dir / "qa_summary.json"
+        if not path.exists():
+            msg = "QA summary not found. Run 'omnix qa' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, QASummary)
+
+    def load_quality_report(self) -> QualityReport:
+        """Load the latest quality report."""
+        path = self.qa_dir / "quality_report.json"
+        if not path.exists():
+            msg = "Quality report not found. Run 'omnix qa' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, QualityReport)
+
+    def load_coverage_report(self) -> CoverageReport:
+        """Load the latest coverage report."""
+        path = self.qa_dir / "coverage_report.json"
+        if not path.exists():
+            msg = "Coverage report not found. Run 'omnix qa' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, CoverageReport)
+
+    def load_gap_report(self) -> GapReport:
+        """Load the latest gap report."""
+        path = self.qa_dir / "gap_report.json"
+        if not path.exists():
+            msg = "Gap report not found. Run 'omnix qa' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, GapReport)
+
+    def load_risk_report(self) -> RiskReport:
+        """Load the latest risk report."""
+        path = self.qa_dir / "risk_report.json"
+        if not path.exists():
+            msg = "Risk report not found. Run 'omnix qa' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, RiskReport)
+
+    # Repair Management
+
+    def save_repair_plan(self, plan: RepairPlan) -> None:
+        """Persist the repair plan for the current cycle (and archive it)."""
+        self.repair_dir.mkdir(parents=True, exist_ok=True)
+        self._write_model(self.repair_dir / "repair_plan.json", plan)
+        self._write_model(
+            self.repair_dir / f"repair_plan.cycle{plan.cycle}.json", plan
+        )
+
+    def load_repair_plan(self) -> RepairPlan:
+        """Load the latest repair plan."""
+        path = self.repair_dir / "repair_plan.json"
+        if not path.exists():
+            msg = "Repair plan not found. Run 'omnix repair' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, RepairPlan)
+
+    def save_repair_artifact(self, artifact: RepairArtifact) -> None:
+        """Persist a repair artifact."""
+        self.repair_dir.mkdir(parents=True, exist_ok=True)
+        self._write_model(self.repair_dir / f"{artifact.id}.json", artifact)
+
+    def list_repair_artifacts(self) -> list[RepairArtifact]:
+        """List all persisted repair artifacts."""
+        if not self.repair_dir.exists():
+            return []
+        artifacts: list[RepairArtifact] = []
+        for path in self.repair_dir.glob("repair_artifact_*.json"):
+            try:
+                artifacts.append(self._load_model(path, RepairArtifact))
+            except (ProjectStateValidationError, ProjectNotInitializedError):
+                continue
+        return sorted(artifacts, key=lambda a: (a.cycle, a.id))
+
+    def save_repair_report(self, report: RepairReport) -> None:
+        """Persist the repair report for the current cycle (and archive it)."""
+        self.repair_dir.mkdir(parents=True, exist_ok=True)
+        self._write_model(self.repair_dir / "repair_report.json", report)
+        self._write_model(
+            self.repair_dir / f"repair_report.cycle{report.cycle}.json", report
+        )
+
+    def load_repair_report(self) -> RepairReport:
+        """Load the latest repair report."""
+        path = self.repair_dir / "repair_report.json"
+        if not path.exists():
+            msg = "Repair report not found. Run 'omnix repair' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, RepairReport)
+
+    def save_repair_history(self, history: RepairHistory) -> None:
+        """Persist the repair cycle history — never overwrites, always appends."""
+        self.repair_dir.mkdir(parents=True, exist_ok=True)
+        self._write_model(self.repair_dir / "repair_history.json", history)
+
+    def load_repair_history(self) -> RepairHistory:
+        """Load the full repair history."""
+        path = self.repair_dir / "repair_history.json"
+        if not path.exists():
+            msg = "Repair history not found. Run 'omnix repair' first."
+            raise ProjectNotInitializedError(msg)
+        return self._load_model(path, RepairHistory)
 
     def _load_model(self, path: Path, model_type: type[ModelT]) -> ModelT:
         if not path.exists():
