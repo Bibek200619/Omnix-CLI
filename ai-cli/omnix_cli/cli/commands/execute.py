@@ -9,6 +9,7 @@ from typing import Annotated
 import typer
 
 from omnix_cli.agents.backend.agent import BackendAgent
+from omnix_cli.agents.database.agent import DatabaseAgent
 from omnix_cli.agents.frontend.agent import FrontendAgent
 from omnix_cli.core.exceptions import OmnixError
 from omnix_cli.core.state_manager import StateManager
@@ -43,11 +44,15 @@ def execute_command(
             typer.secho(f"Task '{task_id}' not found.", fg=typer.colors.RED, err=True)
             raise typer.Exit(1)
         
-        supported_agents = {AgentRole.FRONTEND.value, AgentRole.BACKEND.value}
+        supported_agents = {
+            AgentRole.FRONTEND.value, 
+            AgentRole.BACKEND.value,
+            AgentRole.DATABASE.value,
+        }
         if task.assigned_agent.value not in supported_agents:
             typer.secho(
                 f"Agent '{task.assigned_agent}' is not yet supported for execution. "
-                "Only 'frontend' and 'backend' tasks can be executed in Phase 5B.",
+                "Only 'frontend', 'backend', and 'database' tasks can be executed in Phase 5C.",
                 fg=typer.colors.YELLOW,
                 err=True,
             )
@@ -56,10 +61,13 @@ def execute_command(
         try:
             if task.assigned_agent.value == AgentRole.FRONTEND.value:
                 typer.echo(f"Executing task '{task.title}' ({task_id}) using Frontend Agent...")
-                agent: FrontendAgent | BackendAgent = FrontendAgent(state_manager)
-            else:
+                agent: FrontendAgent | BackendAgent | DatabaseAgent = FrontendAgent(state_manager)
+            elif task.assigned_agent.value == AgentRole.BACKEND.value:
                 typer.echo(f"Executing task '{task.title}' ({task_id}) using Backend Agent...")
                 agent = BackendAgent(state_manager)
+            else:
+                typer.echo(f"Executing task '{task.title}' ({task_id}) using Database Agent...")
+                agent = DatabaseAgent(state_manager)
             
             result = await agent.execute_task(task)
             
