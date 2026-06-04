@@ -6,8 +6,6 @@ import asyncio
 import json
 from pathlib import Path
 
-import pytest
-
 from omnix_cli.agents.repair.agent import RepairAgent
 from omnix_cli.core.state_manager import StateManager
 from omnix_cli.providers.base import BaseProvider
@@ -15,8 +13,8 @@ from omnix_cli.providers.registry import ProviderRegistry
 from omnix_cli.schemas.qa import (
     CoverageReport,
     GapReport,
-    QASummary,
     QAStatus,
+    QASummary,
     QualityReport,
     RiskReport,
 )
@@ -26,7 +24,6 @@ from omnix_cli.schemas.repair import (
     RepairStatus,
 )
 from omnix_cli.schemas.tasks import AgentRole
-
 
 # ---------------------------------------------------------------------------
 # Mock provider
@@ -200,7 +197,10 @@ def _repair_response(cycle: int = 1) -> str:
                     "target_agent": "backend",
                     "title": "Customer CRUD API Repair Specification",
                     "description": "Defines all Customer CRUD endpoints.",
-                    "content": "GET /customers, POST /customers, PUT /customers/{id}, DELETE /customers/{id}",
+                    "content": (
+                        "GET /customers, POST /customers, PUT /customers/{id}, "
+                        "DELETE /customers/{id}"
+                    ),
                 },
                 {
                     "id": f"repair_artifact_{cycle:03d}_002",
@@ -213,7 +213,10 @@ def _repair_response(cycle: int = 1) -> str:
                 },
             ],
             "repair_report": {
-                "expected_impact": f"Cycle {cycle}: resolving critical + high issues should raise score above 85."
+                "expected_impact": (
+                    f"Cycle {cycle}: resolving critical + high issues should "
+                    "raise score above 85."
+                )
             },
         }
     )
