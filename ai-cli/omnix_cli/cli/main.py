@@ -10,6 +10,11 @@ from omnix_cli import __version__
 from omnix_cli.cli.commands.architect import architect_command
 from omnix_cli.cli.commands.artifacts import artifact_view_command, artifacts_command
 from omnix_cli.cli.commands.blueprint import blueprint_command
+from omnix_cli.cli.commands.build import (
+    build_command,
+    build_status_command,
+    builds_command,
+)
 from omnix_cli.cli.commands.chat import chat_command
 from omnix_cli.cli.commands.config import config_command
 from omnix_cli.cli.commands.decisions import decisions_command
@@ -82,6 +87,9 @@ app.command("repair")(repair_command)
 app.command("repairs")(repairs_command)
 app.command("artifacts")(artifacts_command)
 app.command("artifact")(artifact_view_command)
+app.command("build")(build_command)
+app.command("build-status")(build_status_command)
+app.command("builds")(builds_command)
 
 
 if __name__ == "__main__":
