@@ -1,9 +1,12 @@
 import Image from "next/image";
 import { brand, links, product } from "@/lib/constants";
+import { Container } from "@/components/ui/container";
+import { Link } from "@/components/ui/link";
+import { Code } from "@/components/ui/code";
 
 export default function Home() {
   return (
-    <div className="foundation">
+    <Container className="foundation">
       <header className="foundation-brand">
         <Image
           src={brand.logo}
@@ -21,17 +24,17 @@ export default function Home() {
           workflows in your terminal. Explore the source preview while the
           website takes shape.
         </p>
-        <a className="foundation-link" href={links.source}>
+        <Link className="foundation-link" href={links.source}>
           Explore the source on GitHub
-        </a>
+        </Link>
       </main>
       <footer className="foundation-meta">
         <p>
-          {product.availability} <code>v{product.version}</code>
+          {product.availability} <Code>v{product.version}</Code>
           <br />
           Python {product.minimumPython}+ required
         </p>
       </footer>
-    </div>
+    </Container>
   );
 }

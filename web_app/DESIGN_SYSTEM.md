@@ -220,3 +220,11 @@ A screen passes when:
 - current and roadmap states cannot be confused;
 - code examples are real;
 - no section exists solely to look impressive.
+
+## 16. Phase 2 primitive treatment
+
+Keep the Phase 1 palette and font families. Add semantic control tokens for default/hover surfaces, disabled text, control padding, section rhythm, and code spacing. Primary buttons use mint with dark text; secondary buttons use a strong neutral boundary; ghost buttons remain quiet. Pressed controls use an inset outline. All control variants have a minimum 44 px height/width, visible focus offset, and wrapping labels. Inline text links retain underlines; action links share button geometry.
+
+Badges use explicit text and border style, without animation or color-only meaning. Roadmap borders are dashed and text remains readable. Code uses surface-2, a restrained border and the existing terminal radius. Long blocks scroll inside a keyboard-focusable code region; ordinary text and inline code reflow. Selection and forced-colors focus continue to use global tokens.
+
+The component review page uses a single reading column with labelled sections, compact specimen rows that wrap, and a small three-surface comparison solely to review hierarchy. This is a development reference, not the future homepage. No hero or decorative visual assets are added. The original Omnix logo stays unchanged.

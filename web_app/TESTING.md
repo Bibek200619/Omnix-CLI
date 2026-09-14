@@ -154,3 +154,7 @@ Run from `website/`: `npm run check` (format, lint, strict typecheck, unit/compo
 Release normalization and mocked fetch tests cover stable, prerelease, none, unavailable, draft records, malformed data, and untrusted links. The static foundation has no InstallPanel and is independent of release fetches; full install-state page integration tests belong to Phase 7.
 
 Product tests compare content against actual Python command registrations and implementation files. Playwright checks desktop/mobile, 320 px reflow with enlarged text, keyboard skip/focus, reduced motion, forced colors, JavaScript-disabled rendering, assets/fonts, metadata, and axe. Full cross-browser and human screen-reader acceptance remain launch gates, not claims made by an automated Chromium smoke test.
+
+## 13. Phase 2 verification scope
+
+Component tests protect native button semantics, loading/disabled behavior, safe links, explicit status labels, labelled sections/code, exact clipboard output, denied/missing clipboard fallback, and retry behavior. Browser tests exercise the component review page with keyboard activation, horizontal code scrolling, mobile reflow, reduced motion, forced colors, axe, and no-JavaScript readable code. Screenshot inspection verifies default and interaction states against the tokens. Keep the Phase 1 checks as regression coverage.

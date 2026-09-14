@@ -52,6 +52,19 @@
   --motion-fast: 160ms;
   --motion-surface: 240ms;
   --motion-narrative: 400ms;
+  --text-section: clamp(1.5rem, 3vw, 2rem);
+  --leading-control: 1.4;
+  --section-space: var(--space-12);
+  --section-space-compact: var(--space-8);
+  --anchor-offset: var(--space-8);
+  --control-padding-block: var(--space-3);
+  --control-padding-inline: var(--space-4);
+  --control-surface: var(--surface-1);
+  --control-hover: var(--surface-3);
+  --control-disabled-text: var(--text-tertiary);
+  --control-disabled-surface: var(--surface-2);
+  --code-padding: var(--space-4);
+  --code-inline-padding-block: 0.125rem;
 }
 
 @theme inline {
@@ -104,10 +117,7 @@ pre {
 }
 
 .foundation {
-  width: 100%;
-  max-width: var(--page-width);
-  margin-inline: auto;
-  padding: var(--space-8) var(--page-gutter) var(--space-16);
+  padding-block: var(--space-8) var(--space-16);
 }
 .foundation-brand {
   display: flex;

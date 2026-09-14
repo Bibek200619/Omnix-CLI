@@ -1,0 +1,103 @@
+.review {
+  padding-block: var(--space-8);
+}
+.header,
+.brand,
+.row,
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+.header {
+  justify-content: space-between;
+}
+.brand {
+  font-weight: var(--weight-medium);
+}
+.brand img {
+  width: var(--brand-size);
+  height: auto;
+}
+.intro {
+  padding-block: var(--space-12);
+}
+.intro h1 {
+  font-size: var(--text-title);
+  line-height: var(--leading-title);
+  letter-spacing: var(--tracking-title);
+  font-weight: var(--weight-heading);
+  margin: 0 0 var(--space-6);
+}
+.intro p,
+.description {
+  max-width: var(--text-measure);
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-6);
+}
+.specimen {
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+.feedback {
+  min-height: calc(var(--text-body) * var(--leading-body));
+  margin: var(--space-3) 0;
+  color: var(--text-secondary);
+}
+.links {
+  margin-top: var(--space-8);
+  gap: var(--space-6);
+}
+.stateList {
+  max-width: var(--text-measure);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.stateList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+}
+.surfaces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+.surfaces > div {
+  flex: 1 1 var(--space-32);
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-surface);
+}
+.surfaces strong,
+.surfaces span {
+  display: block;
+}
+.surfaces span {
+  color: var(--text-secondary);
+  margin-top: var(--space-2);
+}
+.surfaceOne {
+  background: var(--surface-1);
+}
+.surfaceTwo {
+  background: var(--surface-2);
+}
+.surfaceThree {
+  background: var(--surface-3);
+}
+.stack {
+  display: grid;
+  gap: var(--space-6);
+  min-width: 0;
+}
+.footer {
+  border-top: var(--border-width) solid var(--border-subtle);
+  padding-block: var(--space-8);
+  color: var(--text-tertiary);
+  font-size: var(--text-small);
+}

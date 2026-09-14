@@ -8,6 +8,39 @@ Pages should compose established components rather than creating local one-off s
 
 ## 2. Primitives
 
+### Phase 2 implementation contracts — 2026-09-15
+
+Import primitives directly from `website/components/ui/<name>`; no barrel export or polymorphic `asChild` API. Native HTML props/ref are forwarded where applicable. Styling lives in a shared CSS module and consumes semantic tokens. Callers provide meaningful visible labels; icon-only controls are outside this phase.
+
+| Primitive | Contract |
+|---|---|
+| `Container` | A `div` with `width="page"` (default) or `"prose"`, shared gutters, and a bounded width. Use once per horizontal layout boundary; avoid nesting gutters. |
+| `Section` | A semantic `section` requiring `id` and `title`, with `headingLevel` 2 (default) or 3 and `spacing="default"` or `"compact"`. Owns a labelled heading and vertical spacing; does not add a Container. |
+| `Button` | Native button; `variant="primary"` (default), `"secondary"`, or `"ghost"`. Defaults to `type="button"`; `disabled` and `loading` use native disabled behavior. Loading keeps the original label and adds visible progress text plus `aria-busy`. No animation is required. |
+| `Link` | Native anchor for navigation; underlined by default. `variant="primary"`, `"secondary"`, or `"ghost"` gives action styling. Same-tab navigation by default; `newTab` adds protected rel values and an accessible new-tab notice. HTTPS external destinations get a small decorative direction mark. Relative paths/anchors are supported; unsafe URL schemes are rejected. No disabled-anchor imitation. |
+| `Badge` | Noninteractive span with required `status="available"`, `"roadmap"`, `"preview"`, or `"version"`. Fixed visible status labels; the version variant requires a `version` string. Roadmap uses a dashed border as well as text. Availability context remains the caller's responsibility. |
+| `Code` | Selectable inline `code`, with safe wrapping for long identifiers. |
+| `CodeBlock` | Required string `code` and accessible `label`; semantic `pre/code` within a labelled figure. Preserves whitespace, scrolls internally, supports keyboard scrolling, and optionally includes `copyable` CopyButton. No HTML injection or syntax-highlighter dependency. |
+| `CopyButton` | Required `text`; optional visible `label` defaults to `Copy command`. Writes only after a user click, prevents duplicate pending requests, announces success politely, and allows retry. Denied/missing Clipboard API reveals a labelled read-only text area with exact text, focuses/selects it, and gives keyboard/touch manual-copy instructions. No deprecated clipboard fallback or clipboard reads. |
+
+Only `CopyButton` requires a Client Component boundary. Other primitives work in Server Components; interactive consumers import Button into their own client boundary. Native loading/disabled buttons are excluded from tab order. Tabs and Disclosure are deferred until parallel or collapsible content is required.
+
+The noindex `/design-system` route is a component review fixture, excluded from sitemap and marketing navigation. It displays real source-preview labels and CLI commands without executing them. A small client-only control example demonstrates all button variants and actual loading/disabled behavior. It is not a product landing section.
+
+Example Server Component composition (use unique section IDs and preserve heading order):
+
+```tsx
+import { Container } from "@/components/ui/container";
+import { Section } from "@/components/ui/section";
+import { CodeBlock } from "@/components/ui/code-block";
+
+<Container width="prose">
+  <Section id="inspect" title="Inspect project state">
+    <CodeBlock label="Read the blueprint" code="omnix blueprint" copyable />
+  </Section>
+</Container>;
+```
+
 ### `Button`
 Variants:
 - primary

@@ -1,7 +1,8 @@
 # Omnix CLI website foundation
 
-Phase 0 and Phase 1 only. Specifications remain in `../*.md`. This is a minimal,
-noindex preview shell; primitives and marketing sections start in later phases.
+Phase 0–2 foundation. Specifications remain in `../*.md`. The homepage remains a
+minimal noindex preview. Visit `/design-system` to review the reusable primitives;
+marketing sections start in later phases.
 
 ## Development
 
@@ -34,7 +35,10 @@ ignored under `test-results/` and `playwright-report/`.
 - `content/`: source-backed commands, agents, provider boundaries, roadmap.
 - `lib/`: centralized identity/URLs, validated deployment origin, pure release
   normalization and server-only GitHub fetch. No install commands are inferred.
-- `components/`: reserved directories; reusable primitives begin in Phase 2.
+- `components/ui/`: native, token-driven primitives. Contracts and usage are in
+  `../COMPONENTS.md`. CopyButton owns the clipboard interaction boundary.
+- `app/design-system/`: noindex review page and a small client button example;
+  excluded from the sitemap and marketing navigation.
 - `public/brand/omnix-logo.png`: byte-identical copy of `../ref /logo/img.png`.
 - No database, analytics, animation library, or browser provider credentials.
 

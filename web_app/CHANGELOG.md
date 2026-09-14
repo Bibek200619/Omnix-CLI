@@ -6,6 +6,12 @@ Use a lightweight Keep-a-Changelog style.
 
 ## [Unreleased]
 
+### Phase 2 — 2026-09-15
+- Added native Container, Section, Button, Link, Badge, Code, CodeBlock, and CopyButton primitives with shared semantic styling.
+- Added a noindex component review route and documented primitive props, state, keyboard and clipboard fallback contracts.
+- Reused primitives in the existing preview shell. Deferred optional Tabs/Disclosure and all marketing sections.
+- Added component and browser coverage for controls, status labels, copy recovery, code overflow, and accessibility.
+
 ### Phase 0 and Phase 1 — 2026-09-14
 - Inspected Python CLI source and separated its preview capabilities from the Node MVP.
 - Corrected stale roadmap labels: Planner, workers, Integration, QA, Repair, execution coordination, and build orchestration already exist in source. Documented artifact/report limitations and the lack of Master chat dispatch.
