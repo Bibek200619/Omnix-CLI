@@ -45,7 +45,7 @@ Exit criteria:
 ## Phase 1 — Website scaffold
 
 Tasks:
-- create `website/`;
+- open `website/`;
 - configure Next.js + TypeScript;
 - strict lint/type rules;
 - test runner;
@@ -108,7 +108,7 @@ Build:
 - Master Agent;
 - project state/context;
 - Architect Agent;
-- roadmap roles;
+- confirmed roadmap capabilities (currently additional live provider adapters);
 - responsive vertical alternative;
 - accessible semantic equivalent.
 
@@ -146,14 +146,15 @@ Current:
 - foundation;
 - provider layer;
 - Master Agent;
-- Architect Agent.
+- Architect Agent;
+- Planner and worker artifact generation;
+- integration, QA reports, repair artifacts;
+- dependency-aware execution and build orchestration (source preview).
 
 Future:
-- planning;
-- workers;
-- integration;
-- QA;
-- repair.
+- live Anthropic, Google, OpenRouter, and DeepSeek adapters.
+
+Discovery corrected the former phase-3-only capability list; see `PRODUCT.md`. Available source workflows are not a stable release or proof of runnable generated applications. No additional roadmap agent roles are confirmed.
 
 Exit:
 - no future feature appears shipped.

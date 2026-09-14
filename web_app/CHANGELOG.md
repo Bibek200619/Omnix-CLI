@@ -6,6 +6,26 @@ Use a lightweight Keep-a-Changelog style.
 
 ## [Unreleased]
 
+### Phase 3 — 2026-09-15
+- Replaced the preview placeholder with a production header and hero, preserving the official logo and source-preview distribution boundary.
+- Added accessible mobile navigation and a static five-command walkthrough with explicit configuration, website narration, and copy recovery.
+- Rechecked CLI behavior and the empty public release list; no download command or generated output is invented.
+- Kept later homepage sections out of scope and retained noindex until launch review.
+
+### Phase 2 — 2026-09-15
+- Added native Container, Section, Button, Link, Badge, Code, CodeBlock, and CopyButton primitives with shared semantic styling.
+- Added a noindex component review route and documented primitive props, state, keyboard and clipboard fallback contracts.
+- Reused primitives in the existing preview shell. Deferred optional Tabs/Disclosure and all marketing sections.
+- Added component and browser coverage for controls, status labels, copy recovery, code overflow, and accessibility.
+
+### Phase 0 and Phase 1 — 2026-09-14
+- Inspected Python CLI source and separated its preview capabilities from the Node MVP.
+- Corrected stale roadmap labels: Planner, workers, Integration, QA, Repair, execution coordination, and build orchestration already exist in source. Documented artifact/report limitations and the lack of Master chat dispatch.
+- Confirmed Python >=3.12, package 0.1.0, 26 registered commands, one live provider adapter, four placeholders, and no public GitHub releases.
+- Reviewed all useful local reference assets and preserved the official logo.
+- Established a static Next.js foundation, semantic design tokens, structured product data, release state helpers, and automated quality commands under `website/`.
+- Reserved subsequent UI work for Phase 2 onward; no final homepage or install CTA.
+
 ### Added
 - Initial product specification.
 - Website requirements.
@@ -23,8 +43,8 @@ Use a lightweight Keep-a-Changelog style.
 - Reference and originality rules.
 
 ### Decisions
-- `project/*.md` is the canonical documentation source.
-- `project/documents/*.md` is a synchronized mirror only.
+- `web_app/*.md` is the canonical documentation source.
+- `web_app/documents/*.md`, when present, is a secondary mirror only.
 - Website v1 is static-first and does not require a database.
 - Production download CTA depends on a verified CLI release/distribution path.
 - Current and roadmap agent capabilities must be visually and semantically distinct.

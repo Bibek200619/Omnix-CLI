@@ -95,3 +95,11 @@ Prefer GitHub Issues/Discussions for early-stage product feedback.
 - links use HTTPS;
 - no unsupported release is labelled stable;
 - platform asset mapping has tests before enabling direct downloads.
+
+## 8. Phase 1 release boundary
+
+Repository: `Bibek200619/Omnix-CLI`. The public Releases API returned `[]` on 2026-09-14; snapshot state is `none`. Package version `0.1.0` is not a release version claim.
+
+The helper normalizes only published, non-draft records, prefers a stable release over a prerelease, and selects the newest publish date within that channel. Malformed responses, HTTP failures, timeouts, or untrusted URLs produce `unavailable`, distinct from an empty release list. Release and asset URLs must belong to the official GitHub repository. Unverified assets and install commands are never promoted to download actions. Source navigation remains available in every state.
+
+The foundation page is static and independent of this fetch. A future InstallPanel must additionally require manually verified distribution metadata before showing any stable-download CTA, even if a stable GitHub tag exists.

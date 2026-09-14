@@ -74,7 +74,7 @@ Screen-reader users should be able to understand:
 2. Master Agent;
 3. context;
 4. Architect Agent;
-5. roadmap roles.
+5. other implemented preview specialists and confirmed roadmap capabilities (currently additional live provider adapters).
 
 Do not rely on SVG lines alone to communicate meaning.
 

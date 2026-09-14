@@ -54,6 +54,12 @@ Example dark theme:
 
 These are starting tokens, not permission to scatter raw hex values through components.
 
+Phase 1 resolves these into semantic `--background`, `--text-primary`, `--text-secondary`, `--text-tertiary`, `--border-subtle`, and `--border-strong` names in `website/app/globals.css`. Tertiary text is lifted to `#9199a5` for AA readability on all three dark surfaces. Strong borders use `#657080` where a control boundary needs non-text contrast; subtle borders are decorative separators only. Mint `#8ee3c8` is the interaction accent, while the official blue logo is preserved unchanged.
+
+Phase 1 uses locally bundled Geist and Geist Mono variable Latin fonts via `next/font/local` (no Google Fonts build-time request), a 1280 px maximum page width, 16–32 px responsive gutters, and the documented spacing scale. Font roles, type sizes, line heights, radius, focus, selection, and motion durations are tokens. Focus uses a 2 px accent outline with a 4 px offset. Motion is disabled in reduced-motion mode; forced-colors keeps system focus colors.
+
+Foundation composition: a left-aligned logo/name row, one short preview heading, a source link, and a compact version/requirements line. No final hero, terminal demo, orchestration section, primitive library, or decorative animation is built in Phase 1.
+
 ## 4. Typography
 
 Recommended:
@@ -214,3 +220,19 @@ A screen passes when:
 - current and roadmap states cannot be confused;
 - code examples are real;
 - no section exists solely to look impressive.
+
+## 16. Phase 2 primitive treatment
+
+Keep the Phase 1 palette and font families. Add semantic control tokens for default/hover surfaces, disabled text, control padding, section rhythm, and code spacing. Primary buttons use mint with dark text; secondary buttons use a strong neutral boundary; ghost buttons remain quiet. Pressed controls use an inset outline. All control variants have a minimum 44 px height/width, visible focus offset, and wrapping labels. Inline text links retain underlines; action links share button geometry.
+
+Badges use explicit text and border style, without animation or color-only meaning. Roadmap borders are dashed and text remains readable. Code uses surface-2, a restrained border and the existing terminal radius. Long blocks scroll inside a keyboard-focusable code region; ordinary text and inline code reflow. Selection and forced-colors focus continue to use global tokens.
+
+The component review page uses a single reading column with labelled sections, compact specimen rows that wrap, and a small three-surface comparison solely to review hierarchy. This is a development reference, not the future homepage. No hero or decorative visual assets are added. The original Omnix logo stays unchanged.
+
+## 17. Phase 3 header and hero
+
+Use the existing near-black background (#090a0c), quiet terminal surface (#0d0f12), nested surface (#12151a), primary text (#f4f6f8), secondary text (#a7adb7), and mint action accent (#8ee3c8). Geist carries the editorial headline, capped at 56 px; Geist Mono distinguishes commands. Preserve the blue logo without effects.
+
+Composition: a compact full-width header, then an asymmetric reading column alongside a command walkthrough. Align the terminal's upper rule with the product identity; the terminal is the proof for the adjacent message, not a floating window. At tablet widths, the walkthrough follows the copy and actions. Use existing spacing and radius tokens; no decorative grid, gradient, badge cluster, shadows, or character-by-character typing. Five ordered commands communicate real progression, with website narration visually separate from shell commands. The complete story is static and immediately readable in all motion modes.
+
+The header is sticky on desktop only, with an opaque background and a quiet bottom border. Mobile uses an in-flow disclosure so the menu never covers the headline or traps focus. Only existing targets are presented: Product, CLI, GitHub, and source preview. Future anchors remain absent until their sections exist. Anchor offsets account for the desktop header.
