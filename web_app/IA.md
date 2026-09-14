@@ -52,7 +52,7 @@ The signature “Angry Birds progression” section:
 - Master Agent;
 - persistent context;
 - Architect Agent;
-- future roles;
+- implemented preview specialists and separately labeled roadmap provider adapters;
 - result.
 
 This is a narrative graph/timeline, not a collection of feature cards.
@@ -84,10 +84,11 @@ Visual timeline:
 - Provider layer — available
 - Master Agent — available
 - Architect Agent — available
-- Planner — roadmap
-- Worker agents — roadmap
-- Integration — roadmap
-- QA/repair — roadmap
+- Planner — available in source preview
+- Worker agents — available in source preview (stored artifacts)
+- Integration — available in source preview (package/report assembly)
+- QA/repair — available in source preview (model-assisted reports/artifacts)
+- Additional live provider adapters — roadmap
 
 ### 10 — Download
 - version

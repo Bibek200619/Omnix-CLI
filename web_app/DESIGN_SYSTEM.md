@@ -54,6 +54,12 @@ Example dark theme:
 
 These are starting tokens, not permission to scatter raw hex values through components.
 
+Phase 1 resolves these into semantic `--background`, `--text-primary`, `--text-secondary`, `--text-tertiary`, `--border-subtle`, and `--border-strong` names in `website/app/globals.css`. Tertiary text is lifted to `#9199a5` for AA readability on all three dark surfaces. Strong borders use `#657080` where a control boundary needs non-text contrast; subtle borders are decorative separators only. Mint `#8ee3c8` is the interaction accent, while the official blue logo is preserved unchanged.
+
+Phase 1 uses locally bundled Geist and Geist Mono variable Latin fonts via `next/font/local` (no Google Fonts build-time request), a 1280 px maximum page width, 16–32 px responsive gutters, and the documented spacing scale. Font roles, type sizes, line heights, radius, focus, selection, and motion durations are tokens. Focus uses a 2 px accent outline with a 4 px offset. Motion is disabled in reduced-motion mode; forced-colors keeps system focus colors.
+
+Foundation composition: a left-aligned logo/name row, one short preview heading, a source link, and a compact version/requirements line. No final hero, terminal demo, orchestration section, primitive library, or decorative animation is built in Phase 1.
+
 ## 4. Typography
 
 Recommended:

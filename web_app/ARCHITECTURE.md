@@ -168,3 +168,12 @@ v1:
 - no invasive session replay by default.
 
 Any analytics addition requires updating `DATABASE.md`, `SECURITY.md`, and privacy documentation.
+
+## 13. Phase 1 decisions
+
+- Application and dependency files live only in `web_app/website/`.
+- Next.js App Router, React, strict TypeScript, Tailwind v4, ESLint, Prettier, Vitest/Testing Library, Playwright and axe. No animation runtime, database, analytics, or provider SDK.
+- Page and layout remain Server Components. Domain directories are reserved with `.gitkeep`; reusable primitives begin in Phase 2.
+- Pure release normalization is separate from a `server-only` GitHub fetch helper. It supports stable, prerelease, none, and unavailable, validates repository URLs, and never invents an install method. Phase 1 does not fetch releases during page rendering.
+- `SITE_URL` is optional and must be a valid HTTPS deployment origin. Canonical/social URLs and sitemap entries are emitted only when configured. The unfinished foundation is always noindex and robots-disallowed; launch must deliberately change this. No fictional production domain.
+- `npm run check` supplies CI-ready formatting, lint, typecheck, unit/component, build, and production Playwright checks. Root GitHub workflow wiring is deferred; this phase does not modify paths outside the website workspace.

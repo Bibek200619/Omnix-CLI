@@ -16,15 +16,15 @@ The site must explain:
 - persistent project context;
 - Architect Agent;
 - provider abstraction;
-- current versus roadmap agents.
+- current preview capabilities versus confirmed roadmap capabilities.
 
 ### FR-003 — Interactive orchestration journey
 The main product narrative should use a scroll-driven or step-driven visual progression inspired by a game-level journey:
 - visitor starts at a project goal;
 - goal reaches Master Agent;
-- Master Agent connects to specialized roles;
+- project context connects to specialist commands and the separate build orchestrator; do not imply Master chat dispatches specialists;
 - implemented roles appear active;
-- roadmap roles appear visually distinct and clearly labeled.
+- confirmed roadmap capabilities appear visually distinct and clearly labeled; no extra future agent roles are currently confirmed.
 
 The experience must remain understandable when animation is disabled.
 

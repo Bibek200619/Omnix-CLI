@@ -135,3 +135,21 @@ Before approving a section, ask:
 5. Is this directly imitating one reference?
 
 A “yes” to 1 or 5 requires redesign.
+
+## 6. Local asset review — 2026-09-14
+
+The actual directory is `web_app/ref ` (a trailing space), not `ref/`. Preserve it verbatim. Reviewed both screenshots at full size and four time-spaced frames from each of the five recordings; motion notes concern observed scroll/sequence changes, not inferred easing curves.
+
+| Asset (all dated 2026-09-14) | Observation and Omnix interpretation |
+|---|---|
+| Screenshot 8.29.42 PM | Codex identity, concise central hierarchy, one dominant action, product preview entering below. Retain hierarchy; exclude the blue/purple wash, customer logo band, and exact centered composition. |
+| Screenshot 8.29.57 PM | A large dark product surface with quiet chrome and clear text hierarchy. Retain readable surface contrast; do not build an imitation chat dashboard. |
+| Recording 8.30.08 PM (5.4 s) | Mostly stationary product preview. It reinforces product-first framing; desktop/system overlays are irrelevant. |
+| Recording 8.30.26 PM (97.8 s) | Codex navigation disclosure, product demonstration, asymmetric image/text explanation, dense footer. Retain progressive disclosure and varied section rhythm, not the mega-menu scale, glow, or brand composition. |
+| Recording 8.33.19 PM (57.8 s) | Antigravity CLI terminal examples, concise captions, setup steps, install surface, large footer wordmark. Retain authentic code hierarchy and sequential setup; exclude floating terminal shadows, star field, repeated cards, and oversized wordmark. |
+| Recording 8.36.32 PM (60.8 s) | Mac mini sticky local navigation, highlights, product panels, editorial captions, feature tabs and dense footer. Retain local wayfinding and staged explanation; exclude hardware imagery, benchmark panels, and scroll-dependent comprehension. |
+| Recording 8.37.51 PM (20.5 s) | Apple storefront alternates light/dark product bands with paired actions. Retain clear section boundaries and action hierarchy; exclude retail tiles, imagery, trade-in content, and brand typography. |
+
+Repeated principles: bounded navigation, one focal point at a time, deliberate image/text balance, strong type-size contrast, and useful pauses between dense sections. Omnix translates these into a terminal and engineering journey in later phases. Lines must express relationships; motion must show progression and have a static equivalent.
+
+Official logo: `web_app/ref /logo/img.png`, 180 × 180 PNG. The blue/white circular mark and dark tile remain unchanged. Production copy: `website/public/brand/omnix-logo.png`; use the same PNG for the icon. Do not synthesize an SVG or extract/recolor the mark.

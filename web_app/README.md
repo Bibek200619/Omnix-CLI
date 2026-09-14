@@ -11,7 +11,7 @@ The site must feel like a premium developer product, not a generic AI landing-pa
 
 ## Product Truth
 
-Omnix CLI is a terminal-based AI software-engineering orchestration platform. The user interacts with one Master Agent while specialized agents operate behind the scenes.
+Omnix CLI is a terminal-based AI software-engineering orchestration platform. The user can converse with a Master Agent and invoke specialized workflows through explicit commands or the separate build orchestrator.
 
 The currently implemented product includes:
 
@@ -35,7 +35,7 @@ The currently implemented product includes:
 - `omnix architect`
 - `omnix blueprint`
 
-Planning agents, worker agents, integration, QA, and repair loops are roadmap functionality and must never be presented as already available.
+Discovery on 2026-09-14 also confirmed Planner, Frontend, Backend, Database, Routing, Integration, QA, Repair, dependency-aware execution, and a build orchestrator in source. These are **available in the source preview**, not a verified stable release. Workers produce stored artifacts; QA produces model-assisted reports, not executed test results. `omnix chat` does not dispatch specialists. See `PRODUCT.md` for evidence and limitations.
 
 ## Documentation Map
 
@@ -59,9 +59,9 @@ Planning agents, worker agents, integration, QA, and repair loops are roadmap fu
 
 ## Source-of-Truth Rule
 
-The files directly under `project/` are canonical.
+The files directly under `web_app/` are canonical.
 
-`project/documents/` is a synchronized mirror for tools that expect a nested documents directory. Do not edit the mirror independently. Any future automation should regenerate the mirror from the canonical files.
+`web_app/documents/`, when present, is a secondary mirror for tools that expect a nested documents directory. Do not edit it independently or assume it is synchronized. Future automation may regenerate the mirror from the canonical files.
 
 ## Core Development Rule
 

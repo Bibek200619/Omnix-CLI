@@ -10,8 +10,8 @@ User lands on `/`.
    **Build software with an AI engineering team.**
 2. Sees terminal example and the Master Agent concept.
 3. Scrolls into the orchestration journey.
-4. Understands that the Master Agent maintains context and delegates specialized work.
-5. Sees Architect marked as available and future roles marked as roadmap.
+4. Understands that Master chat maintains context, while specialist commands and `omnix build` run the engineering workflows.
+5. Sees implemented specialists marked as available in source preview and unimplemented provider adapters marked as roadmap. Master chat and the separate build orchestrator are distinguished.
 6. Reviews real CLI commands.
 7. Reaches install/download section.
 8. Chooses an installation method.
@@ -96,7 +96,7 @@ No information may require hover.
 
 ## Flow 7 — Roadmap exploration
 
-1. User sees future agent node.
+1. User sees a confirmed roadmap capability, currently an unimplemented live provider adapter.
 2. Node is visually labeled `Roadmap`.
 3. Opening the node explains intended role without CTA implying availability.
 4. User can continue to current capabilities.

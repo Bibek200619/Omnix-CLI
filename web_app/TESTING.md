@@ -120,7 +120,8 @@ A decorative animation is not allowed to cost a meaningful performance regressio
 
 Where product data is structured, add assertions:
 - Architect status = available;
-- future roles = roadmap;
+- implemented source agents = available with preview scope;
+- unimplemented provider generation adapters = roadmap;
 - required Python version = documented value;
 - current commands list includes only actual CLI commands;
 - no “stable download” state when there is no release.
@@ -145,3 +146,11 @@ Production is blocked if:
 - current/roadmap product status is incorrect;
 - mobile horizontal overflow exists;
 - Lighthouse reveals a major regression without explicit review.
+
+## 12. Phase 1 verification scope
+
+Run from `website/`: `npm run check` (format, lint, strict typecheck, unit/component tests, build, production Playwright). Install the Chromium test browser first with `npx playwright install chromium`. No root CI workflow is added in this workspace-only phase; these commands are ready for subsequent CI wiring.
+
+Release normalization and mocked fetch tests cover stable, prerelease, none, unavailable, draft records, malformed data, and untrusted links. The static foundation has no InstallPanel and is independent of release fetches; full install-state page integration tests belong to Phase 7.
+
+Product tests compare content against actual Python command registrations and implementation files. Playwright checks desktop/mobile, 320 px reflow with enlarged text, keyboard skip/focus, reduced motion, forced colors, JavaScript-disabled rendering, assets/fonts, metadata, and axe. Full cross-browser and human screen-reader acceptance remain launch gates, not claims made by an automated Chromium smoke test.
