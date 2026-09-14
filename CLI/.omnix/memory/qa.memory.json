@@ -1,0 +1,41 @@
+{
+  "reports": [
+    {
+      "at": "2026-06-30T11:48:17.113Z",
+      "status": "passed",
+      "errors": [],
+      "warnings": [],
+      "integration": {
+        "status": "passed",
+        "errors": [],
+        "warnings": []
+      },
+      "checked_at": "2026-06-30T11:48:17.113Z"
+    },
+    {
+      "at": "2026-06-30T11:48:56.258Z",
+      "status": "passed",
+      "errors": [],
+      "warnings": [],
+      "integration": {
+        "status": "passed",
+        "errors": [],
+        "warnings": []
+      },
+      "checked_at": "2026-06-30T11:48:56.258Z"
+    },
+    {
+      "at": "2026-07-25T12:30:47.912Z",
+      "status": "passed",
+      "errors": [],
+      "warnings": [],
+      "integration": {
+        "status": "passed",
+        "errors": [],
+        "warnings": []
+      },
+      "checked_at": "2026-07-25T12:30:47.912Z"
+    }
+  ],
+  "latest_status": "passed"
+}

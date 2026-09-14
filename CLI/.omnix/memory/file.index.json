@@ -1,0 +1,10 @@
+{
+  "generated_files": [],
+  "modified_files": [
+    "src/app/page.tsx",
+    "src/lib/omnix-routes.ts",
+    "supabase/migrations/20260725T123047Z_items.sql"
+  ],
+  "last_scan": null,
+  "files": []
+}

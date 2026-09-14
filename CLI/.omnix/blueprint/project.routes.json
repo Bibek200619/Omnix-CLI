@@ -1,0 +1,10 @@
+{
+  "project_name": "Omnix-CLI",
+  "routes": [
+    {
+      "name": "Home",
+      "path": "/",
+      "protected": false
+    }
+  ]
+}

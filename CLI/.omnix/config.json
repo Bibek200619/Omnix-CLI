@@ -1,0 +1,81 @@
+{
+  "project_name": "Omnix-CLI",
+  "default_agent": "master",
+  "providers": {
+    "openai": {
+      "name": "OpenAI",
+      "enabled": true
+    },
+    "google": {
+      "name": "Google Gemini",
+      "enabled": true
+    },
+    "anthropic": {
+      "name": "Anthropic Claude",
+      "enabled": true
+    },
+    "openrouter": {
+      "name": "OpenRouter",
+      "enabled": true
+    },
+    "custom": {
+      "name": "Custom OpenAI-compatible",
+      "enabled": false
+    },
+    "local": {
+      "name": "Local deterministic provider",
+      "enabled": true
+    }
+  },
+  "agents": {
+    "master": {
+      "provider": "openai",
+      "model": "gpt-5.5"
+    },
+    "architect": {
+      "provider": "openai",
+      "model": "gpt-5.5"
+    },
+    "frontend": {
+      "provider": "google",
+      "model": "gemini-pro"
+    },
+    "backend": {
+      "provider": "anthropic",
+      "model": "claude-sonnet"
+    },
+    "routing": {
+      "provider": "openai",
+      "model": "gpt-5.5"
+    },
+    "database": {
+      "provider": "openai",
+      "model": "gpt-5.5"
+    },
+    "integration": {
+      "provider": "openai",
+      "model": "gpt-5.5"
+    },
+    "qa": {
+      "provider": "openrouter",
+      "model": "selected-model"
+    },
+    "debug": {
+      "provider": "anthropic",
+      "model": "claude-sonnet"
+    },
+    "docs": {
+      "provider": "openai",
+      "model": "gpt-5.5"
+    }
+  },
+  "supabase": {
+    "connected": false,
+    "project_url": "",
+    "project_ref": ""
+  },
+  "ui": {
+    "theme": "omnix-dark",
+    "layout": "split"
+  }
+}

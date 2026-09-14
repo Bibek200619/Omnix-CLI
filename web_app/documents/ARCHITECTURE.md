@@ -1,0 +1,172 @@
+<!-- MIRROR FILE: canonical source is ../ARCHITECTURE.md. Do not edit independently. -->
+
+# Website Architecture
+
+## 1. Recommended Stack
+
+- Next.js with App Router
+- React
+- TypeScript with strict mode
+- Tailwind CSS or CSS Modules with semantic design tokens
+- lightweight motion library only where it provides clear value
+- Vitest/Jest + Testing Library for component behavior
+- Playwright for end-to-end
+- axe integration for automated accessibility checks
+
+If the repository already chooses a different frontend stack before implementation, update this document before coding.
+
+## 2. Architecture Goals
+
+- static-first;
+- minimal client JavaScript;
+- excellent SEO;
+- release information can update without rewriting product content;
+- product truth represented as data;
+- animations isolated from core content;
+- no database requirement for v1.
+
+## 3. Suggested Directory
+
+```text
+website/
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── globals.css
+│   ├── sitemap.ts
+│   └── robots.ts
+├── components/
+│   ├── ui/
+│   ├── marketing/
+│   ├── terminal/
+│   └── orchestration/
+├── content/
+│   ├── agents.ts
+│   ├── commands.ts
+│   ├── providers.ts
+│   └── roadmap.ts
+├── lib/
+│   ├── github.ts
+│   ├── release.ts
+│   └── constants.ts
+├── public/
+├── tests/
+└── package.json
+```
+
+## 4. Rendering Strategy
+
+Default to Server Components/static rendering.
+
+Use Client Components only for:
+- navigation disclosure;
+- copy-to-clipboard;
+- terminal playback controls;
+- scroll-aware journey activation;
+- interactive tabs/disclosures.
+
+Do not make the entire page client-rendered to enable animation.
+
+## 5. Release Data
+
+Preferred model:
+- server-side/build-time fetch from GitHub Releases;
+- validate response;
+- normalize into internal `ReleaseInfo`;
+- cache reasonably;
+- static fallback if GitHub is unavailable.
+
+Example internal shape:
+
+```ts
+type ReleaseInfo = {
+  version: string
+  tag: string
+  publishedAt: string
+  prerelease: boolean
+  url: string
+  assets: ReleaseAsset[]
+}
+```
+
+## 6. Content Architecture
+
+Product data must live outside presentational components.
+
+Example:
+```ts
+type CapabilityStatus = "available" | "roadmap"
+
+type Agent = {
+  id: string
+  name: string
+  status: CapabilityStatus
+  summary: string
+}
+```
+
+This is especially important so future agents cannot accidentally appear as shipped.
+
+## 7. Animation Architecture
+
+The semantic layout exists first.
+
+Animation layer:
+- observes scroll/intersection;
+- changes visual state only;
+- does not insert/remove essential content;
+- disables or simplifies under reduced motion.
+
+Do not use animation as a navigation dependency.
+
+## 8. Error Handling
+
+External release failure:
+- log server-side where available;
+- render preview/fallback state;
+- keep GitHub source link usable.
+
+Clipboard failure:
+- make text selectable;
+- provide manual-copy feedback.
+
+Image/asset failure:
+- never hide essential explanatory text behind visuals.
+
+## 9. Build Boundaries
+
+The website must not import Omnix CLI Python runtime code.
+
+Integration occurs through:
+- documented commands/capabilities;
+- release metadata;
+- links.
+
+This keeps website deployment independent of CLI execution.
+
+## 10. Deployment
+
+Recommended:
+- Vercel or equivalent static/serverless host;
+- preview deployments for PRs;
+- production deploy only after CI gates.
+
+No deployment secrets may be exposed to browser bundles.
+
+## 11. Performance Strategy
+
+- optimize/subset fonts;
+- avoid large video hero;
+- prefer SVG/CSS for diagrams;
+- lazy-load below-fold nonessential media;
+- keep third-party scripts near zero;
+- do not ship animation libraries to sections that do not animate.
+
+## 12. Observability
+
+v1:
+- deployment/build errors;
+- Core Web Vitals where privacy policy allows;
+- no invasive session replay by default.
+
+Any analytics addition requires updating `DATABASE.md`, `SECURITY.md`, and privacy documentation.

@@ -1,0 +1,14 @@
+.DS_Store
+
+# Local IDE metadata
+.idea/workspace.xml
+.idea/**/workspace.xml
+
+# Local logs and runtime state
+*.log
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example

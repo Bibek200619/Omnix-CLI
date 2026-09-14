@@ -1,0 +1,48 @@
+{
+  "project_name": "Omnix-CLI",
+  "created_at": "2026-07-25T12:30:47.880Z",
+  "source_request": "lets create a normal calculater appp",
+  "frontend": {
+    "framework": "Next.js",
+    "pages": [
+      "Home"
+    ],
+    "components": [
+      "AppShell",
+      "Sidebar",
+      "Header"
+    ]
+  },
+  "backend": {
+    "runtime": "Node.js",
+    "apis": [],
+    "services": []
+  },
+  "routing": {
+    "routes": [
+      {
+        "name": "Home",
+        "path": "/",
+        "protected": false
+      }
+    ]
+  },
+  "database": {
+    "provider": "Not specified",
+    "tables": []
+  },
+  "integration_points": [
+    "Frontend routes consume backend API handlers.",
+    "Backend API handlers use database table names from project.database.json.",
+    "QA audit must pass before pending files can be applied."
+  ],
+  "agents": [
+    "architect",
+    "frontend",
+    "backend",
+    "routing",
+    "database",
+    "integration",
+    "qa"
+  ]
+}

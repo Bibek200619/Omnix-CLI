@@ -1,0 +1,30 @@
+{
+  "project_name": "Omnix-CLI",
+  "tech_stack": {
+    "frontend": "Terminal UI",
+    "backend": "Node.js",
+    "database": "Supabase",
+    "language": "JavaScript"
+  },
+  "agents": {
+    "master": "gpt-5.5",
+    "architect": "gpt-5.5",
+    "frontend": "gemini-pro",
+    "backend": "claude-sonnet",
+    "routing": "gpt-5.5",
+    "database": "gpt-5.5",
+    "integration": "gpt-5.5",
+    "qa": "selected-model",
+    "debug": "claude-sonnet",
+    "docs": "gpt-5.5"
+  },
+  "known_rules": [
+    "All agents must read OmniX.md before code generation.",
+    "Database changes must be validated before applying to Supabase.",
+    "QA must run before final file write."
+  ],
+  "generated_files": [],
+  "known_issues": [],
+  "decisions": [],
+  "open_tasks": []
+}
