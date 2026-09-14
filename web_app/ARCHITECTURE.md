@@ -185,3 +185,10 @@ Any analytics addition requires updating `DATABASE.md`, `SECURITY.md`, and priva
 - `/design-system` is an unlinked, noindex review fixture. Its small action demonstration is a Client Component; the route stays a Server Component.
 - The existing homepage adopts Container, Link and Code to exercise composition while retaining its Phase 1 scope.
 - Optional Tabs/Disclosure await a real consuming section. No marketing section or CLI change belongs to Phase 2.
+
+## 15. Phase 3 decisions
+
+- The home route remains a Server Component composition. SiteHeader, HeroSection, and HeroTerminal render their essential content on the server; only MobileNav and CopyButton hydrate for user interaction.
+- MobileNav is an in-flow disclosure with native button semantics, focus restoration, Escape handling, breakpoint reset, and a no-JavaScript link fallback. It has no modal focus trap or scroll listener.
+- The hero uses a static, source-backed five-command walkthrough. It presents commands and website notes as separate text; there is no fake output, autoplay timer, live region, provider request, or animation dependency.
+- Because the verified release state is `none`, both hero actions point to the source preview/repository. A stable install CTA remains blocked until release metadata and distribution are verified.

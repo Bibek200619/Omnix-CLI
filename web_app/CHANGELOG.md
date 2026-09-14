@@ -6,6 +6,12 @@ Use a lightweight Keep-a-Changelog style.
 
 ## [Unreleased]
 
+### Phase 3 — 2026-09-15
+- Replaced the preview placeholder with a production header and hero, preserving the official logo and source-preview distribution boundary.
+- Added accessible mobile navigation and a static five-command walkthrough with explicit configuration, website narration, and copy recovery.
+- Rechecked CLI behavior and the empty public release list; no download command or generated output is invented.
+- Kept later homepage sections out of scope and retained noindex until launch review.
+
 ### Phase 2 — 2026-09-15
 - Added native Container, Section, Button, Link, Badge, Code, CodeBlock, and CopyButton primitives with shared semantic styling.
 - Added a noindex component review route and documented primitive props, state, keyboard and clipboard fallback contracts.

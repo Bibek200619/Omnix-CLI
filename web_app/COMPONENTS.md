@@ -87,13 +87,15 @@ For mobile navigation or optional command details.
 ## 3. Product Components
 
 ### `SiteHeader`
+Phase 3: Server Component containing the official linked logo, desktop navigation, and an isolated MobileNav Client Component. Product links to `#product`, CLI to the hero walkthrough at `#cli`; GitHub and source-preview links use centralized URLs. Desktop is sticky; mobile remains in flow. No absent section links or scroll listeners.
+
 Props/data:
 - navigation items;
 - GitHub URL;
 - primary CTA.
 
 Behavior:
-- sticky after initial viewport;
+- sticky on desktop;
 - compact;
 - keyboard accessible.
 
@@ -101,7 +103,11 @@ Behavior:
 Use disclosure/dialog semantics.
 Must return focus to trigger on close.
 
+Phase 3 uses a button with `aria-expanded`/`aria-controls` and a labelled navigation disclosure (not a modal or ARIA menu). Opening retains trigger focus; Tab enters the links. Escape or closing restores trigger focus. Internal link activation closes the menu and focuses the destination. Leaving the disclosure with Tab closes it without stealing focus. Desktop breakpoint changes reset it. A no-JavaScript fallback exposes the same links.
+
 ### `HeroTerminal`
+Phase 3: Server Component with a labelled figure and ordered command rows. Each row contains selectable `pre/code` and an explicit website note. It owns this domain-specific annotated layout rather than nesting generic CodeBlocks. CopyButton copies only the five commands, without prompts or narration. The explicit configuration command uses the CLI README's OpenAI/gpt-5 example; availability depends on the user's provider account. No invented output, live provider calls, timers, streaming announcements, or playback controls. The prerequisites name source setup and the Architect's OpenAI API key requirement. Source evidence lives beside the content in `content/hero.ts`.
+
 Purpose:
 Demonstrate Omnix with a deterministic sequence.
 

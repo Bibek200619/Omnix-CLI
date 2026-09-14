@@ -65,6 +65,15 @@
   --control-disabled-surface: var(--surface-2);
   --code-padding: var(--space-4);
   --code-inline-padding-block: 0.125rem;
+  --text-hero: clamp(2.25rem, 4.4vw, 3.5rem);
+  --hero-heading-measure: 18ch;
+  --hero-copy-measure: 44ch;
+  --hero-space: clamp(var(--space-8), 6vw, var(--space-24));
+  --terminal-padding: clamp(var(--space-4), 2vw, var(--space-6));
+  --header-logo-size: var(--space-12);
+  --header-anchor-offset: var(--space-32);
+  --layer-header: 10;
+  --layer-skip: 20;
 }
 
 @theme inline {
@@ -116,49 +125,21 @@ pre {
   font-family: var(--font-mono);
 }
 
-.foundation {
-  padding-block: var(--space-8) var(--space-16);
-}
-.foundation-brand {
+.site-meta {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
   gap: var(--space-4);
+  border-top: var(--border-width) solid var(--border-subtle);
+  padding-block: var(--space-6);
+  font-size: var(--text-small);
+  color: var(--text-tertiary);
 }
-.foundation-brand img {
-  width: var(--brand-size);
-  height: auto;
-}
-.foundation-brand span {
-  font-size: var(--text-lead);
-  font-weight: var(--weight-medium);
-}
-.foundation-main {
-  margin-top: var(--space-12);
-  padding-block: var(--space-8);
-  border-block: var(--border-width) solid var(--border-subtle);
-  background: var(--surface-1);
-}
-.foundation-main h1 {
-  margin: 0 0 var(--space-6);
-  font-size: var(--text-title);
-  line-height: var(--leading-title);
-  letter-spacing: var(--tracking-title);
-  font-weight: var(--weight-heading);
-}
-.foundation-main p {
-  max-width: var(--text-measure);
-  color: var(--text-secondary);
-  margin: 0 0 var(--space-6);
-}
-.foundation-link {
+.site-meta a {
   display: inline-flex;
   align-items: center;
   min-height: var(--touch-target);
-}
-.foundation-meta {
-  margin-top: var(--space-6);
-  font-size: var(--text-small);
-  color: var(--text-tertiary);
 }
 .skip-link {
   position: absolute;
@@ -168,7 +149,7 @@ pre {
   background: var(--accent);
   color: var(--on-accent);
   transform: translateY(calc(-100% - var(--space-8)));
-  z-index: 1;
+  z-index: var(--layer-skip);
 }
 .skip-link:focus {
   transform: translateY(0);

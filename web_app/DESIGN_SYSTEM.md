@@ -228,3 +228,11 @@ Keep the Phase 1 palette and font families. Add semantic control tokens for defa
 Badges use explicit text and border style, without animation or color-only meaning. Roadmap borders are dashed and text remains readable. Code uses surface-2, a restrained border and the existing terminal radius. Long blocks scroll inside a keyboard-focusable code region; ordinary text and inline code reflow. Selection and forced-colors focus continue to use global tokens.
 
 The component review page uses a single reading column with labelled sections, compact specimen rows that wrap, and a small three-surface comparison solely to review hierarchy. This is a development reference, not the future homepage. No hero or decorative visual assets are added. The original Omnix logo stays unchanged.
+
+## 17. Phase 3 header and hero
+
+Use the existing near-black background (#090a0c), quiet terminal surface (#0d0f12), nested surface (#12151a), primary text (#f4f6f8), secondary text (#a7adb7), and mint action accent (#8ee3c8). Geist carries the editorial headline, capped at 56 px; Geist Mono distinguishes commands. Preserve the blue logo without effects.
+
+Composition: a compact full-width header, then an asymmetric reading column alongside a command walkthrough. Align the terminal's upper rule with the product identity; the terminal is the proof for the adjacent message, not a floating window. At tablet widths, the walkthrough follows the copy and actions. Use existing spacing and radius tokens; no decorative grid, gradient, badge cluster, shadows, or character-by-character typing. Five ordered commands communicate real progression, with website narration visually separate from shell commands. The complete story is static and immediately readable in all motion modes.
+
+The header is sticky on desktop only, with an opaque background and a quiet bottom border. Mobile uses an in-flow disclosure so the menu never covers the headline or traps focus. Only existing targets are presented: Product, CLI, GitHub, and source preview. Future anchors remain absent until their sections exist. Anchor offsets account for the desktop header.

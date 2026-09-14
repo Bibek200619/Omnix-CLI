@@ -15,7 +15,7 @@ export type ReleaseState =
 
 export const releaseSnapshot = {
   state: { kind: "none" } satisfies ReleaseState,
-  checkedAt: "2026-09-14",
+  checkedAt: "2026-09-15",
   source: `${links.releases}`,
 } as const;
 

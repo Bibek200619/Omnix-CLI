@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-test("loads the foundation, local logo and fonts with a clean console", async ({
+test("loads the hero, local logo and fonts with a clean console", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -17,7 +17,7 @@ test("loads the foundation, local logo and fonts with a clean console", async ({
   await expect(page).toHaveTitle(/Omnix CLI/);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Explore the source on GitHub" }),
+    page.getByRole("link", { name: "View on GitHub" }),
   ).toHaveAttribute("href", "https://github.com/Bibek200619/Omnix-CLI");
   const image = page.locator("header img");
   await expect(image).toBeVisible();
@@ -50,7 +50,7 @@ test("supports keyboard focus and skip navigation", async ({ page }) => {
   await expect(page.getByRole("main")).toBeFocused();
   await page.keyboard.press("Tab");
   const source = page.getByRole("link", {
-    name: "Explore the source on GitHub",
+    name: "View source preview",
   });
   await expect(source).toBeFocused();
   await expect(source).toHaveCSS("outline-width", "2px");
@@ -104,7 +104,7 @@ test("remains readable without JavaScript", async ({ browser }) => {
   await page.goto("http://127.0.0.1:3100/");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(
-    page.getByRole("link", { name: /source on GitHub/ }),
+    page.getByRole("link", { name: "View on GitHub" }),
   ).toBeVisible();
   await context.close();
 });

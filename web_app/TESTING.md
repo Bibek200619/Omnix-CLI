@@ -158,3 +158,7 @@ Product tests compare content against actual Python command registrations and im
 ## 13. Phase 2 verification scope
 
 Component tests protect native button semantics, loading/disabled behavior, safe links, explicit status labels, labelled sections/code, exact clipboard output, denied/missing clipboard fallback, and retry behavior. Browser tests exercise the component review page with keyboard activation, horizontal code scrolling, mobile reflow, reduced motion, forced colors, axe, and no-JavaScript readable code. Screenshot inspection verifies default and interaction states against the tokens. Keep the Phase 1 checks as regression coverage.
+
+## 14. Phase 3 verification scope
+
+Component tests cover hero product truth, valid anchor destinations, mobile disclosure state, Escape/focus restoration, destination focus, the complete command data set, and the absence of fabricated terminal output. Browser tests cover 320/375/390/768/1024/1280/1440 px layouts, desktop/mobile navigation, breakpoint reset, keyboard focus, outside tabbing, reduced motion, exact workflow copying, no stable download CTA, no-JavaScript navigation, forced colors, axe, and screenshot review. The production check currently runs 54 Vitest tests and 50 Playwright tests across Chromium and mobile Chromium emulation.

@@ -1,8 +1,8 @@
 # Omnix CLI website foundation
 
-Phase 0–2 foundation. Specifications remain in `../*.md`. The homepage remains a
-minimal noindex preview. Visit `/design-system` to review the reusable primitives;
-marketing sections start in later phases.
+Phases 0–3. Specifications remain in `../*.md`. The homepage contains the header,
+hero, and a truthful command walkthrough. Visit `/design-system` to review the
+reusable primitives. Later homepage sections remain unbuilt; indexing stays disabled.
 
 ## Development
 
@@ -48,7 +48,7 @@ unfinished shell remains noindex with robots disallowed. Launch review must
 explicitly enable indexing. Current CSP restricts embedding, object and base URLs;
 a complete script policy is deferred to the production security phase.
 
-GitHub Releases returned no records on 2026-09-14. `0.1.0` is the source package
+GitHub Releases returned no records on 2026-09-15. `0.1.0` is the source package
 version. Ten agents exist in preview source; workers store artifacts and QA scores
 are model reports. Master chat does not invoke the separate build orchestrator.
 
