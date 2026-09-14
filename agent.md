@@ -62,4 +62,8 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria, such as "make it work", require constant clarification.
 
+## 5. Branch and Push Safety
+
+Never push directly to the `main` branch. Before pushing any change, verify the current branch. If an appropriate non-main branch already exists, use it; otherwise create a clearly named feature, fix, or chore branch and push there. Changes intended for `main` must reach it through the repository's review or merge process, never through `git push origin main` or a direct force update.
+
 These guidelines are working if there are fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
