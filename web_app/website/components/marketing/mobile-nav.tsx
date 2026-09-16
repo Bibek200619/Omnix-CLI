@@ -32,7 +32,7 @@ export function MobileNav() {
       restoreFocusRef.current = Boolean(shouldRestoreFocus);
       focusTargetRef.current = desktop.matches ? "brand" : "trigger";
       setOpen(false);
-      if (desktop.matches)
+      if (desktop.matches && shouldRestoreFocus)
         window.requestAnimationFrame(() => {
           document
             .querySelector<HTMLAnchorElement>('a[aria-label="Omnix home"]')

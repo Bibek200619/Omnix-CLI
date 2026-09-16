@@ -133,6 +133,8 @@ Inputs:
 
 Do not hardcode the diagram purely in canvas if it harms accessibility. DOM/SVG should retain semantic text.
 
+Phase 4: `OrchestrationJourney` composes the Section/Container primitives, server-rendered stage content, a small `JourneyExplorer` client boundary, and source-preview/roadmap annotations. `content/journey.ts` holds the five-stage narrative and evidence paths; agent status/names and provider roadmap entries come from the existing product modules. `JourneyExplorer` adds stage selection, Previous/Next controls, current-step semantics and a labelled handoff explanation. It never executes a CLI command. Essential ordered-list content remains server rendered and available without JavaScript. CSS rails are decorative; text explains each relationship. No animation package or scroll observer is required.
+
 ### `AgentNode`
 Fields:
 - name;

@@ -1,7 +1,7 @@
 # Omnix CLI website foundation
 
-Phases 0–3. Specifications remain in `../*.md`. The homepage contains the header,
-hero, and a truthful command walkthrough. Visit `/design-system` to review the
+Phases 0–4. Specifications remain in `../*.md`. The homepage contains the header,
+hero, truthful command walkthrough, and interactive orchestration journey. Visit `/design-system` to review the
 reusable primitives. Later homepage sections remain unbuilt; indexing stays disabled.
 
 ## Development
@@ -16,7 +16,7 @@ npm run dev
 ## Verification
 
 ```sh
-npx playwright install chromium
+npx playwright install chromium firefox webkit
 npm run check
 ```
 
@@ -37,6 +37,8 @@ ignored under `test-results/` and `playwright-report/`.
   normalization and server-only GitHub fetch. No install commands are inferred.
 - `components/ui/`: native, token-driven primitives. Contracts and usage are in
   `../COMPONENTS.md`. CopyButton owns the clipboard interaction boundary.
+- `components/orchestration/`: server-rendered narrative plus user-controlled
+  stage selection. The journey has no autoplay, scroll interception, or CLI execution.
 - `app/design-system/`: noindex review page and a small client button example;
   excluded from the sitemap and marketing navigation.
 - `public/brand/omnix-logo.png`: byte-identical copy of `../ref /logo/img.png`.
@@ -48,7 +50,7 @@ unfinished shell remains noindex with robots disallowed. Launch review must
 explicitly enable indexing. Current CSP restricts embedding, object and base URLs;
 a complete script policy is deferred to the production security phase.
 
-GitHub Releases returned no records on 2026-09-15. `0.1.0` is the source package
+GitHub Releases returned no records on 2026-09-16. `0.1.0` is the source package
 version. Ten agents exist in preview source; workers store artifacts and QA scores
 are model reports. Master chat does not invoke the separate build orchestrator.
 
