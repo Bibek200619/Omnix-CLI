@@ -21,9 +21,11 @@ test("loads the hero, local logo and fonts with a clean console", async ({
   ).toHaveAttribute("href", "https://github.com/Bibek200619/Omnix-CLI");
   const image = page.locator("header img");
   await expect(image).toBeVisible();
-  expect(
-    await image.evaluate((node) => (node as HTMLImageElement).naturalWidth),
-  ).toBeGreaterThan(0);
+  await expect
+    .poll(() =>
+      image.evaluate((node) => (node as HTMLImageElement).naturalWidth),
+    )
+    .toBeGreaterThan(0);
   await page.evaluate(() => document.fonts.ready);
   expect(
     await page.evaluate(

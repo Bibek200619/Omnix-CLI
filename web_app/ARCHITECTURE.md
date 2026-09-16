@@ -192,3 +192,10 @@ Any analytics addition requires updating `DATABASE.md`, `SECURITY.md`, and priva
 - MobileNav is an in-flow disclosure with native button semantics, focus restoration, Escape handling, breakpoint reset, and a no-JavaScript link fallback. It has no modal focus trap or scroll listener.
 - The hero uses a static, source-backed five-command walkthrough. It presents commands and website notes as separate text; there is no fake output, autoplay timer, live region, provider request, or animation dependency.
 - Because the verified release state is `none`, both hero actions point to the source preview/repository. A stable install CTA remains blocked until release metadata and distribution are verified.
+
+## 16. Phase 4 decisions
+
+- The home route adds only the orchestration journey at `#how-it-works`. Header data gains the valid destination; later proof, roadmap timeline, and download sections remain deferred.
+- `OrchestrationJourney` renders content on the server and passes stage bodies as React nodes into `JourneyExplorer`. The client boundary owns user-controlled selection and its explanatory annotation. A media-query subscription places the single annotation near its node on vertical layouts or in a shared panel on wide layouts; no timers, scroll listeners, provider calls, canvas, or new dependencies.
+- Five ordered stages distinguish Master memory from explicit Architect invocation. A separate build continuation describes source-preview artifacts/reports; a dashed branch shows only the four confirmed roadmap provider adapters.
+- The full route is the accessible semantic equivalent of the diagram. Hydration enables controls without hiding the story. Reduced motion and no-JavaScript rendering remain complete.

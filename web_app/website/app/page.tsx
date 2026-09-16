@@ -4,6 +4,7 @@ import { Link } from "@/components/ui/link";
 import { Code } from "@/components/ui/code";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { HeroSection } from "@/components/marketing/hero-section";
+import { OrchestrationJourney } from "@/components/orchestration/orchestration-journey";
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
       <SiteHeader />
       <main id="main" tabIndex={-1}>
         <HeroSection />
+        <OrchestrationJourney />
       </main>
       <Container>
         <footer className="site-meta">

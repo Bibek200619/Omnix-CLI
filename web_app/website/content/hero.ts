@@ -12,6 +12,7 @@ export const hero = {
 // Only publish navigation to existing sections. Add future IA anchors with their sections.
 export const navigation = [
   { label: "Product", href: "#product" },
+  { label: "How it works", href: "#how-it-works" },
   { label: "CLI", href: "#cli" },
   { label: "GitHub", href: links.source },
 ] as const;

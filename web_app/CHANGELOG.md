@@ -6,6 +6,14 @@ Use a lightweight Keep-a-Changelog style.
 
 ## [Unreleased]
 
+### Phase 4 — 2026-09-16
+- Added the signature journey at `#how-it-works`: a connected, selectable goal → Master → context → explicit Architect → blueprint narrative, with a vertical alternative and server-rendered semantic content.
+- Kept source-preview build workflows distinct from the four roadmap provider adapters. Rechecked the CLI source and empty GitHub release list; no automatic chat dispatch or runtime validation is implied.
+- Added keyboard stage selection, desktop Previous/Next/restart, inline mobile explanations, no-JavaScript rendering, and immediate full-contrast updates without animation dependencies.
+- Added the valid navigation target and fixed the existing mobile header resize handler so it only restores focus when navigation owned it.
+- Added journey coverage in Chromium, mobile emulation, Firefox, and WebKit; isolated Firefox app data for macOS test launches. The logo smoke check now waits for image decoding.
+- Reviewed screenshot/video references, preserved the official logo, and kept subsequent product-proof sections out of scope.
+
 ### Phase 3 — 2026-09-15
 - Replaced the preview placeholder with a production header and hero, preserving the official logo and source-preview distribution boundary.
 - Added accessible mobile navigation and a static five-command walkthrough with explicit configuration, website narration, and copy recovery.

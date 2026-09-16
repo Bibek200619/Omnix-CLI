@@ -119,6 +119,8 @@ Exit:
 - available vs roadmap unmistakable;
 - 60fps-like smoothness on reasonable hardware without excessive JS.
 
+Implementation: `OrchestrationJourney` and `JourneyExplorer` provide user-controlled progression with static semantic content. Wide screens use a connected horizontal route and shared explanation; vertical layouts place detail beneath the selected stage. `#how-it-works` is a valid header target. Phase 5 and later sections remain deferred.
+
 ---
 
 ## Phase 5 — Product proof
