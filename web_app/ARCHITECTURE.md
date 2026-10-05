@@ -199,3 +199,10 @@ Any analytics addition requires updating `DATABASE.md`, `SECURITY.md`, and priva
 - `OrchestrationJourney` renders content on the server and passes stage bodies as React nodes into `JourneyExplorer`. The client boundary owns user-controlled selection and its explanatory annotation. A media-query subscription places the single annotation near its node on vertical layouts or in a shared panel on wide layouts; no timers, scroll listeners, provider calls, canvas, or new dependencies.
 - Five ordered stages distinguish Master memory from explicit Architect invocation. A separate build continuation describes source-preview artifacts/reports; a dashed branch shows only the four confirmed roadmap provider adapters.
 - The full route is the accessible semantic equivalent of the diagram. Hydration enables controls without hiding the story. Reduced motion and no-JavaScript rendering remain complete.
+
+## 17. Phase 5 decisions
+
+- Four Server Components add the product-proof sections. Structured content lives in `content/product-proof.ts` and reuses the canonical command and provider modules; only the existing CopyButton hydrates.
+- The hero terminal keeps `#hero-cli`, while the complete command index owns the durable `#cli` navigation target. Memory and Architect gain the documented `#memory` and `#architect` targets. The desktop header breakpoint moves to 75 rem to preserve navigation spacing after those targets become valid.
+- The command index renders all 26 registered commands. Ten core commands remain open; the remaining 16 use native `details`, preserving keyboard and no-JavaScript operation without a new disclosure component.
+- Provider status is a semantic table with explicit Available/Roadmap badges. The Architect pipeline is an ordered list of public implementation stages; it does not expose or simulate chain-of-thought.

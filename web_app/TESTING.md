@@ -170,3 +170,9 @@ Journey tests cover the complete semantic route, selected-stage detail, Previous
 On macOS, Playwright setup uses a disposable Firefox app-data directory and removes it after the suite. This avoids the macOS 27 direct-launch/profile failure tracked in [Mozilla bug 2060476](https://bugzilla.mozilla.org/show_bug.cgi?id=2060476) without accessing personal browser data or changing OS permissions. Test browser profiles remain isolated in all engines.
 
 Phase 4 verification (2026-09-16): formatting, lint, strict typecheck, all 58 Vitest tests, production build, and all 102 Playwright tests passed. Screenshot review covered the seven specified widths and keyboard/selected states. A local production Lighthouse run scored Performance 98, Accessibility 100, and Best Practices 100 (LCP 2.4 s, CLS 0, TBT 30 ms). These are lab measurements, not field performance guarantees.
+
+## 16. Phase 5 verification scope
+
+Component tests protect the exact 26-command grouping, local-memory boundary, provider labels, Architect process, and exact clipboard value. Browser tests cover 320/390/768/1024/1280/1440 px reflow, page-level overflow, native disclosure behavior, Clipboard API integration, durable CLI navigation, explicit provider status, Architect validation copy, screenshots, and axe. Existing Phase 1–4 tests remain regression coverage.
+
+Phase 5 verification (2026-10-05): `npm run check` passed formatting, lint, strict typecheck, 62 Vitest tests, the static production build, and 122 Playwright tests. Product-proof coverage runs in desktop and mobile Chromium; the existing journey regressions also run in Firefox and WebKit. Regression coverage includes the 1100px mobile-menu focus boundary and command disclosure with JavaScript disabled. Desktop/mobile section screenshots were reviewed; the memory-copy spacing was tightened and the final check rerun successfully. No new Lighthouse measurement or human screen-reader certification is claimed for this phase.

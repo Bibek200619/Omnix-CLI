@@ -5,7 +5,7 @@ import styles from "./hero-terminal.module.css";
 export function HeroTerminal() {
   return (
     <figure
-      id="cli"
+      id="hero-cli"
       tabIndex={-1}
       aria-labelledby="terminal-title"
       aria-describedby="terminal-description"

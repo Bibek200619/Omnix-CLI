@@ -1,8 +1,9 @@
 # Omnix CLI website foundation
 
-Phases 0–4. Specifications remain in `../*.md`. The homepage contains the header,
-hero, truthful command walkthrough, and interactive orchestration journey. Visit `/design-system` to review the
-reusable primitives. Later homepage sections remain unbuilt; indexing stays disabled.
+Phases 0–5. Specifications remain in `../*.md`. The homepage contains the header,
+hero, truthful command walkthrough, interactive orchestration journey, and four
+source-backed product-proof sections. Visit `/design-system` to review the reusable
+primitives. Later homepage sections remain unbuilt; indexing stays disabled.
 
 ## Development
 
@@ -39,6 +40,8 @@ ignored under `test-results/` and `playwright-report/`.
   `../COMPONENTS.md`. CopyButton owns the clipboard interaction boundary.
 - `components/orchestration/`: server-rendered narrative plus user-controlled
   stage selection. The journey has no autoplay, scroll interception, or CLI execution.
+- `components/marketing/product-proof-sections.tsx`: memory, provider, complete
+  command-index, and Architect evidence sections. Only shared copy controls hydrate.
 - `app/design-system/`: noindex review page and a small client button example;
   excluded from the sitemap and marketing navigation.
 - `public/brand/omnix-logo.png`: byte-identical copy of `../ref /logo/img.png`.

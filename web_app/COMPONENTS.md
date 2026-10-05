@@ -150,8 +150,12 @@ Visualizes:
 - decisions;
 - blueprint.
 
+Phase 5: `MemorySection` groups memory records under `project.memory.json` and the blueprint under its separate `project.blueprint.json` in a definition-list file ledger. The memory command reports a stored-message count, not message bodies. The section explicitly describes local persistence and the manual specialist boundary.
+
 ### `ProviderStrip`
 Displays supported/configurable provider names as text, not fake partnership logos unless branding permission exists.
+
+Phase 5: `ProvidersSection` uses a semantic table rather than provider logos. OpenAI is labelled Available; Anthropic, Google, OpenRouter, and DeepSeek use textual Roadmap badges and dashed row boundaries. The horizontally scrollable table is keyboard reachable on narrow screens.
 
 ### `CommandExplorer`
 Structured list of commands.
@@ -162,11 +166,15 @@ Each command:
 - optional example;
 - copy button.
 
+Phase 5: `CliSection` presents all 26 registered commands from `content/commands.ts`. Ten core commands are grouped by setup, context, and architecture. Sixteen preview-orchestration commands remain in a native `details` disclosure. Every row uses the shared CopyButton and remains present in server-rendered HTML. Copying preserves documented syntax; uppercase arguments are explicitly marked as placeholders to replace before running.
+
 ### `ArchitectFlow`
 Step narrative:
 requirements → context → architecture reasoning → blueprint → validation.
 
 Do not display hidden model chain-of-thought. Use product-level process descriptions only.
+
+Phase 5: `ArchitectSection` shows the verified implementation sequence—read context, request a structured proposal, evolve the existing blueprint, then validate and save. Source filenames are evidence labels, not links or simulated output.
 
 ### `RoadmapTimeline`
 Clearly separates shipped and planned phases.

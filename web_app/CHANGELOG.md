@@ -6,6 +6,14 @@ Use a lightweight Keep-a-Changelog style.
 
 ## [Unreleased]
 
+### Phase 5 — 2026-10-05
+- Added source-backed project memory, provider, CLI command, and Architect proof sections with durable anchors.
+- Added a complete 26-command index with exact CopyButton controls and a native disclosure for the 16 preview-orchestration commands.
+- Added explicit OpenAI Available and four provider Roadmap states, plus local-memory and runtime-validation boundaries.
+- Moved the hero walkthrough to `#hero-cli` so navigation reaches the complete `#cli` explorer, and widened the desktop-header breakpoint for the expanded valid navigation.
+- Added component and browser coverage for command completeness/copying, provider status, Architect claims, accessibility, navigation, and responsive overflow.
+- Separated blueprint and memory file ownership, clarified command argument placeholders, and synchronized mobile navigation focus handling with the 75rem desktop breakpoint.
+
 ### Phase 4 — 2026-09-16
 - Added the signature journey at `#how-it-works`: a connected, selectable goal → Master → context → explicit Architect → blueprint narrative, with a vertical alternative and server-rendered semantic content.
 - Kept source-preview build workflows distinct from the four roadmap provider adapters. Rechecked the CLI source and empty GitHub release list; no automatic chat dispatch or runtime validation is implied.

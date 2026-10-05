@@ -246,3 +246,11 @@ The composition is a connected five-stage route: goal → Master → saved conte
 Progression is user-controlled: select a stage, or use Previous/Next on wide screens. The wide layout uses a shared explanation panel; the vertical layout puts the selected explanation immediately below its node so mobile visitors do not have to search for feedback. Selection persists across layout changes. No autoplay, scroll interception, or ambient motion. Text changes immediately at full contrast; fading text is excluded because it loses contrast during transitions. All core stage content remains available, including with reduced motion. Controls are at least 44 px and preserve keyboard focus. Without JavaScript the full route is static, with no inert playback controls.
 
 A compact continuation names the existing build workflow and its artifact/report limits. A separate dashed provider branch is labelled Roadmap; it must never imply providers are the next execution stage or that implemented specialists are future work. The complete section lives at `#how-it-works`; navigation gains this target only when it exists.
+
+## 19. Phase 5 product proof
+
+Product proof uses four related but distinct editorial structures instead of repeating a card grid. Memory is a `.project/` file ledger, providers are a status table, commands form a dense index, and the Architect is a numbered implementation pipeline. These structures encode file ownership, compatibility status, discoverability, and execution order respectively.
+
+The command index is the visual center of the phase. On wide screens its three core groups form columns; on narrow screens they read in source-workflow order. Every command row retains a 44 px copy control. The 16 orchestration commands use a native disclosure with explicit Show/Hide wording so the page stays scannable without hiding content behind JavaScript.
+
+Provider state never depends on color: OpenAI has an Available badge and the four placeholder adapters have Roadmap text plus dashed row rules. The table scrolls within its own labelled region on narrow screens. The Architect flow shows product-level stages and source filenames only; hidden model reasoning is neither implied nor displayed. No new colors, fonts, dependencies, animations, or decorative imagery are introduced.

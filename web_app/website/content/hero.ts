@@ -13,7 +13,9 @@ export const hero = {
 export const navigation = [
   { label: "Product", href: "#product" },
   { label: "How it works", href: "#how-it-works" },
+  { label: "Memory", href: "#memory" },
   { label: "CLI", href: "#cli" },
+  { label: "Architect", href: "#architect" },
   { label: "GitHub", href: links.source },
 ] as const;
 
