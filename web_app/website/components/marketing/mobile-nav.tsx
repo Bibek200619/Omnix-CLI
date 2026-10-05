@@ -24,7 +24,7 @@ export function MobileNav() {
   );
 
   useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 64rem)");
+    const desktop = window.matchMedia("(min-width: 75rem)");
     const reset = () => {
       const shouldRestoreFocus =
         openRef.current || root.current?.contains(document.activeElement);

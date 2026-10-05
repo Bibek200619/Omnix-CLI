@@ -21,11 +21,13 @@ for (const width of [320, 375, 390, 768, 1024, 1280, 1440]) {
       ),
     ).toBe(true);
     const nav = page.getByRole("navigation", { name: "Primary" });
-    if (width >= 1024) {
+    if (width >= 1200) {
       await expect(nav).toBeVisible();
       await expect(page.getByRole("button", { name: "Menu" })).toBeHidden();
       await nav.getByRole("link", { name: "CLI", exact: true }).click();
-      expect((await terminal.boundingBox())!.y).toBeGreaterThanOrEqual(
+      expect(
+        (await page.locator("#cli").boundingBox())!.y,
+      ).toBeGreaterThanOrEqual(
         (await page.locator("header").boundingBox())!.height,
       );
       await page.goto("/");
@@ -90,6 +92,9 @@ test("mobile menu supports keyboard, Escape, destination focus and outside tabbi
 test("responsive menu resets when switching to desktop", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
+  await page.getByRole("button", { name: "Menu" }).click();
+  await page.setViewportSize({ width: 1100, height: 900 });
+  await expect(page.getByRole("button", { name: "Menu" })).toBeFocused();
   await page.getByRole("button", { name: "Menu" }).click();
   await page
     .getByRole("navigation", { name: "Mobile" })

@@ -138,6 +138,8 @@ Exit:
 - copy controls work;
 - mobile layouts complete.
 
+Implementation: four server-rendered product-proof sections cover local project memory, provider implementation status, all 26 registered commands, and the Architect pipeline. Native disclosure keeps the 16 orchestration commands compact, while shared copy controls provide exact command copying. Durable anchors now exist for `#memory`, `#cli`, and `#architect`.
+
 ---
 
 ## Phase 6 — Roadmap

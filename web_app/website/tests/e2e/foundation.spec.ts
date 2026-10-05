@@ -76,11 +76,11 @@ test("reflows at 320px and enlarged text with reduced motion", async ({
   // Text enlargement complements the narrow viewport reflow check.
   await page.addStyleTag({ content: "html { font-size: 200%; }" });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth,
-    ),
-  ).toBe(true);
+  const pageWidth = await page.evaluate(() => ({
+    content: document.documentElement.scrollWidth,
+    viewport: window.innerWidth,
+  }));
+  expect(pageWidth.content).toBeLessThanOrEqual(pageWidth.viewport);
   expect(
     await page.evaluate(() => getComputedStyle(document.body).animationName),
   ).toBe("none");
