@@ -1,4 +1,5 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { agents } from "@/content/agents";
@@ -57,13 +58,16 @@ describe("product truth against the repository", () => {
     }
   });
 
-  it("preserves the official logo byte-for-byte", () => {
-    const original = readFileSync(
-      resolve(process.cwd(), "../ref /logo/img.png"),
-    );
+  it("preserves the official logo checksum and local reference when available", () => {
+    const reference = resolve(process.cwd(), "../ref /logo/img.png");
     const copy = readFileSync(
       resolve(process.cwd(), "public/brand/omnix-logo.png"),
     );
-    expect(copy.equals(original)).toBe(true);
+    // Digest verified against the untouched official reference during discovery.
+    expect(createHash("sha256").update(copy).digest("hex")).toBe(
+      "0af83834b37d5f54cd88a0703d9d3077f7ae909b5b0136be5fd3802d0ddd5115",
+    );
+    if (existsSync(reference))
+      expect(copy.equals(readFileSync(reference))).toBe(true);
   });
 });

@@ -19,13 +19,13 @@ export default defineConfig({
       use: { ...devices["iPhone 13"], defaultBrowserType: "chromium" },
     },
     {
-      name: "firefox-journey",
-      testMatch: "journey.spec.ts",
+      name: "firefox",
+      testMatch: ["journey.spec.ts", "launch.spec.ts"],
       use: { ...devices["Desktop Firefox"] },
     },
     {
-      name: "webkit-journey",
-      testMatch: "journey.spec.ts",
+      name: "webkit",
+      testMatch: ["journey.spec.ts", "launch.spec.ts"],
       use: { ...devices["Desktop Safari"] },
     },
   ],

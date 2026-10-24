@@ -264,3 +264,7 @@ The section states that availability refers to source preview and that artifact/
 ## 21. Phase 7 source setup
 
 End the page with a practical setup surface at `#download`: release status and a compact requirement ledger on the left, one labelled source-setup CodeBlock on the right. Stack in reading order on mobile. Reuse the existing terminal surface, tokens, and copy recovery. Keep release publication separate from verified installation: all four metadata states retain source-preview setup until an additional distribution method is verified. A native disclosure contains concise setup recovery, and the hero/header preview actions navigate directly to this section. No platform tabs are needed for a single verified method.
+
+## 22. Final review surfaces
+
+Keep the reviewed page composition. Desktop navigation can wrap under text enlargement. Footer links wrap within the existing gutter and spacing scale. The 404 uses a short, quiet reading column and two clear recovery actions. The 1200×630 social image uses actual hero text and the unchanged official PNG with explicit numeric dimensions; its renderer mirrors the documented dark/neutral palette independently of browser CSS. No new decorative assets, font downloads, animation, or product-section redesign is introduced by final QA.

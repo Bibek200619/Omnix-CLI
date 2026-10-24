@@ -97,6 +97,12 @@ Avoid session replay by default.
 
 ## 10. Security Testing Gate
 
+Phase 9 review (2026-10-24) found nine dependency audit entries in the earlier lockfile, including critical Next.js advisories. The repair updates Next.js/config to 16.4.3, Vitest to 5.0.5, and compatible transitive packages. The repeated audit reports zero vulnerabilities and production browser checks pass. This follows the existing supply-chain and release-gate policy; see `QUALITY_REPORT.md` for scope and limits.
+
+The static/ISR website's production CSP restricts resource origins, connections, embedding, and form actions. First-party inline framework scripts/styles remain an explicit exception to preserve static rendering; this is not a strict nonce policy or an XSS sanitizer. Development alone may use eval and WebSocket connections for Next.js tooling. Keep React's escaped rendering and the absence of untrusted HTML as primary application boundaries. HSTS remains a production-host setting after HTTPS/domain verification.
+
+The read-only `.github/workflows/website-checks.yml` runs installation from the lockfile, dependency audit, the full verification command, and the bounded browser-build scan for PRs and merged main changes. Checkout/setup actions are pinned to reviewed revisions, and checkout does not persist credentials. No deployment or release-publish credential is required.
+
 Before production:
 - dependency audit passes;
 - no secrets in generated JS;

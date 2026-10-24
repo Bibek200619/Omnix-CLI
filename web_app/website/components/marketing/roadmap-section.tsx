@@ -36,7 +36,7 @@ export function RoadmapSection() {
                     <p>{milestone.summary}</p>
                     <Link
                       href={`${repository.url}/blob/main/ai-cli/omnix_cli/${milestone.evidence[0]}`}
-                      aria-label={`${milestone.title} implementation`}
+                      aria-label={`View implementation for ${milestone.title}`}
                     >
                       View implementation
                     </Link>

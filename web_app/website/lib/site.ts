@@ -15,3 +15,15 @@ export function resolveSiteUrl(value: string | undefined): URL | undefined {
   }
   return url;
 }
+
+export function resolveIndexing(
+  siteUrl: URL | undefined,
+  value: string | undefined,
+): boolean {
+  if (!value || value === "false") return false;
+  if (value !== "true")
+    throw new Error("SITE_INDEXABLE must be true or false.");
+  if (!siteUrl)
+    throw new Error("SITE_INDEXABLE=true requires a verified HTTPS SITE_URL.");
+  return true;
+}

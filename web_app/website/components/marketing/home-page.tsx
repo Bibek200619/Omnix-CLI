@@ -40,7 +40,11 @@ export default function HomePage({
             <br />
             Python {product.minimumPython}+ required
           </p>
-          <Link href={links.source}>GitHub source</Link>
+          <nav aria-label="Footer">
+            <Link href={links.source}>GitHub source</Link>
+            <Link href={links.cliDocs}>CLI documentation</Link>
+            <Link href={links.issues}>GitHub issues</Link>
+          </nav>
         </footer>
       </Container>
     </>

@@ -1,10 +1,12 @@
-# Omnix CLI website foundation
+# Omnix CLI website
 
-Phases 0–7. Specifications remain in `../*.md`. The homepage contains the header,
+Phases 0–7 implementation, with local quality review for Phases 8–11.
+Specifications remain in `../*.md`. The homepage contains the header,
 hero, truthful command walkthrough, interactive orchestration journey, and four
 source-backed product-proof sections, the source-preview roadmap, and verified
-source setup. Visit `/design-system` to review the reusable primitives. Final
-responsive/accessibility, performance/security, and launch reviews remain; indexing stays disabled.
+source setup. Visit `/design-system` to review the reusable primitives. Final local
+quality reviews are recorded in `../QUALITY_REPORT.md`. Human/deployment acceptance
+steps remain in `../LAUNCH.md`; indexing defaults to disabled.
 
 ## Development
 
@@ -24,11 +26,13 @@ npm run check
 
 `check` runs formatting, lint, strict typecheck, Vitest/Testing Library, a production
 build, and Playwright against its own production server on port 3100. Keep that
-port free. Unit content checks intentionally read `../../ai-cli` and the original
-logo: run them from a full repository checkout. Website builds never import Python.
+port free. Unit content checks intentionally read `../../ai-cli`: run them from a
+full repository checkout. Logo integrity uses the verified official checksum and
+also compares the local reference when present. Website builds never import Python.
 
 Individual commands: `lint`, `typecheck`, `test`, `build`, `test:e2e`, and
-`format:check`. Run `build` before standalone `test:e2e`. Browser artifacts are
+`format:check`. `review:build` scans built browser assets for credential patterns
+and reports all-route JavaScript sizes. Run `build` before standalone `test:e2e`. Browser artifacts are
 ignored under `test-results/` and `playwright-report/`.
 
 ## Boundaries
@@ -54,10 +58,15 @@ ignored under `test-results/` and `playwright-report/`.
 - No database, analytics, animation library, or browser provider credentials.
 
 Optional `SITE_URL` is an HTTPS origin for canonical/social metadata and sitemap
-entries. There is no guessed production domain. Even with it configured, the
-unfinished shell remains noindex with robots disallowed. Launch review must
-explicitly enable indexing. Current CSP restricts embedding, object and base URLs;
-a complete script policy is deferred to the production security phase.
+entries. There is no guessed production domain. Indexing remains disabled until
+`SITE_INDEXABLE=true` is deliberately set after the launch checklist. It requires
+an HTTPS origin and consistently controls page metadata, response headers, robots,
+and sitemap. Review fixtures/404 stay noindex. The production CSP restricts
+resources and connections; inline framework bootstrap/styles remain an explicit
+static-rendering exception. See `../SECURITY.md` for the tradeoff and host HSTS gate.
+
+The repository's read-only GitHub workflow runs audit and these checks on PRs.
+No build secrets, browser provider keys, or release-publish credentials are needed.
 
 GitHub Releases returned no records on 2026-10-24. `0.1.0` is the source package
 version. Ten agents exist in preview source; workers store artifacts and QA scores
