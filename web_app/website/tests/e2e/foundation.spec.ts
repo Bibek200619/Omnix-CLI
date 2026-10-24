@@ -52,7 +52,7 @@ test("supports keyboard focus and skip navigation", async ({ page }) => {
   await expect(page.getByRole("main")).toBeFocused();
   await page.keyboard.press("Tab");
   const source = page.getByRole("link", {
-    name: "View source preview",
+    name: "Preview installation",
   });
   await expect(source).toBeFocused();
   await expect(source).toHaveCSS("outline-width", "2px");

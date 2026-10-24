@@ -5,6 +5,7 @@ type CodeBlockProps = {
   code: string;
   label: string;
   copyable?: boolean;
+  copyLabel?: string;
   className?: string;
 };
 
@@ -12,6 +13,7 @@ export function CodeBlock({
   code,
   label,
   copyable = false,
+  copyLabel,
   className = "",
 }: CodeBlockProps) {
   return (
@@ -27,7 +29,7 @@ export function CodeBlock({
       </pre>
       {copyable ? (
         <div className={styles.codeActions}>
-          <CopyButton text={code} />
+          <CopyButton text={code} label={copyLabel} />
         </div>
       ) : null}
     </figure>

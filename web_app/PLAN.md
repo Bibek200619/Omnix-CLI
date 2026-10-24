@@ -169,6 +169,8 @@ Implementation: a static seven-stage source-preview timeline, a separate provide
 
 ## Phase 7 — Release pipeline / download experience
 
+Implementation: verified source setup and Python packaging in isolation; added a repeatable candidate-verification script and a tagged release runbook without publishing a release. The server release resolver now feeds a source-preview installation panel with all four metadata states. Preview navigation, copying, failure recovery, reflow, no-JavaScript, and keyboard behavior passed verification on 2026-10-24. The current preview path is complete; public tagged distribution requires the maintainer steps in `RELEASE.md` before a stable installer can be enabled. Phase 8 remains next.
+
 ### Track A — CLI repository
 Create or finalize:
 - tagged release process;

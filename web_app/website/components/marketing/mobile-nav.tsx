@@ -114,7 +114,7 @@ export function MobileNav() {
       >
         {[
           ...navigation,
-          { label: "Source preview", href: hero.primary.href },
+          { label: "Preview setup", href: hero.primary.href },
         ].map((item) => (
           <Link
             key={item.href}
@@ -149,7 +149,7 @@ export function MobileNav() {
               {item.label}
             </Link>
           ))}
-          <Link href={hero.primary.href}>Source preview</Link>
+          <Link href={hero.primary.href}>Preview setup</Link>
         </nav>
       </noscript>
     </div>

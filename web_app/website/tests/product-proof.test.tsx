@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import Home from "@/app/page";
+import Home from "@/components/marketing/home-page";
 import { commands } from "@/content/commands";
 import { architectFlow, commandGroups } from "@/content/product-proof";
 import { providers } from "@/content/providers";
