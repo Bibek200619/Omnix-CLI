@@ -1,8 +1,8 @@
 # Omnix CLI website foundation
 
-Phases 0–5. Specifications remain in `../*.md`. The homepage contains the header,
+Phases 0–6. Specifications remain in `../*.md`. The homepage contains the header,
 hero, truthful command walkthrough, interactive orchestration journey, and four
-source-backed product-proof sections. Visit `/design-system` to review the reusable
+source-backed product-proof sections, plus the source-preview roadmap. Visit `/design-system` to review the reusable
 primitives. Later homepage sections remain unbuilt; indexing stays disabled.
 
 ## Development
@@ -42,6 +42,8 @@ ignored under `test-results/` and `playwright-report/`.
   stage selection. The journey has no autoplay, scroll interception, or CLI execution.
 - `components/marketing/product-proof-sections.tsx`: memory, provider, complete
   command-index, and Architect evidence sections. Only shared copy controls hydrate.
+- `components/marketing/roadmap-section.tsx`: server-rendered capability progression
+  and a separate branch for confirmed future provider adapters.
 - `app/design-system/`: noindex review page and a small client button example;
   excluded from the sitemap and marketing navigation.
 - `public/brand/omnix-logo.png`: byte-identical copy of `../ref /logo/img.png`.
@@ -53,7 +55,7 @@ unfinished shell remains noindex with robots disallowed. Launch review must
 explicitly enable indexing. Current CSP restricts embedding, object and base URLs;
 a complete script policy is deferred to the production security phase.
 
-GitHub Releases returned no records on 2026-09-16. `0.1.0` is the source package
+GitHub Releases returned no records on 2026-10-24. `0.1.0` is the source package
 version. Ten agents exist in preview source; workers store artifacts and QA scores
 are model reports. Master chat does not invoke the separate build orchestrator.
 

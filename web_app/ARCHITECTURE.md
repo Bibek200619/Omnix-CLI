@@ -206,3 +206,10 @@ Any analytics addition requires updating `DATABASE.md`, `SECURITY.md`, and priva
 - The hero terminal keeps `#hero-cli`, while the complete command index owns the durable `#cli` navigation target. Memory and Architect gain the documented `#memory` and `#architect` targets. The desktop header breakpoint moves to 75 rem to preserve navigation spacing after those targets become valid.
 - The command index renders all 26 registered commands. Ten core commands remain open; the remaining 16 use native `details`, preserving keyboard and no-JavaScript operation without a new disclosure component.
 - Provider status is a semantic table with explicit Available/Roadmap badges. The Architect pipeline is an ordered list of public implementation stages; it does not expose or simulate chain-of-thought.
+
+## 18. Phase 6 decisions
+
+- `RoadmapSection` is a Server Component using the existing Container, Section, Badge, and Link primitives. It adds no client state, runtime dependency, network request, or animation.
+- `content/roadmap.ts` adds seven implemented capability groups with source evidence. The existing provider-derived `roadmap` array remains the single source for future adapters and continues to serve the orchestration journey.
+- Solid timeline rails and explicit Available labels communicate implemented source-preview stages. A separate dashed future branch uses Roadmap labels. The timeline numbers express capability progression, not release dates or the Python CLI's phase numbering.
+- Roadmap navigation targets the new `#roadmap` section; existing focus and no-JavaScript navigation behaviors are reused.

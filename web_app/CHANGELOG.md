@@ -6,6 +6,11 @@ Use a lightweight Keep-a-Changelog style.
 
 ## [Unreleased]
 
+### Phase 6 — 2026-10-24
+- Added a source-preview capability timeline and a separate branch for the four confirmed roadmap provider adapters.
+- Added implementation links and durable Roadmap navigation, preserving artifact/report and release boundaries.
+- Kept the section server rendered with existing primitives and tokens, without new dependencies or animation.
+
 ### Phase 5 — 2026-10-05
 - Added source-backed project memory, provider, CLI command, and Architect proof sections with durable anchors.
 - Added a complete 26-command index with exact CopyButton controls and a native disclosure for the 16 preview-orchestration commands.

@@ -149,6 +149,8 @@ Project state uses Pydantic-validated JSON under `.project/`: `project.blueprint
 
 ### Distribution decision
 
+Phase 6 recheck (2026-10-24): source inspection confirms the seven capability groups in the roadmap timeline, including the dependency-aware Execution Coordinator and separate build orchestrator. OpenAI remains the live adapter; Anthropic, Google, OpenRouter, and DeepSeek still explicitly reject generation as unimplemented. The public GitHub release list remains empty. This recheck does not certify live model quality or runtime behavior of generated artifacts.
+
 Phase 4 recheck (2026-09-16): Master persists conversation and detected goals/decisions without specialist dispatch. Architect loads memory plus the existing blueprint, then parses, evolves, validates and saves the generated blueprint. Validation checks schema and required architecture fields, not application runtime behavior. The separate build orchestrator runs specialist phases and bounded repair cycles. OpenAI remains the sole live adapter; four generation placeholders remain roadmap. The public GitHub release list is still empty. This was a source/API inspection, not a live model-quality test.
 
 Phase 3 recheck (2026-09-15): public GitHub Releases API still returned an empty array. Package metadata, command registration, Master/Architect handlers, local state persistence, and provider implementation boundaries remain consistent with discovery. Hero CTAs link to the Python source preview and canonical repository. The walkthrough presents commands plus labelled website narration; it makes no claim to show live generated output.

@@ -16,6 +16,7 @@ export const navigation = [
   { label: "Memory", href: "#memory" },
   { label: "CLI", href: "#cli" },
   { label: "Architect", href: "#architect" },
+  { label: "Roadmap", href: "#roadmap" },
   { label: "GitHub", href: links.source },
 ] as const;
 
