@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import Home from "@/app/page";
+import Home from "@/components/marketing/home-page";
 import { links } from "@/lib/constants";
 import { hero, terminalCommands, terminalSteps } from "@/content/hero";
 
@@ -23,11 +23,11 @@ it("renders a semantic source preview without a download claim", () => {
     links.source,
   );
   expect(
-    screen.getByRole("link", { name: "View source preview" }),
-  ).toHaveAttribute("href", links.cliDocs);
+    screen.getByRole("link", { name: "Preview installation" }),
+  ).toHaveAttribute("href", "#download");
   expect(screen.getAllByText(/Python 3.12/).length).toBeGreaterThan(0);
   expect(
-    screen.queryByRole("link", { name: /download|install/i }),
+    screen.queryByRole("link", { name: /^(download|install) omnix$/i }),
   ).not.toBeInTheDocument();
 });
 

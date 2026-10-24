@@ -31,7 +31,7 @@ export function SiteHeader() {
             </Link>
           ))}
           <Link href={hero.primary.href} variant="secondary">
-            Source preview
+            Preview setup
           </Link>
         </nav>
         <MobileNav />

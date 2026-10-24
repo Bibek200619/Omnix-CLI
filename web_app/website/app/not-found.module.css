@@ -1,0 +1,21 @@
+.content {
+  padding-block: var(--space-24);
+}
+
+.content h1 {
+  margin-block: var(--space-4);
+  font-size: var(--text-title);
+  line-height: var(--leading-title);
+  letter-spacing: var(--tracking-title);
+}
+
+.content p {
+  color: var(--text-secondary);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+}

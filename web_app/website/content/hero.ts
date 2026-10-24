@@ -5,7 +5,7 @@ export const hero = {
   headline: "Build software with an AI engineering team.",
   supporting:
     "Talk to a Master Agent that remembers your project. Run specialist workflows from the same terminal.",
-  primary: { label: "View source preview", href: links.cliDocs },
+  primary: { label: "Preview installation", href: "#download" },
   secondary: { label: "View on GitHub", href: links.source },
 } as const;
 

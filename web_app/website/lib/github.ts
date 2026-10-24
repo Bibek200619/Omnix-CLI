@@ -2,7 +2,7 @@ import "server-only";
 import { repository } from "@/lib/constants";
 import { normalizeReleases, type ReleaseState } from "@/lib/release";
 
-/** Server-side public metadata only. No browser token and no build-time dependency. */
+/** Server-side public metadata; failures preserve the source-install fallback. */
 export async function fetchReleaseState(
   fetcher: typeof fetch = fetch,
 ): Promise<ReleaseState> {

@@ -24,6 +24,7 @@ export const product = {
 
 export const brand = {
   logo: "/brand/omnix-logo.png",
+  socialImage: "/social-preview",
   width: 180,
   height: 180,
 } as const;

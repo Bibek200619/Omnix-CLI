@@ -213,3 +213,18 @@ Any analytics addition requires updating `DATABASE.md`, `SECURITY.md`, and priva
 - `content/roadmap.ts` adds seven implemented capability groups with source evidence. The existing provider-derived `roadmap` array remains the single source for future adapters and continues to serve the orchestration journey.
 - Solid timeline rails and explicit Available labels communicate implemented source-preview stages. A separate dashed future branch uses Roadmap labels. The timeline numbers express capability progression, not release dates or the Python CLI's phase numbering.
 - Roadmap navigation targets the new `#roadmap` section; existing focus and no-JavaScript navigation behaviors are reused.
+
+## 19. Phase 7 decisions
+
+- The async home-route entry owns `fetchReleaseState`; its synchronous `HomePage` composition receives a normalized state. The public fetch has a five-second timeout and the home route revalidates hourly. Failures preserve source setup and GitHub links.
+- `InstallSection` remains server rendered. The existing CopyButton owns clipboard behavior through CodeBlock's optional `copyLabel`. A single verified source method needs no tabs or new dependency.
+- Release publication and distribution verification remain distinct. Stable/prerelease records expose official release-page navigation only. Source setup is manually verified; no package-registry or direct artifact install command is inferred.
+- The candidate verification script and tagged-release runbook live under `web_app/` and do not modify CLI source or publish anything. Verification uses archived tracked source and temporary Python environments; candidate artifacts/checksums stay outside the website's public assets.
+
+## 20. Final quality and launch decisions
+
+- Preserve static/ISR rendering. A production resource-restricting CSP allows the framework's inline bootstrap/styles explicitly, disallows eval and remote connections, and confines development exceptions to dev mode.
+- `SITE_INDEXABLE` defaults false and must be explicitly true alongside a validated HTTPS `SITE_URL` for marketing indexing. Metadata, robots, sitemap, and response headers use the same pure helper. Review fixtures and 404 metadata remain noindex. Configuration rehearsal is not a real domain verification.
+- `/social-preview` is a static ImageResponse endpoint built from the official PNG and real hero copy. It mirrors brand colors because image rendering does not consume page CSS variables. The social URL is emitted only when an origin is configured; no fictional canonical host is shipped.
+- The 404 reuses native primitives and offers home/documentation recovery. Footer source/docs/issues links are valid and keyboard reachable.
+- `review:build` performs a bounded first-party/browser-asset credential-pattern scan and reports all-route JavaScript sizes. Read-only pinned-action GitHub CI runs audit, checks, and build review. Logo integrity always uses its verified checksum and also compares the local reference when present, so CI does not require uncommitted reference assets.

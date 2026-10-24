@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { brand, product } from "@/lib/constants";
-import { resolveSiteUrl } from "@/lib/site";
+import { resolveIndexing, resolveSiteUrl } from "@/lib/site";
 import "./globals.css";
 
 const sans = localFont({
@@ -15,12 +15,13 @@ const mono = localFont({
   display: "swap",
 });
 const siteUrl = resolveSiteUrl(process.env.SITE_URL);
+const indexable = resolveIndexing(siteUrl, process.env.SITE_INDEXABLE);
 
 export const metadata: Metadata = {
   title: { default: "Omnix CLI — Source preview", template: "%s | Omnix CLI" },
   description: product.description,
   ...(siteUrl ? { metadataBase: siteUrl, alternates: { canonical: "/" } } : {}),
-  robots: { index: false, follow: false },
+  robots: { index: indexable, follow: indexable },
   icons: {
     icon: { url: brand.logo, type: "image/png", sizes: "180x180" },
     apple: brand.logo,
@@ -35,20 +36,20 @@ export const metadata: Metadata = {
           url: siteUrl,
           images: [
             {
-              url: brand.logo,
-              width: brand.width,
-              height: brand.height,
-              alt: "Omnix",
+              url: brand.socialImage,
+              width: 1200,
+              height: 630,
+              alt: "Omnix CLI — Build software with an AI engineering team. Source preview.",
             },
           ],
         }
       : {}),
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: product.name,
     description: product.description,
-    ...(siteUrl ? { images: [new URL(brand.logo, siteUrl).href] } : {}),
+    ...(siteUrl ? { images: [new URL(brand.socialImage, siteUrl).href] } : {}),
   },
 };
 

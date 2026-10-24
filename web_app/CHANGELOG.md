@@ -6,6 +6,18 @@ Use a lightweight Keep-a-Changelog style.
 
 ## [Unreleased]
 
+### Final quality and launch readiness — 2026-10-24
+- Completed full-page responsive, keyboard, reduced-motion, high-contrast, accessibility-tree, and cross-browser review; included WCAG 2.1/2.2 A tags and fixed visible-label naming on roadmap links.
+- Patched Next.js/config and Vitest plus compatible transitive dependencies; audit now reports zero vulnerabilities. Added production CSP resource restrictions with a documented static-rendering exception.
+- Added an intentional 404, a generated social preview using the official logo, footer recovery links, and a deliberate public-indexing gate requiring an HTTPS origin.
+- Added bounded build/credential review and read-only pinned-action GitHub PR CI; CI logo verification no longer depends on uncommitted reference assets.
+- Recorded independent visual/spec review, local Lighthouse measurements, configuration rehearsal, and remaining human/deployment/publication gates in `QUALITY_REPORT.md` and `LAUNCH.md`.
+
+### Phase 7 — 2026-10-24
+- Added a source-preview installation panel with real setup commands, requirements, copy recovery, and troubleshooting.
+- Connected the server-side release resolver to the homepage with hourly revalidation and explicit stable/prerelease/none/unavailable states; publication alone does not enable unverified downloads.
+- Directed preview actions to the new setup section and added repeatable package verification and a tagged release runbook.
+
 ### Phase 6 — 2026-10-24
 - Added a source-preview capability timeline and a separate branch for the four confirmed roadmap provider adapters.
 - Added implementation links and durable Roadmap navigation, preserving artifact/report and release boundaries.

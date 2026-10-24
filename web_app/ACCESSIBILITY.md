@@ -116,6 +116,8 @@ Manual:
 
 ## 12. Acceptance Criteria
 
+Final review (2026-10-24): automated full-page checks include WCAG 2.0/2.1/2.2 A and AA axe groups, accessibility-tree exports, keyboard flow, no-JavaScript, reduced motion, forced colors, enlarged text, and complete-page reflow across Chromium/mobile, Firefox, and WebKit. A native Chrome accessibility-tree/keyboard pass verified installation destination focus and expanded recovery guidance. Roadmap source links retain their visible text in accessible names for speech input. Human VoiceOver/NVDA listening and real-device acceptance remain explicit pre-launch gates in `LAUNCH.md`.
+
 A feature is not done if:
 - its state is available only on hover;
 - focus is invisible;

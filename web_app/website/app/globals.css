@@ -141,6 +141,11 @@ pre {
   align-items: center;
   min-height: var(--touch-target);
 }
+.site-meta nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+}
 .skip-link {
   position: absolute;
   top: var(--space-4);

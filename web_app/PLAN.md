@@ -169,6 +169,8 @@ Implementation: a static seven-stage source-preview timeline, a separate provide
 
 ## Phase 7 — Release pipeline / download experience
 
+Implementation: verified source setup and Python packaging in isolation; added a repeatable candidate-verification script and a tagged release runbook without publishing a release. The server release resolver now feeds a source-preview installation panel with all four metadata states. Preview navigation, copying, failure recovery, reflow, no-JavaScript, and keyboard behavior passed verification on 2026-10-24. The current preview path is complete; public tagged distribution requires the maintainer steps in `RELEASE.md` before a stable installer can be enabled. Phase 8 remains next.
+
 ### Track A — CLI repository
 Create or finalize:
 - tagged release process;
@@ -192,6 +194,10 @@ Exit:
 
 ## Phase 8 — Responsive and accessibility pass
 
+Review plan: inspect all sections together at the specified widths, enlarged text, keyboard navigation, no JavaScript, reduced motion, forced colors, and browser accessibility trees. Extend cross-browser coverage to the final page and repair only observed issues.
+
+Result (2026-10-24): complete-page checks pass in Chromium/mobile, Firefox, and WebKit, including enlarged text and all WCAG A/AA axe tag groups. Native Chrome keyboard/accessibility-tree review passes. Roadmap link names now include their visible labels. A human VoiceOver/NVDA listening pass remains an acceptance gate in `LAUNCH.md`; automated tree inspection is not reported as speech certification.
+
 Review every section:
 - 320 px;
 - 375/390 px;
@@ -209,6 +215,10 @@ No new features.
 
 ## Phase 9 — Performance and security
 
+Review plan: audit and patch dependencies, measure the production page with Lighthouse, inspect compressed browser assets and resource requests, tighten compatible security headers, and scan source/generated browser assets for credential patterns. Retain static rendering and document CSP exceptions.
+
+Result (2026-10-24): patched dependencies, npm audit reports zero vulnerabilities, resource-restricting CSP passes browser tests, and the bounded build scan finds no credential patterns. Local Lighthouse reports Performance 98 in preview and 100 in the configured launch rehearsal. Read-only, pinned-action PR CI now runs audit, the full check, and build review. See `QUALITY_REPORT.md` for measurements and limits.
+
 - bundle review;
 - image/font optimization;
 - headers/CSP;
@@ -220,6 +230,8 @@ No new features.
 ---
 
 ## Phase 10 — AI-smell review
+
+Result (2026-10-24): independent standards and spec/visual reviewers inspected the final desktop/mobile output. Standards findings: none. One social-image logo rendering defect was fixed and independently rechecked; no additional generic AI-pattern flags remain. The final brand-image test protects its dimensions and visible logo, alongside the official PNG checksum.
 
 A separate reviewer should flag:
 - generic three-card layouts;
@@ -238,6 +250,10 @@ Every flag must be either fixed or justified.
 ---
 
 ## Phase 11 — Launch review
+
+Review plan: add an intentional 404/recovery path, verify metadata and the official social image/logo, and provide an explicit indexing gate tied to a configured HTTPS production origin. Keep review fixtures noindex even when marketing indexing is enabled. Record external launch gates without inventing a domain or a stable CLI release.
+
+Result (2026-10-24): local mechanical review passes, including 404, social image, all 12 outbound links, and indexing/canonical/robots/sitemap rehearsal with a synthetic HTTPS origin. Source-preview implementation is ready for final acceptance. Actual HTTPS deployment verification, human screen-reader/real-device acceptance, deliberate indexing enablement, and stable CLI publication remain external gates documented in `LAUNCH.md` and `RELEASE.md`; the site is not declared publicly launched.
 
 Checklist:
 - product truth verified;

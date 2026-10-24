@@ -43,7 +43,9 @@ it("links each implemented milestone to its canonical source", () => {
   render(<RoadmapSection />);
   for (const milestone of implementedMilestones) {
     expect(
-      screen.getByRole("link", { name: `${milestone.title} implementation` }),
+      screen.getByRole("link", {
+        name: `View implementation for ${milestone.title}`,
+      }),
     ).toHaveAttribute(
       "href",
       `${repository.url}/blob/main/ai-cli/omnix_cli/${milestone.evidence[0]}`,
