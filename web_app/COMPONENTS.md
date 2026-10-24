@@ -179,6 +179,8 @@ Phase 5: `ArchitectSection` shows the verified implementation sequence—read co
 ### `RoadmapTimeline`
 Clearly separates shipped and planned phases.
 
+Phase 6: `RoadmapSection` renders a semantic ordered list of implemented capability groups and a separate unordered list of confirmed future provider adapters. `content/roadmap.ts` owns milestone summaries/evidence and preserves the existing provider-derived roadmap export used by the orchestration journey. Every implemented group has an Available badge in explicit source-preview context; every future adapter has a Roadmap badge and a dashed boundary. Source links use the canonical repository URL. All content is server rendered with no new interaction boundary.
+
 ### `InstallPanel`
 Fields:
 - release status;

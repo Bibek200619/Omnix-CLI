@@ -5,6 +5,7 @@ import { Code } from "@/components/ui/code";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { HeroSection } from "@/components/marketing/hero-section";
 import { OrchestrationJourney } from "@/components/orchestration/orchestration-journey";
+import { RoadmapSection } from "@/components/marketing/roadmap-section";
 import {
   ArchitectSection,
   CliSection,
@@ -23,6 +24,7 @@ export default function Home() {
         <ProvidersSection />
         <CliSection />
         <ArchitectSection />
+        <RoadmapSection />
       </main>
       <Container>
         <footer className="site-meta">

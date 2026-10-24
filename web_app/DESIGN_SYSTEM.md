@@ -254,3 +254,9 @@ Product proof uses four related but distinct editorial structures instead of rep
 The command index is the visual center of the phase. On wide screens its three core groups form columns; on narrow screens they read in source-workflow order. Every command row retains a 44 px copy control. The 16 orchestration commands use a native disclosure with explicit Show/Hide wording so the page stays scannable without hiding content behind JavaScript.
 
 Provider state never depends on color: OpenAI has an Available badge and the four placeholder adapters have Roadmap text plus dashed row rules. The table scrolls within its own labelled region on narrow screens. The Architect flow shows product-level stages and source filenames only; hidden model reasoning is neither implied nor displayed. No new colors, fonts, dependencies, animations, or decorative imagery are introduced.
+
+## 20. Phase 6 roadmap
+
+Use the established dark surfaces, Geist/Geist Mono roles, and mint interaction accent. A solid vertical rail connects seven implemented capability groups in their engineering progression; compact numbered markers express that order, not release dates or CLI phase numbers. Each row pairs its summary with an Available badge and an implementation link. A separate dashed branch names the four future provider adapters with Roadmap badges. At desktop widths the future branch sits beside the implemented timeline; on mobile it follows in DOM order. No sticky panel, autoplay, progress percentage, delivery date, or repeated feature-card grid.
+
+The section states that availability refers to source preview and that artifact/report generation does not establish a tested, deployable application. It adds the durable `#roadmap` destination. Retain the references' controlled spacing, clear hierarchy, and staged explanation without copying their compositions or imagery.

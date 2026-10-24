@@ -163,6 +163,8 @@ Discovery corrected the former phase-3-only capability list; see `PRODUCT.md`. A
 Exit:
 - no future feature appears shipped.
 
+Implementation: a static seven-stage source-preview timeline, a separate provider-derived future branch, implementation links, and valid Roadmap navigation. Verification on 2026-10-24 passed source evidence/status checks, keyboard focus, narrow/zoom reflow, reduced motion, no-JavaScript rendering, and desktop/mobile screenshot review. Phase 6 is complete; Phase 7 remains next.
+
 ---
 
 ## Phase 7 — Release pipeline / download experience
