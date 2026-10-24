@@ -78,11 +78,11 @@ test("mobile menu supports keyboard, Escape, destination focus and outside tabbi
   await expect(page.locator("#cli")).toBeFocused();
   await expect(nav).toBeHidden();
   await menu.click();
-  await nav.getByRole("link", { name: "Source preview" }).focus();
+  await nav.getByRole("link", { name: "Preview setup" }).focus();
   await page.keyboard.press("Tab");
   await expect(nav).toBeHidden();
   await expect(
-    page.getByRole("link", { name: "View source preview" }),
+    page.getByRole("link", { name: "Preview installation" }),
   ).toBeFocused();
   await menu.click();
   await close.click();
@@ -125,7 +125,7 @@ test("static reduced-motion workflow copies exact commands and retains source CT
     ),
   ).toBe(0);
   await expect(
-    page.getByRole("link", { name: /download|install/i }),
+    page.getByRole("link", { name: /^(download|install) omnix$/i }),
   ).toHaveCount(0);
   const copy = page.getByRole("button", { name: "Copy commands" });
   await copy.focus();
@@ -164,7 +164,7 @@ test("primary hover and forced-color keyboard focus remain legible", async ({
   page,
 }) => {
   await page.goto("/");
-  const primary = page.getByRole("link", { name: "View source preview" });
+  const primary = page.getByRole("link", { name: "Preview installation" });
   await primary.hover();
   await expect(primary).toHaveCSS("background-color", "rgb(178, 245, 223)");
   await page.screenshot({

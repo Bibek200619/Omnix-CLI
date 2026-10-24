@@ -103,3 +103,9 @@ Repository: `Bibek200619/Omnix-CLI`. The public Releases API returned `[]` on 20
 The helper normalizes only published, non-draft records, prefers a stable release over a prerelease, and selects the newest publish date within that channel. Malformed responses, HTTP failures, timeouts, or untrusted URLs produce `unavailable`, distinct from an empty release list. Release and asset URLs must belong to the official GitHub repository. Unverified assets and install commands are never promoted to download actions. Source navigation remains available in every state.
 
 The foundation page is static and independent of this fetch. A future InstallPanel must additionally require manually verified distribution metadata before showing any stable-download CTA, even if a stable GitHub tag exists.
+
+## 9. Phase 7 installation boundary
+
+The home route now fetches public release metadata on the server, with a five-second timeout and hourly revalidation. Failure renders an explicit unavailable state while preserving verified source setup and GitHub navigation. Stable and prerelease records link to their official release pages; a published tag alone never enables an artifact download or registry command. No package-registry distribution has been verified.
+
+Only one installation method is currently verified: clone the repository, enter `ai-cli/`, run `uv sync --frozen`, and run `uv run --frozen omnix --help`. Prerequisites are Git, uv, and Python >=3.12. This creates a project virtual environment; it does not install a global `omnix` command. A single method does not require tabs. Installer data is source controlled in `content/install.ts`.

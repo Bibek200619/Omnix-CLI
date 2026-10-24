@@ -20,7 +20,7 @@ Import primitives directly from `website/components/ui/<name>`; no barrel export
 | `Link` | Native anchor for navigation; underlined by default. `variant="primary"`, `"secondary"`, or `"ghost"` gives action styling. Same-tab navigation by default; `newTab` adds protected rel values and an accessible new-tab notice. HTTPS external destinations get a small decorative direction mark. Relative paths/anchors are supported; unsafe URL schemes are rejected. No disabled-anchor imitation. |
 | `Badge` | Noninteractive span with required `status="available"`, `"roadmap"`, `"preview"`, or `"version"`. Fixed visible status labels; the version variant requires a `version` string. Roadmap uses a dashed border as well as text. Availability context remains the caller's responsibility. |
 | `Code` | Selectable inline `code`, with safe wrapping for long identifiers. |
-| `CodeBlock` | Required string `code` and accessible `label`; semantic `pre/code` within a labelled figure. Preserves whitespace, scrolls internally, supports keyboard scrolling, and optionally includes `copyable` CopyButton. No HTML injection or syntax-highlighter dependency. |
+| `CodeBlock` | Required string `code` and accessible `label`; semantic `pre/code` within a labelled figure. Preserves whitespace, scrolls internally, supports keyboard scrolling, and optionally includes `copyable` CopyButton with a visible `copyLabel`. No HTML injection or syntax-highlighter dependency. |
 | `CopyButton` | Required `text`; optional visible `label` defaults to `Copy command`. Writes only after a user click, prevents duplicate pending requests, announces success politely, and allows retry. Denied/missing Clipboard API reveals a labelled read-only text area with exact text, focuses/selects it, and gives keyboard/touch manual-copy instructions. No deprecated clipboard fallback or clipboard reads. |
 
 Only `CopyButton` requires a Client Component boundary. Other primitives work in Server Components; interactive consumers import Button into their own client boundary. Native loading/disabled buttons are excluded from tab order. Tabs and Disclosure are deferred until parallel or collapsible content is required.
@@ -182,6 +182,9 @@ Clearly separates shipped and planned phases.
 Phase 6: `RoadmapSection` renders a semantic ordered list of implemented capability groups and a separate unordered list of confirmed future provider adapters. `content/roadmap.ts` owns milestone summaries/evidence and preserves the existing provider-derived roadmap export used by the orchestration journey. Every implemented group has an Available badge in explicit source-preview context; every future adapter has a Roadmap badge and a dashed boundary. Source links use the canonical repository URL. All content is server rendered with no new interaction boundary.
 
 ### `InstallPanel`
+
+Phase 7: `InstallSection` accepts a normalized ReleaseState, renders an explicit publication/failure notice, and retains verified source setup in every state. It uses the shared CodeBlock/CopyButton, a semantic requirements list, official documentation/release links, and a native troubleshooting disclosure. `HomePage` composes synchronous sections for testing; the async App Router entry owns the cached server fetch. No browser API token or direct artifact/registry download is introduced.
+
 Fields:
 - release status;
 - version;

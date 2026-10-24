@@ -1,9 +1,10 @@
 # Omnix CLI website foundation
 
-Phases 0–6. Specifications remain in `../*.md`. The homepage contains the header,
+Phases 0–7. Specifications remain in `../*.md`. The homepage contains the header,
 hero, truthful command walkthrough, interactive orchestration journey, and four
-source-backed product-proof sections, plus the source-preview roadmap. Visit `/design-system` to review the reusable
-primitives. Later homepage sections remain unbuilt; indexing stays disabled.
+source-backed product-proof sections, the source-preview roadmap, and verified
+source setup. Visit `/design-system` to review the reusable primitives. Final
+responsive/accessibility, performance/security, and launch reviews remain; indexing stays disabled.
 
 ## Development
 
@@ -44,6 +45,9 @@ ignored under `test-results/` and `playwright-report/`.
   command-index, and Architect evidence sections. Only shared copy controls hydrate.
 - `components/marketing/roadmap-section.tsx`: server-rendered capability progression
   and a separate branch for confirmed future provider adapters.
+- `components/marketing/install-section.tsx`: verified source setup and explicit
+  release/failure states. The async route resolves public GitHub metadata server-side;
+  the home route revalidates hourly and preserves setup if GitHub is unavailable.
 - `app/design-system/`: noindex review page and a small client button example;
   excluded from the sitemap and marketing navigation.
 - `public/brand/omnix-logo.png`: byte-identical copy of `../ref /logo/img.png`.
@@ -58,6 +62,10 @@ a complete script policy is deferred to the production security phase.
 GitHub Releases returned no records on 2026-10-24. `0.1.0` is the source package
 version. Ten agents exist in preview source; workers store artifacts and QA scores
 are model reports. Master chat does not invoke the separate build orchestrator.
+
+The source-install commands were verified with Python 3.12.13. See
+`../RELEASE.md` for the candidate verification script and tagged-release process.
+No candidate has been published and no registry distribution is claimed.
 
 Geist and Geist Mono are locally bundled from their Fontsource packages under the
 SIL Open Font License; licenses are included in the installed packages. Original
