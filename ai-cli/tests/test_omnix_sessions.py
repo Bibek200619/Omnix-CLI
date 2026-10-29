@@ -211,6 +211,107 @@ def test_worker_records_local_decline_without_running_build(
     assert [event["event_type"] for event in api.events] == ["run.cancelled"]
 
 
+def test_revoked_device_stops_remote_build_and_preserves_cancelled_result(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    stopped = []
+
+    class RevokedApi(FakeApi):
+        def request(self, method, path, payload=None):
+            if path.endswith("/control"):
+                raise OmnixAuthError("Omnix login expired or was revoked.", status_code=401)
+            if path.endswith("/events") and payload.get("event_type") not in {
+                "run.accepted",
+                "phase.started",
+            }:
+                raise OmnixAuthError("Omnix login expired or was revoked.", status_code=401)
+            return super().request(method, path, payload)
+
+    class FakeOrchestrator:
+        def __init__(self, _state, *, config):
+            self.progress_callback = None
+            self.stop_requested = False
+
+        def request_stop(self):
+            self.stop_requested = True
+            stopped.append(True)
+
+        async def build(self, goal, *, run_id=None):
+            self.progress_callback("Working on a local task")
+            return SimpleNamespace(outcome=BuildOutcome.CANCELLED)
+
+    revoked_api = RevokedApi()
+    monkeypatch.setattr(omnix_sessions, "AutonomousOrchestrator", FakeOrchestrator)
+    monkeypatch.setattr(omnix_sessions.typer, "confirm", lambda *args, **kwargs: True)
+
+    with pytest.raises(OmnixAuthError, match="Remote sync is partial"):
+        omnix_sessions.work_once(StateManager(tmp_path), revoked_api)
+
+    assert stopped == [True]
+    session_id = revoked_api.delivery["request"]["session_id"]
+    history = json.loads(
+        (tmp_path / ".project" / "omnix_remote_sessions.json").read_text(encoding="utf-8")
+    )
+    session = history["sessions"][session_id]
+    assert session["sync_state"] == "partial"
+    assert session["local_result"]["events"][-1] == {
+        "event_type": "run.cancelled",
+        "payload": {"kind": "run.cancelled", "initiated_by": "policy"},
+    }
+
+
+def test_session_history_is_offline_readable_and_excludes_private_inputs(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    state = StateManager(tmp_path)
+    omnix_sessions._write_history(
+        state,
+        {
+            "sessions": {
+                "session-safe-id": {
+                    "capability": "build",
+                    "remote_status": "running",
+                    "sync_state": "partial",
+                    "goal": "private task text",
+                    "token": "must-not-display",
+                }
+            }
+        },
+    )
+
+    omnix_sessions.history_sessions_command(workspace=tmp_path)
+
+    output = capsys.readouterr().out
+    assert "session-safe-id  build  running  sync: partial" in output
+    assert "available offline" in output
+    assert "private task text" not in output
+    assert "must-not-display" not in output
+    assert "omnix sessions work" in output
+
+
+@pytest.mark.parametrize(
+    "capabilities,expected",
+    [
+        (
+            {
+                "protocol_version": 1,
+                "capabilities": [
+                    {"name": name, "version": 1} for name in ("plan", "build", "qa", "repair")
+                ],
+            },
+            "compatible",
+        ),
+        ({"protocol_version": 2, "capabilities": []}, "incompatible"),
+        (
+            {"protocol_version": 1, "capabilities": [{"name": "build", "version": 1}]},
+            "incompatible",
+        ),
+    ],
+)
+def test_session_protocol_status(capabilities, expected):
+    assert omnix_sessions.session_protocol_status(capabilities) == expected
+
+
 def test_worker_persists_local_result_when_event_upload_fails(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):

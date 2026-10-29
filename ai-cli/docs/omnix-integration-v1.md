@@ -15,7 +15,7 @@ The canonical ownership model and protocol contract live in the [Omnix + Omnix C
 
 - Run `omnix login` from an initialized project. The CLI opens the Omnix device approval page and polls until approval or the 10-minute device code expires.
 - Approval is tied to the signed-in Omnix user. The CLI then receives a 15-minute opaque access token and a rotating 30-day refresh token. The database stores only SHA-256 hashes; tokens are stored on the client only in the operating-system credential store. If no supported secure keyring is available, login fails without writing credentials to `.project`, `.env`, or another plaintext file.
-- Run `omnix link` to choose a workspace or pass `--workspace-id`. Linking rechecks current workspace access in Omnix. `omnix status` shows the link; `omnix unlink` removes it; `omnix logout` revokes the device and removes its local credential.
+- Run `omnix link` to choose a workspace or pass `--workspace-id`. Linking rechecks current workspace access in Omnix. `omnix status` shows reachability, link state, and protocol/capability compatibility; `omnix unlink` removes the link; `omnix logout` revokes the device and removes its local credential.
 - Omnix Settings → CLI Devices lists approved devices and lets the account owner revoke them. Each protected CLI integration request rechecks the device token, expiry, current workspace membership, and allowed scope. The initial scopes are `workspace:read` and `project:link`; neither scope authorizes command execution.
 - The local project UUID is stored in `.project/omnix_project.json` and contains no credential. Existing `.project/` files remain readable without migration. Set `OMNIX_API_URL` only when using a trusted development endpoint; non-local endpoints must use HTTPS.
 - `omnix login`, `link`, `unlink`, `status`, and `logout` are optional. All other local CLI workflows continue to work offline without an Omnix account.
@@ -27,7 +27,9 @@ The canonical ownership model and protocol contract live in the [Omnix + Omnix C
 - Raw shell strings, arbitrary executable names, arbitrary filesystem paths, environment values, and provider keys are not valid request fields.
 - Before execution, the CLI checks credential validity, link identity, request expiry, capability/schema compatibility, replay/idempotency state, and existing local approval requirements.
 - Each accepted build request maps to the existing `AutonomousOrchestrator` workflow. The CLI keeps a mode-0600 `.project/omnix_remote_sessions.json` resume cursor with event outbox data; Omnix stores the durable session projection and append-only event ledger.
-- If Omnix is unavailable, local-only workflows continue. Remote requests are not inferred from cached browser state; local sync events use a bounded outbox and may later be rejected on expiry/revocation.
+- Run `omnix sessions history` to inspect recent session outcomes and sync state from local history. It works offline and does not display goals, credentials, or local paths.
+- If Omnix is unreachable, local work continues and pending session events remain available for retry. If the server explicitly denies authorization during remote-originated work, the CLI stops at its next safe progress checkpoint and preserves the local result; it does not treat a connection failure as revocation.
+- If revocation prevents a terminal event from reaching Omnix, the local history shows pending sync. Omnix presents its last accepted state and warns that it cannot confirm local execution stopped.
 
 ## Data sent to Omnix
 
@@ -38,7 +40,7 @@ Only the fields allowed by the canonical RFC and the negotiated v1 schema may be
 1. Complete the shared contract and schema examples before adding remote behavior. (Complete.)
 2. Implement secure device login, credential storage, link/unlink, and revocation before polling for work. (Complete; session/capability APIs remain a later gate.)
 3. The capability bridge supports `plan`, `build`, `qa`, and `repair` v1 and requires the explicit `sessions:execute` device scope shown on the browser approval screen. Previously approved devices retain their existing narrower scopes.
-4. Add sync/outbox and user-facing status/approval commands without changing standalone command behavior.
+4. Sync/outbox and user-facing status, approval, and offline history commands are implemented without changing standalone command behavior. (Complete.)
 5. Run the cross-repository compatibility and security matrix before enabling a beta release.
 
 Related paired workstreams: [Omnix-CLI #47](https://github.com/Bibek200619/Omnix-CLI/issues/47), [#48](https://github.com/Bibek200619/Omnix-CLI/issues/48), [#49](https://github.com/Bibek200619/Omnix-CLI/issues/49), [#50](https://github.com/Bibek200619/Omnix-CLI/issues/50), [#51](https://github.com/Bibek200619/Omnix-CLI/issues/51), [Omnix #219](https://github.com/Bibek200619/Omnix/issues/219), [#220](https://github.com/Bibek200619/Omnix/issues/220), [#221](https://github.com/Bibek200619/Omnix/issues/221), [#222](https://github.com/Bibek200619/Omnix/issues/222), and [#223](https://github.com/Bibek200619/Omnix/issues/223).

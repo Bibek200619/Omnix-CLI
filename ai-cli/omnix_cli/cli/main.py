@@ -38,7 +38,10 @@ from omnix_cli.cli.commands.qa import qa_command, quality_command
 from omnix_cli.cli.commands.repair import repair_command, repairs_command
 from omnix_cli.cli.commands.tasks import tasks_command
 from omnix_cli.core.logging import configure_logging
-from omnix_cli.integrations.omnix_sessions import work_sessions_command
+from omnix_cli.integrations.omnix_sessions import (
+    history_sessions_command,
+    work_sessions_command,
+)
 
 
 def version_callback(value: bool) -> None:
@@ -103,6 +106,7 @@ app.command("login")(login_command)
 app.command("logout")(logout_command)
 sessions_app = typer.Typer(help="Poll and run explicitly approved Omnix capability sessions.")
 sessions_app.command("work")(work_sessions_command)
+sessions_app.command("history")(history_sessions_command)
 app.add_typer(sessions_app, name="sessions")
 app.command("link")(link_command)
 app.command("unlink")(unlink_command)

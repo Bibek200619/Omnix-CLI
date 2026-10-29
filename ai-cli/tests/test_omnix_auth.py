@@ -92,3 +92,30 @@ def test_cli_api_rotates_expired_access_credentials_before_request() -> None:
     assert [path.rsplit("/", 1)[-1] for path, _ in requests] == ["token", "status"]
     assert store.value["access_token"] == "new-access"
     assert store.value["refresh_token"] == "new-refresh"
+
+
+def test_revoked_api_response_preserves_http_status_for_safe_work_stopping() -> None:
+    class Store:
+        def read(self, _project_id: str):
+            return {
+                "device_id": "device-1",
+                "access_token": "opaque-access",
+                "refresh_token": "opaque-refresh",
+                "access_expires_at": 9999999999,
+            }
+
+    api = OmnixApi("project-1", store=Store(), api_url="https://omnix.test")
+    api.client.close()
+    api.client = httpx.Client(
+        transport=httpx.MockTransport(
+            lambda _request: httpx.Response(401, json={"detail": "unauthorized"})
+        )
+    )
+    try:
+        with pytest.raises(OmnixAuthError) as raised:
+            api.request("GET", "/sessions/session-1/control")
+    finally:
+        api.close()
+
+    assert raised.value.status_code == 401
+    assert "opaque-access" not in str(raised.value)
