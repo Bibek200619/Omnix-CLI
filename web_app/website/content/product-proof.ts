@@ -70,6 +70,14 @@ export const commandGroups = [
     primary: true,
   },
   {
+    id: "omnix-account",
+    title: "Omnix account linking",
+    description:
+      "Sign in through browser-approved device authorization and manage the local workspace link.",
+    commands: selectCommands(["login", "logout", "link", "unlink", "status"]),
+    primary: true,
+  },
+  {
     id: "orchestration",
     title: "Preview orchestration commands",
     description:

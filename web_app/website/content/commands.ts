@@ -133,4 +133,29 @@ export const commands = [
     syntax: "omnix builds",
     summary: "Display build history and model-reported quality trends.",
   },
+  {
+    name: "login",
+    syntax: "omnix login",
+    summary: "Sign in to Omnix through browser-approved device authorization.",
+  },
+  {
+    name: "logout",
+    syntax: "omnix logout",
+    summary: "Revoke this CLI device and remove its OS credential.",
+  },
+  {
+    name: "link",
+    syntax: "omnix link",
+    summary: "Link this local project to an authorized Omnix workspace.",
+  },
+  {
+    name: "unlink",
+    syntax: "omnix unlink",
+    summary: "Remove the Omnix workspace and project link.",
+  },
+  {
+    name: "status",
+    syntax: "omnix status",
+    summary: "Show Omnix account and local project link status.",
+  },
 ] as const satisfies readonly Command[];
