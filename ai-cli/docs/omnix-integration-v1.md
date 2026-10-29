@@ -1,6 +1,6 @@
 # Omnix integration v1: CLI implementation notes
 
-**Status:** Device sign-in and project linking are implemented in Omnix #219 and Omnix-CLI #47. Remote execution and session synchronization remain unimplemented.
+**Status:** Device sign-in and project linking are implemented in Omnix #219 and Omnix-CLI #47. Remote execution supports typed `plan`, `build`, `qa`, and `repair` capability v1 requests through durable Omnix sessions. Local task and local plan references that cannot be mapped safely are rejected.
 
 The canonical ownership model and protocol contract live in the [Omnix + Omnix CLI Integration RFC v1](https://github.com/Bibek200619/Omnix/blob/main/docs/integrations/omnix-cli-integration-rfc-v1.md), tracked by [Omnix #218](https://github.com/Bibek200619/Omnix/issues/218) and [Omnix-CLI #46](https://github.com/Bibek200619/Omnix-CLI/issues/46). The canonical [session request schema](https://github.com/Bibek200619/Omnix/blob/main/docs/integrations/v1/session-request.schema.json) and [run event schema](https://github.com/Bibek200619/Omnix/blob/main/docs/integrations/v1/run-event.schema.json) are maintained in Omnix to avoid two sources of truth. This note records how that contract applies to the Python CLI in `ai-cli/`.
 
@@ -22,11 +22,11 @@ The canonical ownership model and protocol contract live in the [Omnix + Omnix C
 
 ## Remote request handling
 
-- The CLI initiates outbound HTTPS polls; v1 does not open a local network listener.
-- The CLI advertises protocol and capability versions. It accepts only a negotiated `plan`, `build`, `qa`, or `repair` request with a validated typed input targeting the currently linked project.
+- The CLI initiates outbound HTTPS polls; v1 does not open a local network listener. Run `omnix sessions work` to poll once. Each delivered build asks for local confirmation; `--yes` is available for explicitly unattended operation.
+- The CLI advertises protocol and capability versions. It accepts only the negotiated `plan`, `build`, `qa`, and `repair` v1 capabilities and rejects unknown versions, unknown fields, and unresolved local references.
 - Raw shell strings, arbitrary executable names, arbitrary filesystem paths, environment values, and provider keys are not valid request fields.
 - Before execution, the CLI checks credential validity, link identity, request expiry, capability/schema compatibility, replay/idempotency state, and existing local approval requirements.
-- Each accepted request is mapped to the corresponding local workflow and local run record. Status/progress events are sequenced and idempotent; detailed history remains in `.project/`.
+- Each accepted build request maps to the existing `AutonomousOrchestrator` workflow. The CLI keeps a mode-0600 `.project/omnix_remote_sessions.json` resume cursor with event outbox data; Omnix stores the durable session projection and append-only event ledger.
 - If Omnix is unavailable, local-only workflows continue. Remote requests are not inferred from cached browser state; local sync events use a bounded outbox and may later be rejected on expiry/revocation.
 
 ## Data sent to Omnix
@@ -37,7 +37,7 @@ Only the fields allowed by the canonical RFC and the negotiated v1 schema may be
 
 1. Complete the shared contract and schema examples before adding remote behavior. (Complete.)
 2. Implement secure device login, credential storage, link/unlink, and revocation before polling for work. (Complete; session/capability APIs remain a later gate.)
-3. Add the capability bridge only after server-side session authorization and replay/idempotency semantics exist.
+3. The capability bridge supports `plan`, `build`, `qa`, and `repair` v1 and requires the explicit `sessions:execute` device scope shown on the browser approval screen. Previously approved devices retain their existing narrower scopes.
 4. Add sync/outbox and user-facing status/approval commands without changing standalone command behavior.
 5. Run the cross-repository compatibility and security matrix before enabling a beta release.
 
