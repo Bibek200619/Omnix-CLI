@@ -1,6 +1,6 @@
 # Omnix integration v1: CLI implementation notes
 
-**Status:** Proposed; no Omnix link or remote execution behavior is implemented yet.
+**Status:** Device sign-in and project linking are implemented in Omnix #219 and Omnix-CLI #47. Remote execution and session synchronization remain unimplemented.
 
 The canonical ownership model and protocol contract live in the [Omnix + Omnix CLI Integration RFC v1](https://github.com/Bibek200619/Omnix/blob/main/docs/integrations/omnix-cli-integration-rfc-v1.md), tracked by [Omnix #218](https://github.com/Bibek200619/Omnix/issues/218) and [Omnix-CLI #46](https://github.com/Bibek200619/Omnix-CLI/issues/46). The canonical [session request schema](https://github.com/Bibek200619/Omnix/blob/main/docs/integrations/v1/session-request.schema.json) and [run event schema](https://github.com/Bibek200619/Omnix/blob/main/docs/integrations/v1/run-event.schema.json) are maintained in Omnix to avoid two sources of truth. This note records how that contract applies to the Python CLI in `ai-cli/`.
 
@@ -10,6 +10,15 @@ The canonical ownership model and protocol contract live in the [Omnix + Omnix C
 - Local project files, source, provider configuration/credentials, full prompts/logs, and full artifact contents remain on the device by default.
 - Local CLI workflows remain available without login, a linked project, or Omnix connectivity.
 - V1 must add a stable local project ID without breaking existing `.project/` files; local run IDs already belong to CLI execution records. Omnix-issued linked-project/session IDs are stored as opaque correlation IDs and do not grant access by themselves.
+
+## Device sign-in and project linking
+
+- Run `omnix login` from an initialized project. The CLI opens the Omnix device approval page and polls until approval or the 10-minute device code expires.
+- Approval is tied to the signed-in Omnix user. The CLI then receives a 15-minute opaque access token and a rotating 30-day refresh token. The database stores only SHA-256 hashes; tokens are stored on the client only in the operating-system credential store. If no supported secure keyring is available, login fails without writing credentials to `.project`, `.env`, or another plaintext file.
+- Run `omnix link` to choose a workspace or pass `--workspace-id`. Linking rechecks current workspace access in Omnix. `omnix status` shows the link; `omnix unlink` removes it; `omnix logout` revokes the device and removes its local credential.
+- Omnix Settings → CLI Devices lists approved devices and lets the account owner revoke them. Each protected CLI integration request rechecks the device token, expiry, current workspace membership, and allowed scope. The initial scopes are `workspace:read` and `project:link`; neither scope authorizes command execution.
+- The local project UUID is stored in `.project/omnix_project.json` and contains no credential. Existing `.project/` files remain readable without migration. Set `OMNIX_API_URL` only when using a trusted development endpoint; non-local endpoints must use HTTPS.
+- `omnix login`, `link`, `unlink`, `status`, and `logout` are optional. All other local CLI workflows continue to work offline without an Omnix account.
 
 ## Remote request handling
 
@@ -26,8 +35,8 @@ Only the fields allowed by the canonical RFC and the negotiated v1 schema may be
 
 ## Implementation gates
 
-1. Complete the shared contract and schema examples before adding remote behavior.
-2. Implement secure device login, credential storage, link/unlink, and revocation before polling for work.
+1. Complete the shared contract and schema examples before adding remote behavior. (Complete.)
+2. Implement secure device login, credential storage, link/unlink, and revocation before polling for work. (Complete; session/capability APIs remain a later gate.)
 3. Add the capability bridge only after server-side session authorization and replay/idempotency semantics exist.
 4. Add sync/outbox and user-facing status/approval commands without changing standalone command behavior.
 5. Run the cross-repository compatibility and security matrix before enabling a beta release.
