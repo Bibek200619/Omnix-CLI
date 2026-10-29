@@ -166,7 +166,7 @@ Each command:
 - optional example;
 - copy button.
 
-Phase 5: `CliSection` presents all 26 registered commands from `content/commands.ts`. Ten core commands are grouped by setup, context, and architecture. Sixteen preview-orchestration commands remain in a native `details` disclosure. Every row uses the shared CopyButton and remains present in server-rendered HTML. Copying preserves documented syntax; uppercase arguments are explicitly marked as placeholders to replace before running.
+`CliSection` presents all executable commands from `content/commands.ts` and derives its visible count from that data. As of 2026-10-30 this is 33 entries, including five optional account commands and two session subcommands alongside the original ten core commands. Sixteen preview-orchestration commands remain in a native `details` disclosure. Session copy explains server/link/compatibility requirements and offline history. Every row uses the shared CopyButton and remains present in server-rendered HTML. Copying preserves documented syntax; uppercase arguments are explicitly marked as placeholders to replace before running.
 
 ### `ArchitectFlow`
 Step narrative:

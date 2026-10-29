@@ -41,12 +41,30 @@ test("command explorer exposes all commands and copies exact syntax", async ({
   await cli.getByText("Preview orchestration commands").click();
   await expect(cli.getByText("omnix build GOAL")).toBeVisible();
   await expect(cli.getByRole("listitem")).toHaveCount(commands.length);
+  await expect(
+    cli.getByText("registered commands", { exact: false }),
+  ).toHaveText(`${commands.length} registered commands`);
   const firstRow = cli.getByRole("listitem").first();
   await firstRow.getByRole("button", { name: "Copy command" }).click();
   await expect(firstRow.getByRole("status")).toHaveText("Copied to clipboard.");
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
     commands[0].syntax,
   );
+  const history = commands.find(
+    (command) => command.name === "sessions history",
+  )!;
+  const historyRow = cli
+    .getByRole("listitem")
+    .filter({ hasText: history.syntax });
+  await expect(historyRow).toContainText("offline");
+  await historyRow.getByRole("button", { name: "Copy syntax" }).click();
+  await expect(historyRow.getByRole("status")).toHaveText(
+    "Copied to clipboard.",
+  );
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    history.syntax,
+  );
+  await expect(cli).toContainText("compatible server with sessions enabled");
 });
 
 test("provider and Architect claims remain accessible and explicit", async ({

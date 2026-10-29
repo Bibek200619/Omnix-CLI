@@ -6,6 +6,11 @@ Use a lightweight Keep-a-Changelog style.
 
 ## [Unreleased]
 
+### Current CLI reconciliation — 2026-10-30
+- Rechecked main after account-linking and remote-session integration; added the missing offline session-history command and corrected session option syntax.
+- Derived the command count from product data and extended source-registration checks to every registered subcommand, closing a test gap that missed session history.
+- Documented optional account/server requirements and reconciled release instructions with the actual `vVERSION` artifact/attestation workflow. Source preview and public indexing gates remain unchanged.
+
 ### Final quality and launch readiness — 2026-10-24
 - Completed full-page responsive, keyboard, reduced-motion, high-contrast, accessibility-tree, and cross-browser review; included WCAG 2.1/2.2 A tags and fixed visible-label naming on roadmap links.
 - Patched Next.js/config and Vitest plus compatible transitive dependencies; audit now reports zero vulnerabilities. Added production CSP resource restrictions with a documented static-rendering exception.

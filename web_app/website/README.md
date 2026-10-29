@@ -68,9 +68,16 @@ static-rendering exception. See `../SECURITY.md` for the tradeoff and host HSTS 
 The repository's read-only GitHub workflow runs audit and these checks on PRs.
 No build secrets, browser provider keys, or release-publish credentials are needed.
 
-GitHub Releases returned no records on 2026-10-24. `0.1.0` is the source package
+GitHub Releases returned no records on 2026-10-30. `0.1.0` is the source package
 version. Ten agents exist in preview source; workers store artifacts and QA scores
 are model reports. Master chat does not invoke the separate build orchestrator.
+
+Current main exposes 33 executable command entries, including optional Omnix
+account linking and `sessions work` / `sessions history`. Remote work requires an
+authorized link and compatible server with sessions enabled; history is readable
+offline. The website documents these commands but does not execute them or store
+account credentials. Content tests compare top-level and grouped registrations
+against the Python source so omitted subcommands fail CI.
 
 The source-install commands were verified with Python 3.12.13. See
 `../RELEASE.md` for the candidate verification script and tagged-release process.

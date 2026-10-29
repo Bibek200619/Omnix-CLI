@@ -1,5 +1,14 @@
 # Execution Plan
 
+Current-source reconciliation (2026-10-30): the website phases below are implemented
+and the reviewed work is merged through PR #61. Newer CLI integrations on main
+required a follow-up command-index correction: all 33 executable entries, including
+offline session history, are now represented, with optional account/server gates.
+The website and current Python package checks pass; current release instructions
+follow the actual artifact workflow. Remaining launch work is the human/device,
+real HTTPS deployment, indexing, and public distribution acceptance in `LAUNCH.md`
+and `RELEASE.md`, not additional homepage sections.
+
 ## Working Model
 
 The implementation agent does not redesign the product while coding.

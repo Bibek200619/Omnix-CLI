@@ -1,5 +1,23 @@
 # Testing Strategy
 
+## Current-source reconciliation — 2026-10-30
+
+At main snapshot `bce0d02`, `npm run check` passed formatting, lint, strict
+typecheck, 71 unit/component tests, production build, and all 208 Playwright
+tests. Desktop/mobile command-index screenshots were reviewed. The source-backed
+command test now reads every registered Typer subgroup instead of special-casing
+`sessions work`; it reproduced the omitted history command before the fix.
+Component/browser assertions reproduced the stale count and now verify the
+data-derived count and exact session-history clipboard syntax.
+
+Candidate verification of the same CLI source passed 171 Python tests on Python
+3.12.13, wheel/source builds, separate installations, help, and local initialization.
+Seven isolated tag/ref validation cases checked commit refs, `vVERSION`, qualified
+tag refs, legacy candidate tags, and version-mismatch rejection. Build review
+found zero credential-pattern matches; dependency installation reported zero
+vulnerabilities. These local checks do not certify hosted integration behavior,
+human screen-reader/device acceptance, or public release/deployment.
+
 ## 1. Philosophy
 
 The website is small enough that quality should be high.

@@ -24,7 +24,9 @@ See `QUALITY_REPORT.md` and `TESTING.md` for evidence and limits.
 
 ## Before enabling public indexing
 
-1. Merge the reviewed feature PRs in dependency order. Never push directly to main.
+1. Merge reviewed feature PRs through GitHub. The initial website branch repair
+   was completed through PR #61; subsequent fixes still require their own PR.
+   Never push directly to main.
 2. Complete a human VoiceOver or NVDA listening pass, including menu dismissal,
    journey selection, provider table, command disclosure, copy feedback/manual
    fallback, and source-setup help. Browser accessibility trees are useful evidence

@@ -16,8 +16,8 @@ export const product = {
   version: "0.1.0",
   minimumPython: "3.12",
   availability: "Source preview",
-  inspectedCommit: "99d72d9",
-  verifiedAt: "2026-09-14",
+  inspectedCommit: "bce0d02",
+  verifiedAt: "2026-10-30",
   description:
     "Project conversations, persistent memory, and specialized engineering workflows in your terminal.",
 } as const;

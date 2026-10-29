@@ -81,8 +81,8 @@ export const commandGroups = [
     id: "remote-sessions",
     title: "Remote execution sessions",
     description:
-      "Poll and locally run explicitly approved Omnix capability sessions.",
-    commands: selectCommands(["sessions work"]),
+      "Work requires an authorized, linked device and a compatible server with sessions enabled. It polls once and asks for local confirmation unless --yes is supplied. History reads local outcomes and sync state offline.",
+    commands: selectCommands(["sessions work", "sessions history"]),
     primary: true,
   },
   {
