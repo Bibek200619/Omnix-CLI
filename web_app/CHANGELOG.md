@@ -6,6 +6,12 @@ Use a lightweight Keep-a-Changelog style.
 
 ## [Unreleased]
 
+### Vercel subpath launch preparation — 2026-10-30
+- Added a build-time path prefix for the requested `/cli` destination, shared by navigation, public assets, metadata, sitemap, and recovery links.
+- Added an isolated production subpath browser rehearsal alongside root-mode checks, preserving default noindex behavior.
+- Corrected canonical URL serialization and Safari pointer-open menu focus so Escape dismissal works consistently under the deployed path.
+- Documented the Vercel multi-project routing contract and existing apex-to-www redirect without transferring the parent domain or changing DNS.
+
 ### Current CLI reconciliation — 2026-10-30
 - Rechecked main after account-linking and remote-session integration; added the missing offline session-history command and corrected session option syntax.
 - Derived the command count from product data and extended source-registration checks to every registered subcommand, closing a test gap that missed session history.

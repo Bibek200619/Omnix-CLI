@@ -99,6 +99,9 @@ export function MobileNav() {
           if (open) close();
           else {
             openRef.current = true;
+            // Safari does not focus buttons on pointer activation; keep Escape
+            // within this disclosure's keyboard handler in every browser.
+            trigger.current?.focus();
             setOpen(true);
           }
         }}

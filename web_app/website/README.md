@@ -25,13 +25,16 @@ npm run check
 ```
 
 `check` runs formatting, lint, strict typecheck, Vitest/Testing Library, a production
-build, and Playwright against its own production server on port 3100. Keep that
-port free. Unit content checks intentionally read `../../ai-cli`: run them from a
+build, and Playwright against its own root-mode production server on port 3100.
+It then rebuilds for `/cli` and runs a separate four-browser deployment rehearsal
+on port 3102. Keep both ports free. Unit content checks intentionally read `../../ai-cli`: run them from a
 full repository checkout. Logo integrity uses the verified official checksum and
 also compares the local reference when present. Website builds never import Python.
 
 Individual commands: `lint`, `typecheck`, `test`, `build`, `test:e2e`, and
-`format:check`. `review:build` scans built browser assets for credential patterns
+`format:check`. `test:subpath` runs only the prefixed build/browser rehearsal;
+it leaves `.next` compiled for `/cli`, so rebuild before returning to root mode.
+`review:build` scans built browser assets for credential patterns
 and reports all-route JavaScript sizes. Run `build` before standalone `test:e2e`. Browser artifacts are
 ignored under `test-results/` and `playwright-report/`.
 
@@ -58,7 +61,13 @@ ignored under `test-results/` and `playwright-report/`.
 - No database, analytics, animation library, or browser provider credentials.
 
 Optional `SITE_URL` is an HTTPS origin for canonical/social metadata and sitemap
-entries. There is no guessed production domain. Indexing remains disabled until
+entries. The confirmed launch is `https://omni-x.co.in/cli`; the existing Vercel
+apex redirect makes `https://www.omni-x.co.in/cli` the canonical destination.
+Set the origin alone in `SITE_URL` and `NEXT_PUBLIC_BASE_PATH=/cli` at build time.
+Without the prefix the application continues to run at `/`. Shared links, brand
+assets, metadata and recovery respect the prefix. See `../DEPLOYMENT.md` for the
+parent project's routing and robots ownership; adding a path does not require
+moving the GoDaddy domain. Indexing remains disabled until
 `SITE_INDEXABLE=true` is deliberately set after the launch checklist. It requires
 an HTTPS origin and consistently controls page metadata, response headers, robots,
 and sitemap. Review fixtures/404 stay noindex. The production CSP restricts

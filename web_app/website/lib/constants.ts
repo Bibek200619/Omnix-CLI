@@ -1,3 +1,5 @@
+import { appPath } from "./paths";
+
 export const repository = {
   owner: "Bibek200619",
   name: "Omnix-CLI",
@@ -23,8 +25,8 @@ export const product = {
 } as const;
 
 export const brand = {
-  logo: "/brand/omnix-logo.png",
-  socialImage: "/social-preview",
+  logo: appPath("/brand/omnix-logo.png"),
+  socialImage: appPath("/social-preview"),
   width: 180,
   height: 180,
 } as const;

@@ -1,5 +1,22 @@
 # Testing Strategy
 
+## Vercel subpath rehearsal — 2026-10-30
+
+`npm run check` passed formatting, lint, strict typecheck, 84 unit/component tests,
+the root-mode production build and 208 browser tests, then a second `/cli`
+production build and 20 deployment tests across Chromium, mobile Chromium,
+Firefox, and WebKit. Deployment tests cover real prefixed asset responses, clean
+browser consoles, canonical/social/icon paths, mobile Escape/focus, anchor focus,
+scoped preview robots/sitemap, recovery, and isolation from the parent root.
+
+The rehearsal reproduced two defects before repair: Next.js canonical resolution
+treated a URL instance as a base and dropped `/cli`; serializing the absolute URL
+fixes it. Safari pointer clicks did not focus the menu trigger, leaving Escape
+outside the disclosure handler; explicitly focusing the trigger on opening fixes
+that behavior. Build review scanned 63 text files and found no credential-pattern
+matches. This is local evidence; the Vercel preview/live path still requires
+authenticated deployment and acceptance under `DEPLOYMENT.md`.
+
 ## Current-source reconciliation — 2026-10-30
 
 At main snapshot `bce0d02`, `npm run check` passed formatting, lint, strict

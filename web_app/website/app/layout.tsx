@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { brand, product } from "@/lib/constants";
 import { resolveIndexing, resolveSiteUrl } from "@/lib/site";
+import { appPath } from "@/lib/paths";
 import "./globals.css";
 
 const sans = localFont({
@@ -15,12 +16,15 @@ const mono = localFont({
   display: "swap",
 });
 const siteUrl = resolveSiteUrl(process.env.SITE_URL);
+const homeUrl = siteUrl ? new URL(appPath("/"), siteUrl).href : undefined;
 const indexable = resolveIndexing(siteUrl, process.env.SITE_INDEXABLE);
 
 export const metadata: Metadata = {
   title: { default: "Omnix CLI — Source preview", template: "%s | Omnix CLI" },
   description: product.description,
-  ...(siteUrl ? { metadataBase: siteUrl, alternates: { canonical: "/" } } : {}),
+  ...(siteUrl
+    ? { metadataBase: siteUrl, alternates: { canonical: homeUrl } }
+    : {}),
   robots: { index: indexable, follow: indexable },
   icons: {
     icon: { url: brand.logo, type: "image/png", sizes: "180x180" },
@@ -33,7 +37,7 @@ export const metadata: Metadata = {
     siteName: product.name,
     ...(siteUrl
       ? {
-          url: siteUrl,
+          url: homeUrl,
           images: [
             {
               url: brand.socialImage,

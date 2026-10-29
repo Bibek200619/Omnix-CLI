@@ -144,6 +144,25 @@ This keeps website deployment independent of CLI execution.
 
 ## 10. Deployment
 
+Launch target confirmed 2026-10-30: `https://omni-x.co.in/cli`, alongside the
+existing Vercel frontend with a GoDaddy-registered domain. The current Vercel
+domain configuration redirects the apex to `www.omni-x.co.in`; preserve that
+site-wide policy and use `https://www.omni-x.co.in/cli` as the configured canonical
+destination unless the owner deliberately changes the existing redirect.
+
+Build this application with `NEXT_PUBLIC_BASE_PATH=/cli` and the HTTPS origin
+alone in `SITE_URL`. Next.js `basePath` namespaces framework assets; shared native
+links, public images, icons, social metadata, sitemap, and recovery URLs must use
+the same prefix. Root development remains supported when the prefix is absent.
+The build-time prefix cannot be changed by restarting an existing build.
+
+Deploy the CLI app as a separate Vercel project. The existing domain-owning app
+must forward `/cli` and `/cli/:path*`, preserving the prefix, to that project's
+verified origin. Do not transfer the apex domain to the CLI project, change DNS,
+or proxy the existing app's other routes. Root `/robots.txt` remains owned by the
+parent site; `/cli/robots.txt` alone cannot control domain-wide crawling. Details
+and acceptance gates are in `DEPLOYMENT.md`.
+
 Recommended:
 - Vercel or equivalent static/serverless host;
 - preview deployments for PRs;
