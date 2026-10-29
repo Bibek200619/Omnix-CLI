@@ -78,6 +78,14 @@ export const commandGroups = [
     primary: true,
   },
   {
+    id: "remote-sessions",
+    title: "Remote execution sessions",
+    description:
+      "Poll and locally run explicitly approved Omnix capability sessions.",
+    commands: selectCommands(["sessions work"]),
+    primary: true,
+  },
+  {
     id: "orchestration",
     title: "Preview orchestration commands",
     description:

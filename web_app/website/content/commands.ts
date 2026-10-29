@@ -144,6 +144,12 @@ export const commands = [
     summary: "Revoke this CLI device and remove its OS credential.",
   },
   {
+    name: "sessions work",
+    syntax: "omnix sessions work [-w --workspace] [--yes]",
+    summary:
+      "Poll and locally run explicitly approved Omnix capability sessions.",
+  },
+  {
     name: "link",
     syntax: "omnix link",
     summary: "Link this local project to an authorized Omnix workspace.",

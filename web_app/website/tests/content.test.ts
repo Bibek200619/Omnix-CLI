@@ -15,10 +15,14 @@ describe("product truth against the repository", () => {
 
   it("contains exactly the registered CLI commands", () => {
     const main = readCli("omnix_cli/cli/main.py");
-    const registered = [...main.matchAll(/app\.command\("([^"]+)"\)/g)]
-      .map((match) => match[1])
-      .sort();
-    expect(commands.map((command) => command.name).sort()).toEqual(registered);
+    const registered = [...main.matchAll(/^app\.command\("([^"]+)"\)/gm)].map(
+      (match) => match[1],
+    );
+    if (main.includes('sessions_app.command("work")'))
+      registered.push("sessions work");
+    expect(commands.map((command) => command.name).sort()).toEqual(
+      registered.sort(),
+    );
   });
 
   it("uses package version and Python requirement without claiming a stable release", () => {

@@ -217,6 +217,7 @@ class OmnixApi:
                 "local_project_id": project_id,
                 "project_name": blueprint.project_name or state_manager.workspace.name,
                 "device_name": f"Omnix CLI ({platform.system()})",
+                "scopes": ["workspace:read", "project:link", "sessions:execute"],
             },
         )
         url = response["verification_uri"]
