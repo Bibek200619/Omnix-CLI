@@ -257,6 +257,8 @@ local software-engineering execution / agents / artifacts / QA / repair / builds
 
 The integration roadmap deliberately preserves standalone/offline CLI operation and avoids turning Omnix into a generic remote shell. See [Omnix-CLI #45](https://github.com/Bibek200619/Omnix-CLI/issues/45) and [Omnix #217](https://github.com/Bibek200619/Omnix/issues/217).
 
+The proposed v1 contract is documented in the [Omnix + Omnix CLI Integration RFC](https://github.com/Bibek200619/Omnix/blob/main/docs/integrations/omnix-cli-integration-rfc-v1.md); CLI-specific ownership and implementation notes are in [`ai-cli/docs/omnix-integration-v1.md`](ai-cli/docs/omnix-integration-v1.md). These documents describe planned work; the CLI does not yet implement account linking or remote execution.
+
 ## Repository layout
 
 ```text
