@@ -159,6 +159,8 @@ async def _run_capability(
 
         orchestrator.progress_callback = on_progress
         report = await orchestrator.build(capability_input["goal"], run_id=local_run_id)
+        if report.outcome == BuildOutcome.CANCELLED:
+            return BuildOutcome.CANCELLED.value, False
         blueprint = getattr(report, "blueprint_summary", None)
         blueprint_counts = ""
         if blueprint is not None:
@@ -306,6 +308,19 @@ def _submit_pending_event(
             "check the connection or device authorization, then rerun `omnix sessions work`."
         ) from exc
     record["sequence"] = pending["sequence"]
+    record["last_event_type"] = pending["event_type"]
+    record["remote_status"] = {
+        "run.accepted": "running",
+        "phase.started": "running",
+        "phase.progress": "running",
+        "phase.completed": "running",
+        "approval.requested": "awaiting approval",
+        "approval.resolved": "running",
+        "run.succeeded": "succeeded",
+        "run.failed": "failed",
+        "run.cancelled": "cancelled",
+        "run.disconnected": "disconnected",
+    }.get(pending["event_type"], record.get("remote_status", "unknown"))
     record["terminal"] = pending["event_type"] in {
         "run.succeeded",
         "run.failed",
@@ -500,6 +515,10 @@ def _work_once_locked(state: StateManager, api: OmnixApi, *, confirm: bool) -> i
         session_id, capability, capability_input = _validate_request(request, link)
         history = _read_history(state)
         existing = history["sessions"].get(session_id, {})
+        record = history["sessions"].setdefault(session_id, {"sequence": 0, "terminal": False})
+        record.setdefault("capability", capability)
+        record.setdefault("remote_status", "queued")
+        _write_history(state, history)
         if existing.get("terminal"):
             typer.echo(
                 f"Session {session_id} was already completed locally; skipping duplicate delivery."
@@ -547,6 +566,10 @@ def _work_once_locked(state: StateManager, api: OmnixApi, *, confirm: bool) -> i
                 "local_run_id"
             ] = local_run_id
             _write_history(state, history)
+        history = _read_history(state)
+        history["sessions"].setdefault(session_id, {})["local_run_id"] = local_run_id
+        history["sessions"][session_id]["capability"] = capability
+        _write_history(state, history)
         if confirm and not typer.confirm(
             f"Run approved Omnix {capability} session {session_id}?", default=False
         ):
@@ -570,22 +593,26 @@ def _work_once_locked(state: StateManager, api: OmnixApi, *, confirm: bool) -> i
             history["sessions"].setdefault(session_id, {})["accepted"] = True
             _write_history(state, history)
         progress: list[str] = []
+        authorization_revoked = False
 
         def report_progress(
             message: str,
             _session_id: str = session_id,
             _progress: list[str] = progress,
         ) -> bool:
+            nonlocal authorization_revoked
             cancel = False
             try:
                 control = api.request("GET", f"/sessions/{_session_id}/control")
                 cancel = bool(control.get("cancel_requested"))
-            except OmnixAuthError:
+            except OmnixAuthError as exc:
                 # A lost Omnix connection must not turn a local build into a false failure.
-                pass
+                # An explicit authorization denial is different: stop remote-originated work
+                # at the orchestrator's next safe checkpoint after the device is revoked.
+                authorization_revoked = exc.status_code in {401, 403}
             if len(_progress) < 20:
                 _progress.append(str(message)[:1024])
-            return cancel
+            return cancel or authorization_revoked
 
         _emit(
             api,
@@ -619,7 +646,10 @@ def _work_once_locked(state: StateManager, api: OmnixApi, *, confirm: bool) -> i
             continue
         if capability == "build" and summary == BuildOutcome.CANCELLED.value:
             terminal_event_type = "run.cancelled"
-            terminal_payload = {"kind": terminal_event_type, "initiated_by": "omnix_user"}
+            terminal_payload = {
+                "kind": terminal_event_type,
+                "initiated_by": "policy" if authorization_revoked else "omnix_user",
+            }
         elif success:
             terminal_event_type = "run.succeeded"
         else:
@@ -702,3 +732,57 @@ def work_sessions_command(
         raise typer.Exit(1) from exc
     finally:
         api.close()
+
+
+def history_sessions_command(
+    workspace: Annotated[
+        Path,
+        typer.Option(
+            "--workspace",
+            "-w",
+            help="Project root containing the .project directory.",
+            file_okay=False,
+        ),
+    ] = Path("."),
+    limit: Annotated[
+        int,
+        typer.Option("--limit", min=1, max=100, help="Maximum number of local sessions to show."),
+    ] = 20,
+) -> None:
+    """Show recent Omnix session outcomes and sync state from local history (offline-safe)."""
+    try:
+        history = _read_history(StateManager(workspace))
+    except OmnixAuthError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(1) from exc
+
+    sessions = history["sessions"]
+    if not sessions:
+        typer.echo("No Omnix session history in this project.")
+        return
+
+    typer.echo("Recent Omnix sessions (local history; available offline):")
+    for session_id, record in list(sessions.items())[-limit:][::-1]:
+        remote_status = record.get("remote_status", "not started")
+        sync_state = record.get("sync_state")
+        if not sync_state:
+            sync_state = (
+                "pending" if record.get("local_result") or record.get("pending_event") else "synced"
+            )
+        typer.echo(
+            f"{session_id}  {record.get('capability', 'unknown')}  "
+            f"{remote_status}  sync: {sync_state}"
+        )
+    if any(record.get("sync_state") in {"partial", "conflicted"} for record in sessions.values()):
+        typer.echo("Retry a preserved remote event with `omnix sessions work` after reconnecting.")
+
+
+def session_protocol_status(capabilities: Any) -> str:
+    if not isinstance(capabilities, dict) or capabilities.get("protocol_version") != 1:
+        return "incompatible"
+    advertised = {
+        (item.get("name"), item.get("version"))
+        for item in capabilities.get("capabilities", [])
+        if isinstance(item, dict)
+    }
+    return "compatible" if advertised >= SUPPORTED_CAPABILITIES else "incompatible"

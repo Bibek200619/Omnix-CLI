@@ -14,6 +14,7 @@ from omnix_cli.integrations.omnix_auth import (
     OmnixAuthError,
     project_id_for,
 )
+from omnix_cli.integrations.omnix_sessions import session_protocol_status
 
 
 def _report_error(error: Exception) -> None:
@@ -195,6 +196,19 @@ def omnix_status_command(
         if result.get("linked"):
             typer.echo(f"Workspace ID: {result.get('workspace_id')}")
             typer.echo(f"Omnix project ID: {result.get('linked_project_id')}")
+            if "sessions:execute" not in result.get("scopes", []):
+                typer.echo("Remote sessions: not enabled for this CLI device")
+            else:
+                try:
+                    capabilities = api.request("GET", "/capabilities")
+                except OmnixAuthError:
+                    typer.echo("Remote sessions: compatibility check unavailable")
+                else:
+                    compatibility = session_protocol_status(capabilities)
+                    if compatibility == "compatible":
+                        typer.echo("Remote sessions: compatible (protocol v1 capabilities)")
+                    else:
+                        typer.echo("Remote sessions: incompatible; update Omnix CLI before polling")
         else:
             typer.echo("Workspace: not linked")
     except (OmnixAuthError, OmnixError) as exc:

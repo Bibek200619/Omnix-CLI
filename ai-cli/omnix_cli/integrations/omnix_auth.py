@@ -31,6 +31,10 @@ SAFE_KEYRING_MODULES = (
 class OmnixAuthError(RuntimeError):
     """Safe-to-display authentication or integration error."""
 
+    def __init__(self, message: str, *, status_code: int | None = None) -> None:
+        super().__init__(message)
+        self.status_code = status_code
+
 
 def _backend_is_secure(backend: Any) -> bool:
     if getattr(backend, "priority", 0) <= 0:
@@ -162,7 +166,7 @@ class OmnixApi:
             )
             if response.status_code == 428:
                 raise ApprovalPending(message)
-            raise OmnixAuthError(message)
+            raise OmnixAuthError(message, status_code=response.status_code)
         if not isinstance(result, (dict, list)):
             raise OmnixAuthError("Omnix returned an invalid response.")
         return result
@@ -176,7 +180,7 @@ class OmnixApi:
         try:
             return self._raw(method, path, payload, credentials["access_token"])
         except OmnixAuthError as exc:
-            if "HTTP 401" not in str(exc):
+            if exc.status_code != 401:
                 raise
             credentials = self._refresh(credentials)
             return self._raw(method, path, payload, credentials["access_token"])
@@ -190,7 +194,8 @@ class OmnixApi:
             )
         except OmnixAuthError as exc:
             raise OmnixAuthError(
-                "Omnix login expired or was revoked. Run `omnix login` again."
+                "Omnix login expired or was revoked. Run `omnix login` again.",
+                status_code=exc.status_code,
             ) from exc
         next_credentials = self._token_record(response)
         self.store.write(self.project_id, next_credentials)
