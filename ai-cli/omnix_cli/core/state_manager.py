@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import TypeVar
+from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ValidationError
 
@@ -62,6 +64,7 @@ TASKS_FILE = "tasks.json"
 BUILD_REPORT_FILE = "build_report.json"
 BUILD_HISTORY_FILE = "build_history.json"
 FINAL_PROJECT_PACKAGE_FILE = "final_project_package.json"
+OMNIX_PROJECT_FILE = "omnix_project.json"
 
 
 class StateManager:
@@ -85,6 +88,40 @@ class StateManager:
         self.build_report_path = self.build_dir / BUILD_REPORT_FILE
         self.build_history_path = self.build_dir / BUILD_HISTORY_FILE
         self.final_project_package_path = self.build_dir / FINAL_PROJECT_PACKAGE_FILE
+        self.omnix_project_path = self.project_dir / OMNIX_PROJECT_FILE
+
+    def ensure_project_id(self) -> str:
+        """Return a stable, non-secret project ID stored beside local project state."""
+
+        self.load_blueprint()
+        if self.omnix_project_path.exists():
+            try:
+                payload = json.loads(self.omnix_project_path.read_text(encoding="utf-8"))
+                return str(UUID(payload["project_id"]))
+            except (OSError, ValueError, TypeError, KeyError, json.JSONDecodeError) as exc:
+                msg = f"Invalid local Omnix project identity at {self.omnix_project_path}."
+                raise ProjectStateValidationError(msg) from exc
+
+        project_id = str(uuid4())
+        self.project_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            descriptor = os.open(
+                self.omnix_project_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600
+            )
+            with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+                json.dump({"project_id": project_id}, stream, indent=2)
+                stream.write("\n")
+        except FileExistsError:
+            try:
+                payload = json.loads(self.omnix_project_path.read_text(encoding="utf-8"))
+                return str(UUID(payload["project_id"]))
+            except (OSError, ValueError, TypeError, KeyError, json.JSONDecodeError) as exc:
+                msg = f"Invalid local Omnix project identity at {self.omnix_project_path}."
+                raise ProjectStateValidationError(msg) from exc
+        except OSError as exc:
+            msg = f"Could not write local Omnix project identity at {self.omnix_project_path}."
+            raise ProjectStateValidationError(msg) from exc
+        return project_id
 
     def init_project(
         self,
@@ -352,9 +389,7 @@ class StateManager:
         """Persist the repair plan for the current cycle (and archive it)."""
         self.repair_dir.mkdir(parents=True, exist_ok=True)
         self._write_model(self.repair_dir / "repair_plan.json", plan)
-        self._write_model(
-            self.repair_dir / f"repair_plan.cycle{plan.cycle}.json", plan
-        )
+        self._write_model(self.repair_dir / f"repair_plan.cycle{plan.cycle}.json", plan)
 
     def load_repair_plan(self) -> RepairPlan:
         """Load the latest repair plan."""
@@ -385,9 +420,7 @@ class StateManager:
         """Persist the repair report for the current cycle (and archive it)."""
         self.repair_dir.mkdir(parents=True, exist_ok=True)
         self._write_model(self.repair_dir / "repair_report.json", report)
-        self._write_model(
-            self.repair_dir / f"repair_report.cycle{report.cycle}.json", report
-        )
+        self._write_model(self.repair_dir / f"repair_report.cycle{report.cycle}.json", report)
 
     def load_repair_report(self) -> RepairReport:
         """Load the latest repair report."""
@@ -429,9 +462,7 @@ class StateManager:
         """Persist the execution report and archive it by run ID."""
         self.execution_dir.mkdir(parents=True, exist_ok=True)
         self._write_model(self.execution_dir / "execution_report.json", report)
-        self._write_model(
-            self.execution_dir / f"execution_report.{report.run_id}.json", report
-        )
+        self._write_model(self.execution_dir / f"execution_report.{report.run_id}.json", report)
 
     def load_execution_report(self) -> ExecutionReport:
         """Load the latest execution report."""

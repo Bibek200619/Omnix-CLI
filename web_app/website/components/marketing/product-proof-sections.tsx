@@ -169,11 +169,12 @@ export function CliSection() {
       >
         <div className={styles.commandIntro}>
           <p className={styles.lead}>
-            Twenty-six registered commands cover setup, persistent context,
-            architecture, and the source-preview orchestration lifecycle.
+            Thirty-one registered commands cover setup, persistent context,
+            architecture, source-preview orchestration, and secure Omnix account
+            linking.
           </p>
           <p className={styles.commandCount}>
-            <span>26</span> registered commands
+            <span>31</span> registered commands
           </p>
         </div>
         <div className={styles.commandGroups}>

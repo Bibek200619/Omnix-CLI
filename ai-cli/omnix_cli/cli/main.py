@@ -25,6 +25,13 @@ from omnix_cli.cli.commands.init import init_command
 from omnix_cli.cli.commands.integration import integrate_command, integration_summary_command
 from omnix_cli.cli.commands.memory import memory_command
 from omnix_cli.cli.commands.models import models_command
+from omnix_cli.cli.commands.omnix_account import (
+    link_command,
+    login_command,
+    logout_command,
+    omnix_status_command,
+    unlink_command,
+)
 from omnix_cli.cli.commands.ping import ping_command
 from omnix_cli.cli.commands.plan import plan_command
 from omnix_cli.cli.commands.qa import qa_command, quality_command
@@ -64,6 +71,7 @@ def main_callback(
 ) -> None:
     """Omnix CLI command group."""
 
+
 app.command("init")(init_command)
 app.command("config")(config_command)
 app.command("chat")(chat_command)
@@ -90,6 +98,11 @@ app.command("artifact")(artifact_view_command)
 app.command("build")(build_command)
 app.command("build-status")(build_status_command)
 app.command("builds")(builds_command)
+app.command("login")(login_command)
+app.command("logout")(logout_command)
+app.command("link")(link_command)
+app.command("unlink")(unlink_command)
+app.command("status")(omnix_status_command)
 
 
 if __name__ == "__main__":
