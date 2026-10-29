@@ -7,6 +7,7 @@ Use a lightweight Keep-a-Changelog style.
 ## [Unreleased]
 
 ### Vercel subpath launch preparation — 2026-10-30
+- Created a protected Vercel preview from the exact tested commit after owner authentication; verified hosted assets, headers, metadata, mobile navigation, and recovery. Recorded deployment evidence and pending public-domain routing in `DEPLOYMENT.md`.
 - Added a build-time path prefix for the requested `/cli` destination, shared by navigation, public assets, metadata, sitemap, and recovery links.
 - Added an isolated production subpath browser rehearsal alongside root-mode checks, preserving default noindex behavior.
 - Corrected canonical URL serialization and Safari pointer-open menu focus so Escape dismissal works consistently under the deployed path.

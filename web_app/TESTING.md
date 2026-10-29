@@ -14,8 +14,13 @@ treated a URL instance as a base and dropped `/cli`; serializing the absolute UR
 fixes it. Safari pointer clicks did not focus the menu trigger, leaving Escape
 outside the disclosure handler; explicitly focusing the trigger on opening fixes
 that behavior. Build review scanned 63 text files and found no credential-pattern
-matches. This is local evidence; the Vercel preview/live path still requires
-authenticated deployment and acceptance under `DEPLOYMENT.md`.
+matches. A subsequent protected Vercel deployment of the exact tested commit also
+passed hosted Chromium QA at 390 and 1440 px, with 30 successful asset responses,
+zero browser console errors, correct canonical/noindex/CSP/HSTS headers, mobile
+navigation, installation anchor, social image, and 404 recovery. The optional
+Vercel preview toolbar was disabled and the same source redeployed to fix its
+injected-script CSP violation. Temporary review access was revoked afterward.
+Public-domain routing and human acceptance remain under `DEPLOYMENT.md`.
 
 ## Current-source reconciliation — 2026-10-30
 

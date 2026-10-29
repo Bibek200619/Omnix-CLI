@@ -10,6 +10,11 @@ Vercel's existing apex-to-www redirect is preserved, so the canonical target is
 rewrites, build-time prefix, and parent robots ownership. Live acceptance is still
 required; a confirmed intended URL is not evidence of a completed deployment.
 
+An isolated protected Vercel preview is now verified against the tested website
+commit; see `DEPLOYMENT.md` for its URL, deployment ID, and hosted QA evidence.
+Public `omni-x.co.in/cli` routing, production origin/promotion, and parent robots
+acceptance are still pending. Indexing stays disabled.
+
 ## Verified locally — 2026-10-24
 
 - Source-backed product copy, commands, agents, provider states, and source setup.

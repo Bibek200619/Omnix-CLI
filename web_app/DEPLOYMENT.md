@@ -8,11 +8,32 @@ CLI canonical destination is `https://www.omni-x.co.in/cli`. GoDaddy registratio
 does not require a DNS change to add a path. Do not attach or transfer the apex
 domain to the CLI website project.
 
-Deployment access check (2026-10-30): the connected Vercel account can inspect the
-parent project and its verified domains, but creating `omnix-cli-website` returned
-403. The local CLI fallback has no credentials; its device-login flow was stopped.
-No CLI project or hosted preview was created by these attempts. An account with
-project-write access must authenticate before the deployment steps can proceed.
+## Verified protected preview — 2026-10-30
+
+After the owner authenticated the Vercel CLI, the isolated `omnix-cli-website`
+project was created in the same team as the domain-owning `omnix` project.
+
+- Project ID: `prj_jRQnikTyD9xWPyqtVuUdRagaaocM`; Node 24; root `web_app/website`.
+- [Preview at /cli](https://omnix-cli-website-l8b7ovo1z-crazy764gaming-4092s-projects.vercel.app/cli).
+- Deployment: `dpl_E18qAKpicXYDPqxoCfmu2s3oN2TN`, READY, API target `staging`.
+- Source: exact tested commit `312fc0f9db74fdc08cd1ceaed2ed505414909865`.
+- Build environment: `/cli` prefix, canonical `https://www.omni-x.co.in/cli`,
+  indexing disabled. Preview feedback/toolbar disabled for this project to retain
+  the site's existing CSP without an injected external-script violation.
+- Hosted Chromium review passed at 390 and 1440 px: HTTP 200, 30 successful asset
+  responses, zero browser console errors, logo/fonts, metadata, menu/Escape,
+  installation anchor, social image, and 404 recovery. CSP, noindex, and Vercel's
+  HTTPS/HSTS response headers were verified. This is not a field-performance or
+  human screen-reader certification.
+
+Vercel Authentication remains enabled. Review through the normal Vercel sign-in;
+the short-lived link used for isolated automated QA was revoked and its local
+access files removed. The first implicit production-target build was canceled
+before completion; subsequent builds used the explicit staging target.
+
+The connector cannot yet access this new project; authenticated CLI operations
+were used. The existing domain's project, DNS, and public `/cli` routing have not
+been changed. The preview is ready for review, not a public-domain launch.
 
 ## CLI project
 
@@ -29,7 +50,8 @@ project-write access must authenticate before the deployment steps can proceed.
 
 ## Existing domain-owning project
 
-After the CLI deployment has a verified, stable project origin, add these two
+After the website PR is reviewed/merged and the CLI deployment has a verified,
+stable production project origin, add these two
 rewrites to the existing frontend's reviewed configuration, before its fallback
 routes. Replace `CLI_ORIGIN` with that actual HTTPS origin, with no trailing slash:
 

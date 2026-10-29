@@ -3,9 +3,11 @@
 Vercel path preparation (2026-10-30): the owner confirmed `omni-x.co.in/cli`.
 The optional build-time `/cli` prefix, scoped metadata/assets/native links, and
 separate 20-test deployment rehearsal are complete. The existing Vercel apex-to-www
-redirect is preserved. Project creation currently requires authenticated write
-access; `DEPLOYMENT.md` records the exact routing/build contract and pending live
-acceptance. Do not mark the public website launched from local test results.
+redirect is preserved. The owner-authenticated CLI created an isolated Vercel
+project, and hosted preview QA passes for the exact tested website commit.
+`DEPLOYMENT.md` records its URL and evidence, the routing/build contract, and
+pending public-domain acceptance. Do not mark the public website launched from
+the isolated preview results.
 
 Current-source reconciliation (2026-10-30): the website phases below are implemented
 and the reviewed work is merged through PR #61. Newer CLI integrations on main
