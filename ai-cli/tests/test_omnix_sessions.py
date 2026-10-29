@@ -99,11 +99,15 @@ class FakeApi:
             return {"linked": True, "linked_project_id": "project-1"}
         if path == "/capabilities":
             return {
+                "protocol_version": 1,
+                "minimum_cli_version": "0.1.0",
+                "sessions_enabled": True,
                 "capabilities": [
                     {"name": name, "version": 1} for name in ("plan", "build", "qa", "repair")
-                ]
+                ],
             }
         if path == "/sessions/poll":
+            self.poll_payload = payload
             return {"deliveries": [self.delivery]}
         if path.endswith("/control"):
             return {"cancel_requested": False}
@@ -162,6 +166,13 @@ def test_worker_runs_typed_build_once_and_keeps_replay_cursor_private(
 
     assert omnix_sessions.work_once(state, api) == 1
     assert omnix_sessions.work_once(state, api) == 1
+    assert api.poll_payload == {
+        "client_version": "0.1.0",
+        "protocol_version": 1,
+        "capabilities": [
+            {"name": name, "version": 1} for name in ("build", "plan", "qa", "repair")
+        ],
+    }
     assert calls == ["Add coverage"]
     assert run_ids == [f"remote_{api.delivery['request']['session_id'][:32]}"]
     assert api.events[0]["payload"]["local_run_id"] == run_ids[0]
@@ -295,21 +306,96 @@ def test_session_history_is_offline_readable_and_excludes_private_inputs(
         (
             {
                 "protocol_version": 1,
+                "minimum_cli_version": "0.1.0",
+                "sessions_enabled": True,
                 "capabilities": [
                     {"name": name, "version": 1} for name in ("plan", "build", "qa", "repair")
                 ],
             },
             "compatible",
         ),
-        ({"protocol_version": 2, "capabilities": []}, "incompatible"),
         (
-            {"protocol_version": 1, "capabilities": [{"name": "build", "version": 1}]},
+            {
+                "protocol_version": 2,
+                "minimum_cli_version": "0.1.0",
+                "sessions_enabled": True,
+                "capabilities": [],
+            },
+            "incompatible",
+        ),
+        (
+            {
+                "protocol_version": 1,
+                "minimum_cli_version": "0.2.0",
+                "sessions_enabled": True,
+                "capabilities": [],
+            },
+            "incompatible",
+        ),
+        (
+            {
+                "protocol_version": 1,
+                "minimum_cli_version": "not-a-version",
+                "sessions_enabled": True,
+                "capabilities": [],
+            },
+            "incompatible",
+        ),
+        (
+            {
+                "protocol_version": 1,
+                "minimum_cli_version": "0.1.0",
+                "sessions_enabled": True,
+                "capabilities": [{"name": "build", "version": 1}],
+            },
+            "incompatible",
+        ),
+        (
+            {
+                "protocol_version": 1,
+                "minimum_cli_version": "0.1.0",
+                "sessions_enabled": True,
+                "capabilities": [{"name": [], "version": 1}],
+            },
+            "incompatible",
+        ),
+        (
+            {
+                "protocol_version": 1,
+                "minimum_cli_version": "0.1.0",
+                "sessions_enabled": True,
+                "capabilities": None,
+            },
             "incompatible",
         ),
     ],
 )
 def test_session_protocol_status(capabilities, expected):
     assert omnix_sessions.session_protocol_status(capabilities) == expected
+
+
+def test_worker_does_not_poll_when_server_disables_remote_sessions(tmp_path: Path):
+    class DisabledApi(FakeApi):
+        poll_requested = False
+
+        def request(self, method, path, payload=None):
+            if path == "/capabilities":
+                return {
+                    "protocol_version": 1,
+                    "minimum_cli_version": "0.1.0",
+                    "sessions_enabled": False,
+                    "capabilities": [
+                        {"name": name, "version": 1} for name in ("plan", "build", "qa", "repair")
+                    ],
+                }
+            if path == "/sessions/poll":
+                self.poll_requested = True
+            return super().request(method, path, payload)
+
+    api = DisabledApi()
+    with pytest.raises(OmnixAuthError, match="disabled by the server"):
+        omnix_sessions.work_once(StateManager(tmp_path), api)
+    assert api.poll_requested is False
 
 
 def test_worker_persists_local_result_when_event_upload_fails(

@@ -204,11 +204,19 @@ def omnix_status_command(
                 except OmnixAuthError:
                     typer.echo("Remote sessions: compatibility check unavailable")
                 else:
-                    compatibility = session_protocol_status(capabilities)
-                    if compatibility == "compatible":
-                        typer.echo("Remote sessions: compatible (protocol v1 capabilities)")
+                    if (
+                        not isinstance(capabilities, dict)
+                        or capabilities.get("sessions_enabled") is not True
+                    ):
+                        typer.echo("Remote sessions: disabled by Omnix")
                     else:
-                        typer.echo("Remote sessions: incompatible; update Omnix CLI before polling")
+                        compatibility = session_protocol_status(capabilities)
+                        if compatibility == "compatible":
+                            typer.echo("Remote sessions: compatible (protocol v1 capabilities)")
+                        else:
+                            typer.echo(
+                                "Remote sessions: incompatible; update Omnix CLI before polling"
+                            )
         else:
             typer.echo("Workspace: not linked")
     except (OmnixAuthError, OmnixError) as exc:

@@ -13,6 +13,8 @@ from omnix_cli.cli.commands import omnix_account
         (
             {
                 "protocol_version": 1,
+                "minimum_cli_version": "0.1.0",
+                "sessions_enabled": True,
                 "capabilities": [
                     {"name": name, "version": 1} for name in ("plan", "build", "qa", "repair")
                 ],
@@ -20,8 +22,22 @@ from omnix_cli.cli.commands import omnix_account
             "Remote sessions: compatible (protocol v1 capabilities)",
         ),
         (
-            {"protocol_version": 2, "capabilities": []},
+            {
+                "protocol_version": 2,
+                "minimum_cli_version": "0.1.0",
+                "sessions_enabled": True,
+                "capabilities": [],
+            },
             "Remote sessions: incompatible; update Omnix CLI before polling",
+        ),
+        (
+            {
+                "protocol_version": 1,
+                "minimum_cli_version": "0.1.0",
+                "sessions_enabled": False,
+                "capabilities": [],
+            },
+            "Remote sessions: disabled by Omnix",
         ),
     ],
 )

@@ -24,6 +24,7 @@ The canonical ownership model and protocol contract live in the [Omnix + Omnix C
 
 - The CLI initiates outbound HTTPS polls; v1 does not open a local network listener. Run `omnix sessions work` to poll once. Each delivered build asks for local confirmation; `--yes` is available for explicitly unattended operation.
 - The CLI advertises protocol and capability versions. It accepts only the negotiated `plan`, `build`, `qa`, and `repair` v1 capabilities and rejects unknown versions, unknown fields, and unresolved local references.
+- Before polling, the CLI checks the server's advertised minimum version and `sessions_enabled` state, then sends its numeric `major.minor.patch` version, protocol v1, and supported capabilities. It does not poll when the server disables sessions or the pair is incompatible.
 - Raw shell strings, arbitrary executable names, arbitrary filesystem paths, environment values, and provider keys are not valid request fields.
 - Before execution, the CLI checks credential validity, link identity, request expiry, capability/schema compatibility, replay/idempotency state, and existing local approval requirements.
 - Each accepted build request maps to the existing `AutonomousOrchestrator` workflow. The CLI keeps a mode-0600 `.project/omnix_remote_sessions.json` resume cursor with event outbox data; Omnix stores the durable session projection and append-only event ledger.
@@ -42,5 +43,11 @@ Only the fields allowed by the canonical RFC and the negotiated v1 schema may be
 3. The capability bridge supports `plan`, `build`, `qa`, and `repair` v1 and requires the explicit `sessions:execute` device scope shown on the browser approval screen. Previously approved devices retain their existing narrower scopes.
 4. Sync/outbox and user-facing status, approval, and offline history commands are implemented without changing standalone command behavior. (Complete.)
 5. Run the cross-repository compatibility and security matrix before enabling a beta release.
+
+## Security and release policy
+
+Omnix owns the current shared threat model, exact server/CLI compatibility matrix, rate-limit behavior, rollout/rollback procedure, and incident-response steps in [`omnix-cli-security-and-release-v1.md`](https://github.com/Bibek200619/Omnix/blob/main/docs/integrations/omnix-cli-security-and-release-v1.md). Remote sessions are disabled by default on the server with `OMNIX_CLI_REMOTE_SESSIONS_ENABLED=false`. This CLI has no stable binary/update channel, so it does not claim signed or self-verifying updates; artifact provenance and independent verification remain a pre-GA requirement.
+
+Published CLI releases now build a wheel and source archive, publish SHA-256 checksums, and create GitHub build-provenance attestations. Verify a downloaded artifact with `gh attestation verify <artifact> --repo Bibek200619/Omnix-CLI --signer-workflow Bibek200619/Omnix-CLI/.github/workflows/cli-release-artifacts.yml`, then compare its digest against `SHA256SUMS`. This release workflow runs when a GitHub Release is published and first checks that the release tag matches `ai-cli/pyproject.toml`.
 
 Related paired workstreams: [Omnix-CLI #47](https://github.com/Bibek200619/Omnix-CLI/issues/47), [#48](https://github.com/Bibek200619/Omnix-CLI/issues/48), [#49](https://github.com/Bibek200619/Omnix-CLI/issues/49), [#50](https://github.com/Bibek200619/Omnix-CLI/issues/50), [#51](https://github.com/Bibek200619/Omnix-CLI/issues/51), [Omnix #219](https://github.com/Bibek200619/Omnix/issues/219), [#220](https://github.com/Bibek200619/Omnix/issues/220), [#221](https://github.com/Bibek200619/Omnix/issues/221), [#222](https://github.com/Bibek200619/Omnix/issues/222), and [#223](https://github.com/Bibek200619/Omnix/issues/223).
