@@ -16,6 +16,7 @@ from uuid import UUID, uuid4
 
 import typer
 
+from omnix_cli import __version__
 from omnix_cli.agents.planner import PlannerAgent
 from omnix_cli.agents.qa.agent import QAAgent
 from omnix_cli.agents.repair.agent import RepairAgent
@@ -496,16 +497,17 @@ def _work_once_locked(state: StateManager, api: OmnixApi, *, confirm: bool) -> i
     if not isinstance(link, dict) or not link.get("linked"):
         raise OmnixAuthError("Link this local project before polling for Omnix sessions.")
     capabilities = api.request("GET", "/capabilities")
-    advertised = {
-        (item.get("name"), item.get("version"))
-        for item in capabilities.get("capabilities", [])
-        if isinstance(item, dict)
-    }
-    if not advertised >= SUPPORTED_CAPABILITIES:
+    if not isinstance(capabilities, dict) or capabilities.get("sessions_enabled") is not True:
+        raise OmnixAuthError("Omnix remote sessions are disabled by the server.")
+    if session_protocol_status(capabilities) != "compatible":
         raise OmnixAuthError(
-            "The linked Omnix server does not advertise all supported v1 capabilities."
+            "The linked Omnix server does not support this CLI version and protocol."
         )
-    result = api.request("POST", "/sessions/poll", {})
+    result = api.request(
+        "POST",
+        "/sessions/poll",
+        session_poll_payload(),
+    )
     deliveries = result.get("deliveries", []) if isinstance(result, dict) else []
     if not deliveries:
         typer.echo("No queued Omnix sessions.")
@@ -780,9 +782,42 @@ def history_sessions_command(
 def session_protocol_status(capabilities: Any) -> str:
     if not isinstance(capabilities, dict) or capabilities.get("protocol_version") != 1:
         return "incompatible"
-    advertised = {
-        (item.get("name"), item.get("version"))
-        for item in capabilities.get("capabilities", [])
-        if isinstance(item, dict)
-    }
+    minimum_version = capabilities.get("minimum_cli_version")
+    if not isinstance(minimum_version, str):
+        return "incompatible"
+    client_parts = _version_tuple(__version__)
+    minimum_parts = _version_tuple(minimum_version)
+    if client_parts is None or minimum_parts is None or client_parts < minimum_parts:
+        return "incompatible"
+    raw_capabilities = capabilities.get("capabilities")
+    if not isinstance(raw_capabilities, list):
+        return "incompatible"
+    advertised: set[tuple[str, int]] = set()
+    for item in raw_capabilities:
+        if not isinstance(item, dict):
+            continue
+        name = item.get("name")
+        version = item.get("version")
+        if isinstance(name, str) and isinstance(version, int) and not isinstance(version, bool):
+            advertised.add((name, version))
     return "compatible" if advertised >= SUPPORTED_CAPABILITIES else "incompatible"
+
+
+def _version_tuple(value: str) -> tuple[int, int, int] | None:
+    parts = value.split(".")
+    if len(parts) != 3 or any(not part.isascii() or not part.isdecimal() for part in parts):
+        return None
+    try:
+        return int(parts[0]), int(parts[1]), int(parts[2])
+    except ValueError:
+        return None
+
+
+def session_poll_payload() -> dict[str, Any]:
+    return {
+        "client_version": __version__,
+        "protocol_version": 1,
+        "capabilities": [
+            {"name": name, "version": version} for name, version in sorted(SUPPORTED_CAPABILITIES)
+        ],
+    }
