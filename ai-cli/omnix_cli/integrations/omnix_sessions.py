@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import os
+import re
 import tempfile
 from contextlib import suppress
 from datetime import UTC, datetime
@@ -62,11 +64,91 @@ def _require_local_run(state: StateManager, run_id: str) -> None:
         raise OmnixAuthError("The referenced local build does not belong to this project.")
 
 
+def _artifact_manifest(
+    state: StateManager, before_digests: dict[str, str]
+) -> tuple[list[dict[str, Any]], int]:
+    """Return bounded metadata for artifacts created during this local session."""
+    items: list[dict[str, Any]] = []
+
+    def opaque_reference(value: str) -> str:
+        if re.fullmatch(r"[A-Za-z0-9_.:-]{1,128}", value) and ".." not in value:
+            return value
+        return f"opaque_{hashlib.sha256(value.encode('utf-8')).hexdigest()}"
+
+    artifacts: list[tuple[str, str, str, str, str, list[str]]] = []
+    for artifact in state.list_artifacts():
+        artifacts.append(
+            (
+                f"build:{artifact.id}",
+                artifact.id,
+                str(artifact.artifact_type),
+                artifact.title,
+                artifact.content,
+                [artifact.task_id],
+            )
+        )
+    for artifact in state.list_repair_artifacts():
+        artifacts.append(
+            (
+                f"repair:{artifact.id}",
+                artifact.id,
+                "repair_artifact",
+                artifact.title,
+                artifact.content,
+                [artifact.repair_plan_id, artifact.qa_finding_id],
+            )
+        )
+    changed_artifacts = []
+    for artifact_key, _artifact_id, artifact_type, title, content_value, provenance in artifacts:
+        content = content_value.encode("utf-8")
+        digest = hashlib.sha256(content).hexdigest()
+        if before_digests.get(artifact_key) == digest:
+            continue
+        changed_artifacts.append(
+            (artifact_key, artifact_type, title, provenance, digest, len(content))
+        )
+    for artifact_key, artifact_type, title, provenance, digest, size_bytes in changed_artifacts:
+        artifact_type = artifact_type[:64]
+        if "/" in title or "\\" in title:
+            display_name = "Generated artifact"
+        else:
+            display_name = re.sub(r"[^A-Za-z0-9 _()-]", "", title).strip()[:256]
+        item = {
+            "local_artifact_id": opaque_reference(artifact_key),
+            "artifact_type": artifact_type,
+            "display_name": display_name or "Generated artifact",
+            "summary": f"Generated {artifact_type.replace('_', ' ')} artifact",
+            "sha256": digest,
+            "size_bytes": size_bytes,
+            "provenance_refs": [opaque_reference(ref) for ref in provenance],
+        }
+        candidate = [*items, item]
+        payload_size = len(str({"kind": "artifact.manifest", "items": candidate}).encode("utf-8"))
+        if len(candidate) > 100 or payload_size > 12000:
+            break
+        items.append(item)
+    return items, len(changed_artifacts) - len(items)
+
+
+def _artifact_snapshot(state: StateManager) -> dict[str, str]:
+    return {
+        **{
+            f"build:{item.id}": hashlib.sha256(item.content.encode("utf-8")).hexdigest()
+            for item in state.list_artifacts()
+        },
+        **{
+            f"repair:{item.id}": hashlib.sha256(item.content.encode("utf-8")).hexdigest()
+            for item in state.list_repair_artifacts()
+        },
+    }
+
+
 async def _run_capability(
     state: StateManager,
     capability: str,
     capability_input: dict[str, Any],
     progress_callback,
+    local_run_id: str | None = None,
 ):
     if capability == "build":
         orchestrator = AutonomousOrchestrator(state, config=BuildConfig())
@@ -76,8 +158,30 @@ async def _run_capability(
                 orchestrator.request_stop()
 
         orchestrator.progress_callback = on_progress
-        report = await orchestrator.build(capability_input["goal"])
-        return report.outcome.value, report.outcome == BuildOutcome.SUCCESS
+        report = await orchestrator.build(capability_input["goal"], run_id=local_run_id)
+        blueprint = getattr(report, "blueprint_summary", None)
+        blueprint_counts = ""
+        if blueprint is not None:
+            blueprint_counts = (
+                "; blueprint: "
+                f"{blueprint.feature_count} features, {blueprint.entity_count} entities, "
+                f"{blueprint.module_count} "
+                f"{'module' if blueprint.module_count == 1 else 'modules'}, "
+                f"{blueprint.page_count} pages, "
+                f"{blueprint.api_count} APIs, "
+                f"{blueprint.architecture_note_count} architecture notes"
+            )
+        quality = getattr(report, "final_quality_score", None)
+        quality_summary = f"; quality score {quality}" if quality is not None else ""
+        task_count = getattr(report, "task_count", 0)
+        artifact_count = getattr(report, "artifacts_generated", 0)
+        summary = (
+            f"Build {report.outcome.value}; {task_count} "
+            f"{'task' if task_count == 1 else 'tasks'}, {artifact_count} "
+            f"{'artifact' if artifact_count == 1 else 'artifacts'}"
+            f"{quality_summary}{blueprint_counts}"
+        )
+        return summary[:4096], report.outcome == BuildOutcome.SUCCESS
     if capability == "plan":
         MemoryManager(state).add_goal(capability_input["goal"])
         result = await PlannerAgent(state).run()
@@ -155,15 +259,7 @@ def _emit(
     if pending is not None and (
         pending.get("event_type") != event_type or pending.get("payload") != payload
     ):
-        api.request("POST", f"/sessions/{session_id}/events", pending)
-        record["sequence"] = pending["sequence"]
-        record["terminal"] = pending["event_type"] in {
-            "run.succeeded",
-            "run.failed",
-            "run.cancelled",
-        }
-        record.pop("pending_event", None)
-        _write_history(state, history)
+        _submit_pending_event(api, state, session_id, history, record, pending)
         if record["terminal"]:
             return
         return _emit(api, state, session_id, event_type, payload)
@@ -179,10 +275,45 @@ def _emit(
         }
         record["pending_event"] = pending
         _write_history(state, history)
-    api.request("POST", f"/sessions/{session_id}/events", pending)
+    _submit_pending_event(api, state, session_id, history, record, pending)
+
+
+def _submit_pending_event(
+    api: OmnixApi,
+    state: StateManager,
+    session_id: str,
+    history: dict[str, Any],
+    record: dict[str, Any],
+    pending: dict[str, Any],
+) -> None:
+    try:
+        api.request("POST", f"/sessions/{session_id}/events", pending)
+    except OmnixAuthError as exc:
+        message = str(exc)
+        record["sync_state"] = (
+            "conflicted" if "HTTP 409" in message or "HTTP 422" in message else "partial"
+        )
+        record["sync_error"] = message[:256]
+        _write_history(state, history)
+        if record["sync_state"] == "conflicted":
+            raise OmnixAuthError(
+                "Remote sync conflict (HTTP 409/422). The pending event and local result "
+                "were preserved. Resolve the session conflict, then rerun `omnix sessions work` "
+                "to retry the same idempotent event."
+            ) from exc
+        raise OmnixAuthError(
+            "Remote sync is partial. The pending event and local result were preserved; "
+            "check the connection or device authorization, then rerun `omnix sessions work`."
+        ) from exc
     record["sequence"] = pending["sequence"]
-    record["terminal"] = event_type in {"run.succeeded", "run.failed", "run.cancelled"}
+    record["terminal"] = pending["event_type"] in {
+        "run.succeeded",
+        "run.failed",
+        "run.cancelled",
+    }
     record.pop("pending_event", None)
+    record.pop("sync_state", None)
+    record.pop("sync_error", None)
     _write_history(state, history)
 
 
@@ -408,6 +539,14 @@ def _work_once_locked(state: StateManager, api: OmnixApi, *, confirm: bool) -> i
                 {"kind": "run.cancelled", "initiated_by": "omnix_user"},
             )
             continue
+        local_run_id = existing.get("local_run_id")
+        if not isinstance(local_run_id, str):
+            local_run_id = f"remote_{session_id[:32]}"
+            history = _read_history(state)
+            history["sessions"].setdefault(session_id, {"sequence": 0, "terminal": False})[
+                "local_run_id"
+            ] = local_run_id
+            _write_history(state, history)
         if confirm and not typer.confirm(
             f"Run approved Omnix {capability} session {session_id}?", default=False
         ):
@@ -425,7 +564,7 @@ def _work_once_locked(state: StateManager, api: OmnixApi, *, confirm: bool) -> i
                 state,
                 session_id,
                 "run.accepted",
-                {"kind": "run.accepted", "local_run_id": f"remote_{session_id[:32]}"},
+                {"kind": "run.accepted", "local_run_id": local_run_id},
             )
             history = _read_history(state)
             history["sessions"].setdefault(session_id, {})["accepted"] = True
@@ -458,9 +597,10 @@ def _work_once_locked(state: StateManager, api: OmnixApi, *, confirm: bool) -> i
         history = _read_history(state)
         history["sessions"].setdefault(session_id, {})["started"] = True
         _write_history(state, history)
+        before_artifact_digests = _artifact_snapshot(state)
         try:
             summary, success = asyncio.run(
-                _run_capability(state, capability, capability_input, report_progress)
+                _run_capability(state, capability, capability_input, report_progress, local_run_id)
             )
         except Exception:
             _emit(
@@ -511,6 +651,25 @@ def _work_once_locked(state: StateManager, api: OmnixApi, *, confirm: bool) -> i
                 {"event_type": terminal_event_type, "payload": terminal_payload},
             ]
         )
+        manifest_items, omitted_artifacts = _artifact_manifest(state, before_artifact_digests)
+        if manifest_items:
+            if omitted_artifacts:
+                phase_summary = next(
+                    event["payload"]
+                    for event in reversed(result_events)
+                    if event["event_type"] == "phase.completed"
+                )
+                phase_summary["summary"] = phase_summary["summary"][:3900] + (
+                    f" (manifest lists {len(manifest_items)} of "
+                    f"{len(manifest_items) + omitted_artifacts} artifacts)"
+                )
+            result_events.insert(
+                -1,
+                {
+                    "event_type": "artifact.manifest",
+                    "payload": {"kind": "artifact.manifest", "items": manifest_items},
+                },
+            )
         _store_local_result(state, session_id, result_events)
         _sync_local_result(api, state, session_id)
         typer.echo(f"Completed Omnix {capability} session {session_id}: {summary}")

@@ -168,7 +168,7 @@ class AutonomousOrchestrator:
 
         self._manual_stop_requested = True
 
-    async def build(self, goal: str) -> BuildReport:
+    async def build(self, goal: str, *, run_id: str | None = None) -> BuildReport:
         """Run an autonomous build from goal to final package or terminal stop."""
 
         normalized_goal = goal.strip()
@@ -180,7 +180,7 @@ class AutonomousOrchestrator:
         self._recover_incomplete_latest_run()
 
         report = BuildReport(
-            run_id=self.state_manager.get_next_build_run_id(),
+            run_id=run_id or self.state_manager.get_next_build_run_id(),
             goal=normalized_goal,
             status=BuildStatus.PENDING,
             quality_threshold=self.config.quality_threshold,
