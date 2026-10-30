@@ -76,7 +76,17 @@ def _fit_line(text: str, width: int) -> str:
         return "." * width
     left = (width - 1) // 2
     right = width - left - 1
-    return text[:left] + "…" + text[-right:]
+    left_text = ""
+    for char in text:
+        if get_cwidth(left_text + char) > left:
+            break
+        left_text += char
+    right_text = ""
+    for char in reversed(text):
+        if get_cwidth(char + right_text) > right:
+            break
+        right_text = char + right_text
+    return left_text + "…" + right_text
 
 
 class TerminalApp:
@@ -105,7 +115,8 @@ class TerminalApp:
         self.previous_text = ""
         self.restore_draft = ""
         self.inserting = False
-        self.hint = "Type a goal, or / for commands. Start with /init for a new project."
+        self.default_hint = "Type a goal, or / for commands. Start with /init for a new project."
+        self.hint = self.default_hint
         self.last_patches: list[Patch] = []
         self.patch_index = 0
         self.project, self.model, details = project_context(self.workspace)
@@ -130,8 +141,15 @@ class TerminalApp:
             style="class:context",
         )
         self.composer = TextArea(
-            height=lambda: min(5, max(2, self.composer.text.count("\n") + 1)),
-            prompt="> ",
+            height=lambda: min(5, max(3, self.composer.text.count("\n") + 1)),
+            prompt=lambda: (
+                [
+                    ("class:text-area.prompt", "> "),
+                    ("class:muted", "Describe what you want to work on"),
+                ]
+                if not self.composer.text
+                else "> "
+            ),
             history=InMemoryHistory(),
             multiline=True,
             wrap_lines=True,
@@ -151,7 +169,7 @@ class TerminalApp:
         )
         header = Window(FormattedTextControl(self._header), height=2)
         footer = Window(FormattedTextControl(self._footer), height=2, wrap_lines=True)
-        root = HSplit(
+        content = HSplit(
             [header, DynamicContainer(self._body), palette, self.composer, footer],
             style="class:base",
             window_too_small=Window(
@@ -159,12 +177,19 @@ class TerminalApp:
                 wrap_lines=True,
             ),
         )
+        root = VSplit([Window(width=2), content, Window(width=2)], style="class:base")
         self.app: Application[None] = Application(
             layout=Layout(root, focused_element=self.composer),
             key_bindings=self._bindings(),
             full_screen=True,
             style=DynamicStyle(lambda: theme_style(self.theme, self.no_color)),
-            color_depth=ColorDepth.DEPTH_1_BIT if self.no_color else None,
+            color_depth=(
+                ColorDepth.DEPTH_1_BIT
+                if self.no_color or theme == "mono"
+                else ColorDepth.DEPTH_24_BIT
+                if theme in {"slate", "light"}
+                else None
+            ),
             input=input,
             output=self.output,
             min_redraw_interval=0.05,
@@ -210,7 +235,13 @@ class TerminalApp:
                     ),
                     Window(
                         FormattedTextControl("One conversation. Your project."),
-                        height=2,
+                        height=3,
+                        align=WindowAlign.CENTER,
+                        style="class:muted",
+                    ),
+                    Window(
+                        FormattedTextControl("Type a goal or / to begin."),
+                        height=1,
                         align=WindowAlign.CENTER,
                         style="class:muted",
                     ),
@@ -220,35 +251,64 @@ class TerminalApp:
         return self.transcript.__pt_container__()
 
     def _header(self) -> StyleAndTextTuples:
-        available = self.output.get_size().columns
-        workspace = _fit_line(
-            f"{self.project}  {clean(str(self.workspace))}",
-            available,
-        )
+        available = max(0, self.output.get_size().columns - 4)
+        if self.output.get_size().columns < 110:
+            workspace = _fit_line(self.project, available)
+        else:
+            try:
+                relative = self.workspace.relative_to(Path.home())
+                display_path = f"~/{relative}" if relative.parts else "~"
+            except ValueError:
+                display_path = str(self.workspace)
+                if get_cwidth(display_path) > 56:
+                    display_path = f"…/{self.workspace.parent.name}/{self.workspace.name}"
+            workspace = _fit_line(f"{self.project}  {clean(display_path)}", available)
         return [
             ("class:heading", f"Omnix CLI {__version__} / source preview\n"),
             ("class:muted", workspace),
         ]
 
     def _footer(self) -> StyleAndTextTuples:
-        if self.output.get_size().columns < 80:
-            keys = "Enter Send  / Commands  Esc Back  Ctrl+C Stop"
+        columns = max(0, self.output.get_size().columns - 4)
+        if columns < 70:
+            keys = "Enter Send  / Commands  Esc Back"
         else:
-            keys = "Enter Send  Ctrl+J Newline  / Commands  Tab Focus  PgUp/PgDn Scroll"
-        status = "Running" if self.busy else "Ready"
+            keys = "Enter Send  Ctrl+J Newline  / Commands  Esc Back"
         if self.exit_armed:
-            return [("class:muted", keys + "\n"), ("class:warning", self.hint)]
+            status = "Press Ctrl+C again to exit. Project files will be retained."
+            return [("class:muted", keys + "\n"), ("class:warning", status)]
+        if self.palette_open:
+            command_count = sum(not item.local for item in self.commands)
+            status = (
+                f"Catalog / {command_count} source-backed actions"
+                if columns >= 60
+                else f"Catalog / {command_count} actions"
+            )
+        elif self.context_open:
+            status = "Project context / local state / Esc to return"
+        elif self.busy:
+            status = f"Master / {self.model} / {self.project} / Running / Ctrl+C to interrupt"
+        elif self.hint != self.default_hint:
+            status = self.hint
+        elif self.model == "Unconfigured":
+            status = "Master / Unconfigured / Local"
+        elif columns < 60:
+            status = f"Master / {self.model} / Local"
+        else:
+            status = f"Master / {self.model} / {self.project} / Local"
         return [
             ("class:muted", keys + "\n"),
-            ("class:accent", f"Master / {self.model} / {status} / "),
-            ("class:warning" if self.exit_armed else "class:muted", clean(self.hint)),
+            ("class:accent", _fit_line(clean(status), columns)),
         ]
 
     def _palette_height(self) -> int:
         return min(11, max(3, self.output.get_size().rows // 2))
 
     def suggestions(self) -> list[Command]:
-        return matches(self.commands, self.composer.text)
+        choices = matches(self.commands, self.composer.text)
+        if self.composer.text.strip() == "/":
+            return [command for command in choices if not command.local]
+        return choices
 
     def _catalog(self) -> StyleAndTextTuples:
         choices = self.suggestions()
@@ -259,7 +319,7 @@ class TerminalApp:
         self.selection = min(self.selection, len(choices) - 1)
         count = max(1, self._palette_height() - 2)
         offset = max(0, self.selection - count + 1)
-        width = self.output.get_size().columns
+        width = max(0, self.output.get_size().columns - 4)
         result: StyleAndTextTuples = [
             (
                 "class:muted",
@@ -518,7 +578,7 @@ class TerminalApp:
             self.busy = False
             self.project, self.model, details = project_context(self.workspace)
             self.context.text = details
-            self.hint = "/help for keyboard guidance. /changes toggles the latest patch."
+            self.hint = self.default_hint
             self._refresh_transcript()
 
     def run(self) -> None:

@@ -68,6 +68,12 @@ def test_catalog_contains_real_workflows_and_separate_ui_actions() -> None:
     assert matches(commands, "/does-not-exist") == []
     assert command_path(commands, "sessions history --json").name == "sessions history"
     assert command_path(commands, "architectural") is None
+    ui = TerminalApp(group(), Path.cwd(), output=SizedOutput())
+    ui.composer.text = "/"
+    assert len(ui.suggestions()) == 33
+    assert all(not command.local for command in ui.suggestions())
+    ui.composer.text = "/context"
+    assert [command.name for command in ui.suggestions()] == ["context"]
 
 
 def test_logo_is_terminal_text_with_ascii_fallback(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -83,6 +89,10 @@ def test_no_color_has_no_color_styles_and_terminal_theme_inherits_background() -
     assert all("#" not in style for _, style in theme_style("slate", True).style_rules)
     assert all("bg:" not in style for _, style in theme_style("terminal").style_rules)
     assert any("#eef2f7" in style for _, style in theme_style("light").style_rules)
+    assert any(
+        name == "base" and "#182333" in style
+        for name, style in theme_style("slate").style_rules
+    )
 
 
 def test_status_path_is_middle_truncated_to_terminal_width() -> None:
@@ -146,7 +156,7 @@ def test_artifact_diffs_compare_saved_content_and_ignore_symlinks(tmp_path: Path
 
 def test_context_is_local_and_does_not_create_state(tmp_path: Path) -> None:
     _, model, details = project_context(tmp_path)
-    assert "unconfigured" in model and "/init" in details
+    assert "unconfigured" in model.casefold() and "/init" in details
     assert not (tmp_path / ".project").exists()
     StateManager(tmp_path).init_project(project_name="Atlas")
     name, model, details = project_context(tmp_path)
@@ -226,9 +236,13 @@ def test_palette_keyboard_inserts_without_running_and_reaches_last_action(tmp_pa
                 pipe.send_text("/")
                 await eventually(lambda: ui.palette_open)
                 assert not ui.welcome
-                pipe.send_bytes(b"\x1b[B" * (len(ui.commands) - 1))
-                await eventually(lambda: ui.selection == len(ui.commands) - 1)
-                assert "exit" in "".join(t for _, t in ui._catalog())
+                source_count = sum(not item.local for item in ui.commands)
+                pipe.send_bytes(b"\x1b[B" * (source_count - 1))
+                await eventually(lambda: ui.selection == source_count - 1)
+                assert "/builds" in "".join(t for _, t in ui._catalog())
+                assert "exit" not in "".join(t for _, t in ui._catalog())
+                pipe.send_text("exit")
+                await eventually(lambda: "exit" in "".join(t for _, t in ui._catalog()))
                 pipe.send_bytes(b"\x1b")
                 await eventually(lambda: not ui.palette_open)
                 assert ui.composer.text == "" and not ui.welcome
