@@ -2,6 +2,7 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import Home from "@/components/marketing/home-page";
 import { commands } from "@/content/commands";
+import { tuiCommands } from "@/content/tui-commands";
 import { architectFlow, commandGroups } from "@/content/product-proof";
 import { providers } from "@/content/providers";
 
@@ -33,6 +34,16 @@ it("renders all registered commands once in source-backed groups", () => {
   );
   for (const command of commands)
     expect(within(cli).getByText(command.syntax)).toBeInTheDocument();
+});
+
+it("documents local conversation slash commands separately from shell commands", () => {
+  render(<Home />);
+  const cli = screen.getByRole("region", {
+    name: "The CLI is the product surface.",
+  });
+  expect(within(cli).getByText(/not registered/)).toBeVisible();
+  for (const command of tuiCommands)
+    expect(within(cli).getByText(command.syntax)).toBeVisible();
 });
 
 it("keeps live and roadmap provider states explicit in text", () => {

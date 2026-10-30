@@ -86,6 +86,14 @@ export const commandGroups = [
     primary: true,
   },
   {
+    id: "terminal-interface",
+    title: "Interactive terminal",
+    description:
+      "Open the conversation interface or use its linear-output accessibility mode.",
+    commands: selectCommands(["tui"]),
+    primary: true,
+  },
+  {
     id: "orchestration",
     title: "Preview orchestration commands",
     description:

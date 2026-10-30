@@ -107,7 +107,9 @@ test("command disclosure works without JavaScript", async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto("http://127.0.0.1:3100/#cli");
-  const disclosure = page.locator("#cli details");
+  const disclosure = page
+    .locator("#cli details")
+    .filter({ hasText: "Preview orchestration commands" });
   await disclosure.locator("summary").focus();
   await page.keyboard.press("Enter");
   await expect(disclosure.getByText("omnix build GOAL")).toBeVisible();

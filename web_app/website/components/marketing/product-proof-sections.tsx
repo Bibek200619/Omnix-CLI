@@ -5,6 +5,7 @@ import { CopyButton } from "@/components/ui/copy-button";
 import { Section } from "@/components/ui/section";
 import { providers } from "@/content/providers";
 import { commands } from "@/content/commands";
+import { tuiCommands } from "@/content/tui-commands";
 import {
   architectFlow,
   commandGroups,
@@ -33,6 +34,24 @@ function CommandRows({ groupId }: { groupId: string }) {
         </li>
       ))}
     </ol>
+  );
+}
+
+function TuiCommandRows() {
+  return (
+    <dl
+      className={styles.tuiCommandList}
+      aria-label="TUI conversation controls"
+    >
+      {tuiCommands.map((command) => (
+        <div key={command.name} className={styles.tuiCommandRow}>
+          <dt>
+            <Code>{command.syntax}</Code>
+          </dt>
+          <dd>{command.summary}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
@@ -199,6 +218,18 @@ export function CliSection() {
             </summary>
             <p>{orchestration.description}</p>
             <CommandRows groupId={orchestration.id} />
+          </details>
+          <details open className={styles.moreCommands}>
+            <summary>
+              <span>Conversation controls · TUI</span>
+              <span>{tuiCommands.length} local controls</span>
+            </summary>
+            <p>
+              These slash commands work inside the interactive Omnix terminal
+              interface. They are not registered <Code>omnix</Code> shell
+              subcommands.
+            </p>
+            <TuiCommandRows />
           </details>
         </div>
         <p className={styles.caveat}>

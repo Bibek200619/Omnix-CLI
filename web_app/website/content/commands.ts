@@ -1,6 +1,6 @@
 export type Command = { name: string; syntax: string; summary: string };
 
-// Verified against ai-cli/omnix_cli/cli/main.py at bce0d02. Arguments from handlers.
+// Verified against ai-cli/omnix_cli/cli/main.py. Arguments from handlers.
 export const commands = [
   {
     name: "init",
@@ -169,5 +169,11 @@ export const commands = [
     name: "status",
     syntax: "omnix status",
     summary: "Show Omnix account and local project link status.",
+  },
+  {
+    name: "tui",
+    syntax: "omnix tui [--workspace PATH] [--theme THEME] [--plain]",
+    summary:
+      "Open the interactive terminal, with an optional linear-output mode.",
   },
 ] as const satisfies readonly Command[];
