@@ -38,15 +38,13 @@ The current implementation includes the full Phase 0–10 engineering pipeline:
 
 ## Architecture at a glance
 
-The interactive terminal is being migrated to the architecture in
-[`CLI_ARCHITECTURE.md`](CLI_ARCHITECTURE.md). The target frontend is **Rust with
-Ratatui and Crossterm**. The existing Python 3.12+ application remains the AI engine
-for agents, providers, project state and command execution. A versioned structured
-local bridge is planned; its protocol is still under design. The current source
-preview and `uv` installation instructions below still refer to the Python runtime.
-The first Rust UI prototype is in [`rust-tui/`](rust-tui/); it is not the default
-`omnix` command and does not call the Python engine yet. Preview it with `cd rust-tui`
-and `cargo run` after installing Rust 1.88 or newer.
+The interactive terminal uses **Rust with Ratatui and Crossterm**. The Python 3.12+
+application remains the AI engine for agents, providers, project state and command
+execution. The Rust frontend communicates with it through a versioned JSON Lines
+bridge. The Rust binary is named `omnix`: with no arguments it opens the TUI; existing
+subcommands such as `omnix init` are forwarded to the installed Python engine. Published
+release artifacts and the installer are not available until a verified GitHub Release
+is published.
 
 This migration is tracked in [#69](https://github.com/Bibek200619/Omnix-CLI/issues/69);
 the Rust-to-Python contract is [#70](https://github.com/Bibek200619/Omnix-CLI/issues/70).
@@ -83,8 +81,8 @@ Omnix CLI
 
 ## Quick start from source
 
-There is no public package-registry release yet. For development or preview use,
-work from the repository source:
+There is no published release yet. For development, install the Python engine and run
+the Rust frontend from the checkout:
 
 ```bash
 git clone https://github.com/Bibek200619/Omnix-CLI.git
@@ -93,22 +91,23 @@ uv sync --extra dev
 uv run omnix --help
 ```
 
-To install the checkout's `omnix` command into uv's tool environment, run this
-from the repository root:
+To run the Rust frontend against that engine from the repository root:
 
 ```bash
-uv tool install ./ai-cli
-uv tool update-shell
-omnix --version
-omnix
+cd ..
+uv sync --directory ai-cli --extra dev
+OMNIX_PYTHON="$PWD/ai-cli/.venv/bin/python" cargo run --manifest-path rust-tui/Cargo.toml
 ```
 
-Restart the terminal if `omnix` is not found after the install.
+Until release assets are verified, do not use a public download/install command. The
+release workflow targets macOS arm64 and Linux x86_64, and requires Python 3.12+ at
+runtime. Linux arm64, Intel macOS, and Windows are not yet supported release targets.
+The install, upgrade, and uninstall behavior is documented in
+[`packaging/README.md`](packaging/README.md).
 
-If `uv` is not installed, use an equivalent Python 3.12+ virtual environment.
-
-Open the interactive terminal with `uv run omnix` (or `omnix tui --workspace
-/path/to/project` from an installed source environment). The new interface combines
+The source Python command remains available with `uv run --directory ai-cli omnix`.
+The Rust command opens the interactive terminal and forwards registered subcommands to
+the installed engine. The interface combines
 a pixel welcome mark, searchable `/` catalog, conversation transcript, optional
 project context and saved-artifact diffs. Use `omnix tui --plain` for linear output.
 See [the terminal interaction guide](ai-cli/docs/TUI.md).
@@ -257,10 +256,13 @@ uv run ruff check .
 uv run mypy omnix_cli
 ```
 
-The Rust frontend, engine bridge and packaged `omnix` launcher are migration work;
-their build and verification commands will be documented after the workspace and
-protocol are established. See [#71](https://github.com/Bibek200619/Omnix-CLI/issues/71)
-and [#72](https://github.com/Bibek200619/Omnix-CLI/issues/72).
+For the Rust frontend and engine bridge, run `cargo fmt --check`,
+`cargo test --locked --manifest-path rust-tui/Cargo.toml`, and
+`cargo build --locked --release --manifest-path rust-tui/Cargo.toml`. The
+`cli-package-check` workflow verifies a clean Python wheel installation and the unified
+entry point on Linux x86_64 and macOS arm64. See
+[#71](https://github.com/Bibek200619/Omnix-CLI/issues/71) and
+[#72](https://github.com/Bibek200619/Omnix-CLI/issues/72).
 
 For the website, run its repository-defined quality scripts from `web_app/website/` before opening or merging a PR.
 

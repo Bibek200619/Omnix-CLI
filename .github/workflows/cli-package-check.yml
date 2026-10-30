@@ -1,0 +1,85 @@
+name: CLI package checks
+
+on:
+  pull_request:
+    paths:
+      - "ai-cli/**"
+      - "rust-tui/**"
+      - "packaging/**"
+      - "CLI_ARCHITECTURE.md"
+      - ".github/workflows/cli-package-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package-smoke:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+            target: linux-x86_64
+            python: ai-cli/.venv/bin/python
+            binary: rust-tui/target/release/omnix
+          - runner: macos-14
+            target: macos-aarch64
+            python: ai-cli/.venv/bin/python
+            binary: rust-tui/target/release/omnix
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        run: python -m pip install "uv==0.11.22"
+
+      - name: Set up Rust
+        run: rustup update stable
+
+      - name: Build and install engine into a clean environment
+        run: |
+          python -m pip install --upgrade build
+          python -m build --wheel --outdir dist ai-cli
+          uv export --directory ai-cli --locked --no-dev --no-emit-project \
+            --format requirements.txt --output-file dist/requirements.txt
+          python -m venv ai-cli/.venv
+          ai-cli/.venv/bin/python -m pip install --require-hashes -r dist/requirements.txt
+          ai-cli/.venv/bin/python -m pip install --no-deps dist/*.whl
+
+      - name: Verify engine interruption and failure recovery
+        env:
+          UV_PROJECT_ENVIRONMENT: ${{ runner.temp }}/omnix-test-environment
+        run: >-
+          uv run --directory ai-cli --extra dev pytest -q
+          tests/test_tui.py tests/test_tui_terminal.py tests/test_tui_bridge.py
+
+      - name: Build and verify the unified entry point
+        env:
+          OMNIX_PYTHON: ${{ matrix.python }}
+          OMNIX_BINARY: ${{ matrix.binary }}
+        run: |
+          rustfmt --check --edition 2024 rust-tui/src/main.rs
+          cargo test --locked --manifest-path rust-tui/Cargo.toml
+          cargo build --locked --release --manifest-path rust-tui/Cargo.toml
+          "$OMNIX_BINARY" --version
+          "$OMNIX_BINARY" --help >/dev/null
+          "$OMNIX_BINARY" init --project-name "Package smoke" --workspace "$RUNNER_TEMP/omnix-package-smoke"
+          test -f "$RUNNER_TEMP/omnix-package-smoke/.project/project.memory.json"
+          set -o pipefail
+          printf '' | TERM=dumb "$OMNIX_BINARY" | tee "$RUNNER_TEMP/omnix-tui-startup.txt"
+          grep -q "Omnix CLI" "$RUNNER_TEMP/omnix-tui-startup.txt"
+
+      - name: Verify local clean-install bundle, PATH, upgrade and uninstall
+        env:
+          OMNIX_BINARY: ${{ matrix.binary }}
+        run: |
+          python packaging/verify-install.py \
+            --binary "$OMNIX_BINARY" \
+            --wheel dist/*.whl \
+            --requirements dist/requirements.txt \
+            --target "${{ matrix.target }}"

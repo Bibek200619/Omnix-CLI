@@ -95,14 +95,17 @@ authorization remain in the existing integration code.
 
 ## Rust frontend migration
 
-The separate `rust-tui/` binary uses the same registered Python command handlers via
-the versioned JSON Lines bridge in `omnix_cli.bridge`. It loads recent conversation
+The Rust `omnix` binary uses the same registered Python command handlers via the
+versioned JSON Lines bridge in `omnix_cli.bridge`. It loads recent conversation
 memory, project/model context and the command catalog at startup; streams output;
 supports cancellation and native terminal handoff; and displays collapsible,
-line-numbered changes to saved generated artifacts. It is not yet the default `omnix`
-entry point; Python remains the production runtime while command parity and platform
-packaging are completed. Run it from the repository with
-`cargo run --manifest-path rust-tui/Cargo.toml`.
+line-numbered changes to saved generated artifacts. The binary opens the TUI with no
+arguments and forwards existing subcommands to the Python engine. The Python console
+entry point remains available as a source-development fallback. Combined release
+assets are not published yet; target support and Python runtime requirements are
+documented in [`../../packaging/README.md`](../../packaging/README.md). Build from the
+repository with `cargo run --manifest-path rust-tui/Cargo.toml` after installing the
+engine into `ai-cli/.venv/`.
 
 ## Verification
 
