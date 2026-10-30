@@ -46,7 +46,7 @@ jobs:
           python -m pip install --upgrade build
           python -m build --wheel --outdir dist ai-cli
           uv export --directory ai-cli --locked --no-dev --no-emit-project \
-            --format requirements.txt --output-file dist/requirements.txt
+            --format requirements.txt --output-file ../dist/requirements.txt
           python -m venv ai-cli/.venv
           ai-cli/.venv/bin/python -m pip install --require-hashes -r dist/requirements.txt
           ai-cli/.venv/bin/python -m pip install --no-deps dist/*.whl

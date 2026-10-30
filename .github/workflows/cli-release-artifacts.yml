@@ -60,7 +60,7 @@ jobs:
           python -m pip install --upgrade build
           python -m build --wheel --outdir dist ai-cli
           uv export --directory ai-cli --locked --no-dev --no-emit-project \
-            --format requirements.txt --output-file dist/requirements.txt
+            --format requirements.txt --output-file ../dist/requirements.txt
 
       - name: Build Rust terminal frontend
         run: cargo build --locked --release --manifest-path rust-tui/Cargo.toml
