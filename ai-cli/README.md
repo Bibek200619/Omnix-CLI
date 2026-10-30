@@ -40,10 +40,32 @@ Phase 3 is implemented. It provides:
 - `omnix architect`
 - `omnix blueprint`
 
-Future phases add planning, worker agents, integration, QA, and repair loops.
-Phase boundaries are enforced in code: the Master Agent records and discusses
-project context, while the Architect Agent generates architecture blueprints but
-does not generate project code.
+Dedicated commands also implement planning, workers, integration, QA, repair and
+build orchestration. Master chat records and discusses project context; specialist
+workflows require explicit invocation. Saved generated artifacts and model-assisted
+reports do not establish that application code was applied, tested or deployed.
+
+## Interactive terminal
+
+Run `omnix` in a terminal to open the new conversation interface, or use
+`omnix tui --workspace /path/to/project`. `omnix chat` without a message opens
+the same interface. Existing commands and JSON output remain scriptable.
+
+The block/pixel welcome mark disappears on the first input or output. Type `/`
+for a searchable command catalog; arrows select, Enter/Tab inserts, and a second
+Enter runs. Normal messages talk to Master. Project setup, models, memory,
+blueprints, tasks, artifacts, reports and account commands use their existing
+handlers. `/context` opens project context; `/help` lists keyboard guidance.
+
+Saved generated-artifact changes have green `+` additions, red `-` deletions,
+line numbers and expandable details (`/changes`). These are artifact-content
+comparisons, not a new source-code apply feature.
+
+Use `omnix tui --plain` for linear output without redraw, `--theme light` or
+`--theme terminal` for alternate themes, `NO_COLOR=1` to disable colors, and
+`OMNIX_ASCII=1` to use ASCII logo blocks. Ctrl+C interrupts work; twice at idle
+exits. Workspace selection and remote-session approval retain their native prompts.
+See [the interaction contract](docs/TUI.md) for details.
 
 ## Development
 
