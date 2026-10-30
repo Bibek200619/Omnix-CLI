@@ -6,6 +6,10 @@ rust-version = "1.88"
 description = "Rust terminal frontend for Omnix CLI"
 publish = false
 
+[[bin]]
+name = "omnix"
+path = "src/main.rs"
+
 [dependencies]
 crossterm = "0.29"
 ratatui = { version = "0.30.2", default-features = false, features = ["crossterm"] }

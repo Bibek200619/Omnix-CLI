@@ -5,14 +5,14 @@ single Master Agent while specialized agents collaborate behind the scenes.
 
 ## Runtime and frontend migration
 
-This directory contains the current Python 3.12+ CLI, terminal UI and AI engine.
-The Rust frontend lives in `../rust-tui/` and uses Ratatui/Crossterm. It is a separate
-`omnix-tui` binary, connected to this engine through the versioned JSON Lines bridge
-in `omnix_cli.bridge`. It is not the default `omnix` entrypoint yet. Agents, providers,
-project state, command handlers and engineering execution remain in this Python engine
-during the migration. Keep the Python terminal UI available until command parity and
-platform packaging are complete. See the [migration architecture](../CLI_ARCHITECTURE.md)
-and [tracking issue #69](https://github.com/Bibek200619/Omnix-CLI/issues/69).
+This directory contains the Python 3.12+ command engine and compatibility CLI. The
+Rust frontend in `../rust-tui/` builds the `omnix` binary. It opens the terminal UI
+without arguments and forwards existing subcommands to this engine. The Rust bridge
+uses the versioned JSON Lines protocol in `omnix_cli.bridge`. Agents, providers,
+project state, command handlers and engineering execution remain in Python. The Python
+console entry point remains available for development and fallback use. See the
+[migration architecture](../CLI_ARCHITECTURE.md) and
+[tracking issue #69](https://github.com/Bibek200619/Omnix-CLI/issues/69).
 
 Phase 0 is implemented. It provides:
 
@@ -88,8 +88,8 @@ See [the interaction contract](docs/TUI.md) for details.
 
 ## Install the `omnix` command
 
-Python 3.12+ is required. From a checkout of this repository, install the CLI as a
-standalone `uv` tool:
+Python 3.12+ is required by the engine. From a checkout, install the Python fallback
+CLI as a standalone `uv` tool:
 
 ```bash
 uv tool install ./ai-cli
@@ -99,9 +99,9 @@ omnix
 ```
 
 `uv tool update-shell` adds uv's executable directory to supported shell startup
-files when needed. Restart the terminal if `omnix` is not found. The package
-defines the `omnix` console entry point; a public package-index release is not
-available yet.
+files when needed. Restart the terminal if `omnix` is not found. The Python package
+defines an `omnix` console entry point for fallback use. Combined Rust/engine release
+bundles are not available until a verified GitHub Release is published.
 
 ## Development
 

@@ -216,15 +216,7 @@ struct EngineBridge {
 impl EngineBridge {
     fn spawn(workspace: &PathBuf) -> io::Result<Self> {
         let source = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../ai-cli");
-        let local_python = if cfg!(windows) {
-            source.join(".venv/Scripts/python.exe")
-        } else {
-            source.join(".venv/bin/python")
-        };
-        let python = env::var_os("OMNIX_PYTHON")
-            .map(PathBuf::from)
-            .or_else(|| local_python.exists().then_some(local_python))
-            .unwrap_or_else(|| PathBuf::from("python3"));
+        let python = engine_python();
         let mut process = ProcessCommand::new(python);
         process
             .args(["-m", "omnix_cli.bridge", "--workspace"])
@@ -1073,7 +1065,14 @@ impl Drop for TerminalSession {
 }
 
 fn main() -> io::Result<()> {
-    let Some((workspace, plain)) = parse_args()? else {
+    let mut args = env::args_os().skip(1).collect::<Vec<_>>();
+    if should_run_engine_cli(&args) {
+        return run_engine_cli(&args);
+    }
+    if args.first().is_some_and(|argument| argument == "tui") {
+        args.remove(0);
+    }
+    let Some((workspace, plain)) = parse_args(args)? else {
         return Ok(());
     };
     if plain {
@@ -1208,14 +1207,36 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-fn parse_args() -> io::Result<Option<(PathBuf, bool)>> {
-    let mut args = env::args_os().skip(1);
+fn should_run_engine_cli(args: &[std::ffi::OsString]) -> bool {
+    if args.iter().any(|argument| argument == "--theme") {
+        return true;
+    }
+    let Some(first) = args.first() else {
+        return false;
+    };
+    if first == "tui" {
+        return false;
+    }
+    let mut index = 0;
+    while index < args.len() {
+        match args[index].to_str() {
+            Some("--plain") => index += 1,
+            Some("--workspace" | "-w") if index + 1 < args.len() => index += 2,
+            Some(value) if value.starts_with("--workspace=") => index += 1,
+            _ => return true,
+        }
+    }
+    false
+}
+
+fn parse_args(args: Vec<std::ffi::OsString>) -> io::Result<Option<(PathBuf, bool)>> {
+    let mut args = args.into_iter();
     let mut workspace = env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
     let mut plain = env::var("TERM").is_ok_and(|term| term == "dumb");
     while let Some(arg) = args.next() {
         if arg == "--help" || arg == "-h" {
             println!(
-                "Omnix terminal frontend\n\nUsage: omnix-tui [--workspace PATH] [--plain]\n\nOptions:\n  -w, --workspace PATH  Project workspace (defaults to the current directory)\n  --plain               Use linear, unstyled output\n  -h, --help            Show this help"
+                "Omnix CLI\n\nUsage: omnix [--workspace PATH] [--plain]\n       omnix <command> [arguments]\n\nOptions:\n  -w, --workspace PATH  Project workspace (defaults to the current directory)\n  --plain               Use linear, unstyled output\n  -h, --help            Show command help"
             );
             return Ok(None);
         }
@@ -1249,6 +1270,42 @@ fn parse_args() -> io::Result<Option<(PathBuf, bool)>> {
         ));
     }
     Ok(Some((workspace, plain)))
+}
+
+fn run_engine_cli(args: &[std::ffi::OsString]) -> io::Result<()> {
+    let python = engine_python();
+    let mut command = ProcessCommand::new(python);
+    command
+        .args(["-m", "omnix_cli.cli.main"])
+        .args(args)
+        .stdin(Stdio::inherit())
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit());
+    let status = command.status()?;
+    if status.success() {
+        Ok(())
+    } else {
+        std::process::exit(status.code().unwrap_or(1));
+    }
+}
+
+fn engine_python() -> PathBuf {
+    if let Some(python) = env::var_os("OMNIX_PYTHON") {
+        return PathBuf::from(python);
+    }
+    let source = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../ai-cli");
+    let local_python = if cfg!(windows) {
+        source.join(".venv/Scripts/python.exe")
+    } else {
+        source.join(".venv/bin/python")
+    };
+    if local_python.exists() {
+        local_python
+    } else if cfg!(windows) {
+        PathBuf::from("python")
+    } else {
+        PathBuf::from("python3")
+    }
 }
 
 fn run_plain(workspace: PathBuf) -> io::Result<()> {
@@ -2205,5 +2262,31 @@ mod tests {
         assert_eq!(bridge_request_type(" /new "), "session_new");
         assert_eq!(bridge_request_type("/resume"), "session_resume");
         assert_eq!(bridge_request_type("/logout"), "run");
+    }
+
+    #[test]
+    fn unified_entry_routes_tui_and_flags_to_rust_and_commands_to_python() {
+        let args = |items: &[&str]| {
+            items
+                .iter()
+                .map(std::ffi::OsString::from)
+                .collect::<Vec<_>>()
+        };
+        assert!(!should_run_engine_cli(&args(&[])));
+        assert!(!should_run_engine_cli(&args(&["--workspace", "."])));
+        assert!(!should_run_engine_cli(&args(&["tui", "--plain"])));
+        assert!(should_run_engine_cli(&args(&[
+            "--workspace",
+            ".",
+            "chat",
+            "hello"
+        ])));
+        assert!(should_run_engine_cli(&args(&["--version"])));
+        assert!(should_run_engine_cli(&args(&[
+            "init",
+            "--project-name",
+            "demo"
+        ])));
+        assert!(should_run_engine_cli(&args(&["tui", "--theme", "blue"])));
     }
 }

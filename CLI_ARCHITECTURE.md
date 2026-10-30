@@ -1,9 +1,10 @@
 # Omnix CLI architecture migration
 
-**Status:** approved direction; the Rust TUI now has a versioned local bridge to the
-Python command engine. The current production CLI runtime remains Python; `omnix-tui`
-is not yet the default `omnix` entry point or a distributable release. It uses Rust
-1.88+, Ratatui 0.30.2 and Crossterm 0.29.
+**Status:** the Rust TUI builds the `omnix` binary and connects to the Python engine
+through the versioned local bridge. The binary defaults to the TUI and forwards
+existing subcommands to Python. Release automation targets macOS arm64 and Linux
+x86_64. No combined release artifact is published yet. It uses Rust 1.88+, Ratatui
+0.30.2 and Crossterm 0.29.
 
 ## Target architecture
 
@@ -55,14 +56,15 @@ for further contract hardening and protocol tests.
    terminal layouts, keyboard interaction, and visual QA.
 3. Finish command parity through the bridge and preserve explicit interactive handoff
    for commands that need terminal input while retaining consent behavior.
-4. Package one `omnix` entry point with a documented Python runtime strategy for each
-   supported platform.
-5. Compare behavior and release readiness before removing or demoting the Python TUI.
+4. Publish verified combined `omnix` and Python-engine bundles for macOS arm64 and
+   Linux x86_64. The installer provisions the engine in an isolated virtual
+   environment and requires Python 3.12 or newer; project state remains outside the install.
+5. Extend the release matrix only after clean-machine checks cover the target platform.
+6. Compare behavior and release readiness before removing or demoting the Python TUI.
 
-The existing Python terminal UI remains available as a fallback through parity and
-packaging work. The active product version and stable-release state remain governed by
-the Python package metadata and verified release artifacts; a Rust crate alone is not
-a product release.
+The existing Python console entry point remains available as a fallback. The active
+product version and stable-release state remain governed by the Python package
+metadata and verified release artifacts; a Rust crate alone is not a product release.
 
 ## Tracking
 

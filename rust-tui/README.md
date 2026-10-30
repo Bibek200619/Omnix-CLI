@@ -1,8 +1,8 @@
 # Omnix Rust terminal frontend
 
-This is the Rust terminal frontend for Omnix. It currently builds as the separate
-`omnix-tui` binary; Python remains the production `omnix` entry point until command
-parity and cross-platform packaging are complete.
+This is the Rust terminal frontend for Omnix. It builds as the `omnix` binary. With no
+arguments it opens the TUI; existing CLI commands are forwarded to the Python engine.
+Combined release assets are not published until a verified GitHub Release exists.
 
 ## Stack
 
@@ -45,16 +45,19 @@ Use `--plain` for linear, unstyled interaction; `TERM=dumb` selects it automatic
 ## Run the Rust terminal UI
 
 ```sh
-cargo run
-cargo run -- --workspace PATH
-cargo run -- --plain
+uv sync --directory ../ai-cli --extra dev
+OMNIX_PYTHON="../ai-cli/.venv/bin/python" cargo run
+OMNIX_PYTHON="../ai-cli/.venv/bin/python" cargo run -- --workspace PATH
+OMNIX_PYTHON="../ai-cli/.venv/bin/python" cargo run -- --plain
+OMNIX_PYTHON="../ai-cli/.venv/bin/python" cargo run -- --version
 ```
 
 The bridge uses `OMNIX_PYTHON` when set, otherwise it prefers `ai-cli/.venv/` in a
 source checkout and falls back to `python3`. It loads the sibling `ai-cli/` package.
-`TERM=dumb` selects linear output automatically. The current Python CLI remains the
-production entry point until parity and packaging work in
-[issue #69](https://github.com/Bibek200619/Omnix-CLI/issues/69) is complete. See
+`TERM=dumb` selects linear output automatically. The same binary forwards existing
+commands such as `omnix init` to Python. `omnix tui --theme blue` uses the Python
+compatibility UI because the Rust frontend inherits terminal colors. See the
+[packaging guide](../packaging/README.md) and
 [`../CLI_ARCHITECTURE.md`](../CLI_ARCHITECTURE.md).
 
 The Rust UI loads recent conversation memory, project/model context and the real
