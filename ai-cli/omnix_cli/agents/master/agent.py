@@ -134,28 +134,29 @@ class MasterAgent:
             latest_goal = active_goals[-1]
             return (
                 f"You previously recorded a goal to {latest_goal.title}. "
-                "Implementation agents are not available yet in Phase 2, but I can "
-                "continue tracking goals, decisions, and project context."
+                "I can continue tracking goals, decisions, and project context. "
+                "Invoke specialist workflows explicitly with `omnix architect`, "
+                "`omnix plan`, or `omnix build` when ready."
             )
 
         if recorded_goal is not None:
             return (
                 f"Master Agent recorded the goal: {recorded_goal.title}. "
-                "Phase 2 persistent memory is active. Configure the master role with "
+                "Project memory is active. Configure the master role with "
                 "`omnix config --set master=provider:model` for model-backed "
-                "discussion. Implementation agents are not available yet."
+                "discussion. Invoke `omnix architect` explicitly to refine the blueprint."
             )
 
         if recorded_decisions:
             decision_text = ", ".join(decision.title for decision in recorded_decisions)
             return (
                 f"Master Agent recorded the decision: {decision_text}. "
-                "Phase 2 persistent memory is active. Implementation agents are not "
-                "available yet."
+                "The decision is saved in project memory. Specialist workflows run "
+                "only when you invoke them."
             )
 
         return (
-            "Master Agent recorded the conversation. Phase 2 persistent memory is "
+            "Master Agent recorded the conversation. Project memory is "
             "active. Configure the master role with "
             "`omnix config --set master=provider:model` for model-backed discussion."
         )

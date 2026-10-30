@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
 from typing import Annotated
 
 import typer
@@ -37,6 +39,7 @@ from omnix_cli.cli.commands.plan import plan_command
 from omnix_cli.cli.commands.qa import qa_command, quality_command
 from omnix_cli.cli.commands.repair import repair_command, repairs_command
 from omnix_cli.cli.commands.tasks import tasks_command
+from omnix_cli.cli.commands.tui import Theme, open_terminal, tui_command
 from omnix_cli.core.logging import configure_logging
 from omnix_cli.integrations.omnix_sessions import (
     history_sessions_command,
@@ -57,12 +60,14 @@ configure_logging()
 app = typer.Typer(
     name="omnix",
     help="Omnix CLI.",
-    no_args_is_help=True,
+    no_args_is_help=False,
+    invoke_without_command=True,
 )
 
 
 @app.callback()
 def main_callback(
+    ctx: typer.Context,
     version: Annotated[
         bool,
         typer.Option(
@@ -72,8 +77,20 @@ def main_callback(
             is_eager=True,
         ),
     ] = False,
+    workspace: Annotated[
+        Path, typer.Option("--workspace", "-w", file_okay=False, help="Interactive workspace.")
+    ] = Path("."),
+    plain: Annotated[
+        bool, typer.Option(help="Start an interactive session with linear output.")
+    ] = False,
+    theme: Annotated[Theme, typer.Option(help="Interactive terminal theme.")] = Theme.TERMINAL,
 ) -> None:
     """Omnix CLI command group."""
+    if ctx.invoked_subcommand is None:
+        if plain or (sys.stdin.isatty() and sys.stdout.isatty()):
+            open_terminal(workspace, theme.value, plain)
+        else:
+            typer.echo(ctx.get_help())
 
 
 app.command("init")(init_command)
@@ -111,6 +128,7 @@ app.add_typer(sessions_app, name="sessions")
 app.command("link")(link_command)
 app.command("unlink")(unlink_command)
 app.command("status")(omnix_status_command)
+app.command("tui")(tui_command)
 
 
 if __name__ == "__main__":

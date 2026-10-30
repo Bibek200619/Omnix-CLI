@@ -201,6 +201,30 @@
   border-top: var(--border-width) solid var(--border-subtle);
 }
 
+.tuiCommandList {
+  margin: 0;
+  padding-inline: var(--space-4);
+}
+
+.tuiCommandRow {
+  display: grid;
+  gap: var(--space-2);
+  padding-block: var(--space-4);
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+
+.tuiCommandRow dt code {
+  background: transparent;
+  padding: 0;
+  font-size: var(--text-small);
+}
+
+.tuiCommandRow dd {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--text-small);
+}
+
 .commandRow {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

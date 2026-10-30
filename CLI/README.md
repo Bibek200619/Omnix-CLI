@@ -2,6 +2,17 @@
 
 OmniX CLI is a dependency-free MVP for the multi-agent terminal workflow described in `PRD.md`.
 
+## Stack status
+
+This directory is the earlier Node.js prototype and is not the active AI-engine
+implementation. The current engine and working CLI commands live in `../ai-cli/`
+and use Python 3.12+. The Rust frontend prototype is in `../rust-tui/` and uses
+Ratatui and Crossterm; the bridge to the Python engine is still under design. The
+approved target connects that frontend to the Python engine through a versioned
+structured local interface. This prototype's deterministic provider
+placeholders are not part of the target runtime. See
+[`../CLI_ARCHITECTURE.md`](../CLI_ARCHITECTURE.md).
+
 ## Quick Start
 
 ```bash
