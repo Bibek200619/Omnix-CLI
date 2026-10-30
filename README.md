@@ -81,6 +81,12 @@ uv run omnix --help
 
 If `uv` is not installed, use an equivalent Python 3.12+ virtual environment.
 
+Open the interactive terminal with `uv run omnix` (or `omnix tui --workspace
+/path/to/project` from an installed source environment). The new interface combines
+a pixel welcome mark, searchable `/` catalog, conversation transcript, optional
+project context and saved-artifact diffs. Use `omnix tui --plain` for linear output.
+See [the terminal interaction guide](ai-cli/docs/TUI.md).
+
 Initialize a project:
 
 ```bash

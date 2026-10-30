@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import sys
 from pathlib import Path
 from typing import Annotated
 
@@ -30,6 +31,12 @@ def chat_command(
     ] = Path("."),
 ) -> None:
     """Send a message to the state-aware Master Agent."""
+
+    if message is None and sys.stdin.isatty() and sys.stdout.isatty():
+        from omnix_cli.cli.commands.tui import open_terminal
+
+        open_terminal(workspace)
+        return
 
     state_manager = StateManager(workspace)
     memory_manager = MemoryManager(state_manager)
