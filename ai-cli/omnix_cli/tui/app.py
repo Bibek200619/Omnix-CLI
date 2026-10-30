@@ -11,6 +11,7 @@ from pathlib import Path
 import typer
 from prompt_toolkit.application import Application, run_in_terminal
 from prompt_toolkit.buffer import Buffer
+from prompt_toolkit.cursor_shapes import CursorShape
 from prompt_toolkit.document import Document
 from prompt_toolkit.filters import Condition, has_focus
 from prompt_toolkit.formatted_text import StyleAndTextTuples
@@ -62,7 +63,7 @@ HELP = (
     "Plain messages go to Master. Specialists run only when invoked.\n"
     "Generated artifacts are not applied application source or executed tests.\n"
     "Use // at the start to send an absolute path as a message.\n"
-    "/theme slate|light|terminal|mono changes this session's theme."
+    "/theme black|blue|white|terminal|mono changes this session's theme."
 )
 
 
@@ -94,7 +95,7 @@ class TerminalApp:
         self,
         group: TyperGroup,
         workspace: Path,
-        theme: str = "slate",
+        theme: str = "black",
         *,
         input: Input | None = None,
         output: Output | None = None,
@@ -182,12 +183,13 @@ class TerminalApp:
             layout=Layout(root, focused_element=self.composer),
             key_bindings=self._bindings(),
             full_screen=True,
+            cursor=CursorShape.BLINKING_BLOCK,
             style=DynamicStyle(lambda: theme_style(self.theme, self.no_color)),
             color_depth=(
                 ColorDepth.DEPTH_1_BIT
                 if self.no_color or theme == "mono"
                 else ColorDepth.DEPTH_24_BIT
-                if theme in {"slate", "light"}
+                if theme in {"black", "blue", "white", "slate", "light"}
                 else None
             ),
             input=input,
@@ -490,7 +492,7 @@ class TerminalApp:
                 self.app.layout.focus(self.composer)
         elif command.name == "theme":
             if len(args) != 1 or args[0] not in THEMES:
-                self.entries.append(Entry("Theme", "Use /theme slate|light|terminal|mono."))
+                self.entries.append(Entry("Theme", "Use /theme black|blue|white|terminal|mono."))
             else:
                 self.theme = args[0]
                 self.hint = f"Theme: {self.theme} (this session)."
@@ -646,7 +648,7 @@ def run_plain(group: TyperGroup, workspace: Path) -> None:
             typer.echo("Interrupted. Inspect project state before retrying.")
 
 
-def launch(group: TyperGroup, workspace: Path, theme: str = "slate", plain: bool = False) -> None:
+def launch(group: TyperGroup, workspace: Path, theme: str = "black", plain: bool = False) -> None:
     workspace = workspace.expanduser().resolve()
     if not workspace.is_dir():
         raise typer.BadParameter(

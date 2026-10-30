@@ -83,7 +83,7 @@ def main_callback(
     plain: Annotated[
         bool, typer.Option(help="Start an interactive session with linear output.")
     ] = False,
-    theme: Annotated[Theme, typer.Option(help="Interactive terminal theme.")] = Theme.SLATE,
+    theme: Annotated[Theme, typer.Option(help="Interactive terminal theme.")] = Theme.BLACK,
 ) -> None:
     """Omnix CLI command group."""
     if ctx.invoked_subcommand is None:

@@ -38,6 +38,19 @@ The current implementation includes the full Phase 0–10 engineering pipeline:
 
 ## Architecture at a glance
 
+The interactive terminal is being migrated to the architecture in
+[`CLI_ARCHITECTURE.md`](CLI_ARCHITECTURE.md). The target frontend is **Rust with
+Ratatui and Crossterm**. The existing Python 3.12+ application remains the AI engine
+for agents, providers, project state and command execution. A versioned structured
+local bridge is planned; its protocol is still under design. The current source
+preview and `uv` installation instructions below still refer to the Python runtime.
+The first Rust UI prototype is in [`rust-tui/`](rust-tui/); it is not the default
+`omnix` command and does not call the Python engine yet. Preview it with `cd rust-tui`
+and `cargo run` after installing Rust 1.88 or newer.
+
+This migration is tracked in [#69](https://github.com/Bibek200619/Omnix-CLI/issues/69);
+the Rust-to-Python contract is [#70](https://github.com/Bibek200619/Omnix-CLI/issues/70).
+
 ```text
 Developer
    │
@@ -70,7 +83,8 @@ Omnix CLI
 
 ## Quick start from source
 
-A stable package-registry/binary installation path has not been verified yet. For development or preview use, work from the repository source:
+There is no public package-registry release yet. For development or preview use,
+work from the repository source:
 
 ```bash
 git clone https://github.com/Bibek200619/Omnix-CLI.git
@@ -78,6 +92,18 @@ cd Omnix-CLI/ai-cli
 uv sync --extra dev
 uv run omnix --help
 ```
+
+To install the checkout's `omnix` command into uv's tool environment, run this
+from the repository root:
+
+```bash
+uv tool install ./ai-cli
+uv tool update-shell
+omnix --version
+omnix
+```
+
+Restart the terminal if `omnix` is not found after the install.
 
 If `uv` is not installed, use an equivalent Python 3.12+ virtual environment.
 
@@ -231,6 +257,11 @@ uv run ruff check .
 uv run mypy omnix_cli
 ```
 
+The Rust frontend, engine bridge and packaged `omnix` launcher are migration work;
+their build and verification commands will be documented after the workspace and
+protocol are established. See [#71](https://github.com/Bibek200619/Omnix-CLI/issues/71)
+and [#72](https://github.com/Bibek200619/Omnix-CLI/issues/72).
+
 For the website, run its repository-defined quality scripts from `web_app/website/` before opening or merging a PR.
 
 ## Repository workflow
@@ -240,6 +271,10 @@ Changes intended for `main` should be developed on a feature/fix/chore branch an
 Current project tracking is organized through GitHub Issues and the shared **Omnix Development Board**:
 
 - Omnix CLI website tracker: [#44](https://github.com/Bibek200619/Omnix-CLI/issues/44)
+- Rust terminal frontend migration: [#69](https://github.com/Bibek200619/Omnix-CLI/issues/69)
+- Ratatui/Crossterm frontend: [#71](https://github.com/Bibek200619/Omnix-CLI/issues/71)
+- CLI packaging and runtime: [#72](https://github.com/Bibek200619/Omnix-CLI/issues/72)
+- Stack documentation: [#73](https://github.com/Bibek200619/Omnix-CLI/issues/73)
 - Omnix CLI ↔ Omnix integration epic: [#45](https://github.com/Bibek200619/Omnix-CLI/issues/45)
 - Shared board-link tracker: [#54](https://github.com/Bibek200619/Omnix-CLI/issues/54)
 - Omnix-side board anchor: [Omnix #224](https://github.com/Bibek200619/Omnix/issues/224)
@@ -258,7 +293,7 @@ workspace / identity / collaboration / permissions / approvals / cloud coordinat
                             │ versioned integration contract
                             ▼
 Omnix CLI
-local software-engineering execution / agents / artifacts / QA / repair / builds
+Rust terminal frontend (target) / Python engine (current agents, artifacts, QA, repair, builds)
 ```
 
 The integration roadmap deliberately preserves standalone/offline CLI operation and avoids turning Omnix into a generic remote shell. See [Omnix-CLI #45](https://github.com/Bibek200619/Omnix-CLI/issues/45) and [Omnix #217](https://github.com/Bibek200619/Omnix/issues/217).
@@ -269,7 +304,9 @@ The proposed v1 contract is documented in the [Omnix + Omnix CLI Integration RFC
 
 ```text
 Omnix-CLI/
-├── ai-cli/                 # Python Omnix CLI implementation
+├── ai-cli/                 # Current Python CLI and AI engine; retained during Rust TUI migration
+├── rust-tui/               # Rust/Ratatui frontend prototype (engine bridge pending)
+├── CLI_ARCHITECTURE.md     # Rust frontend + Python engine migration plan
 ├── web_app/
 │   ├── *.md                # Website/product/design specifications
 │   ├── ref/                # Visual references and original brand assets

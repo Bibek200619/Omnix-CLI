@@ -17,10 +17,10 @@ interactive prompt; existing explicit commands and their JSON output remain supp
   Existing conversations open directly in the transcript.
 - A persistent composer sits below the transcript. The optional context panel uses
   a rail at 110 columns and a separate view at narrower widths.
-- Slate, light, terminal-default and monochrome themes use semantic colors. `NO_COLOR`
+- Black is the default theme. Blue and white themes are available with `/theme blue`
+  and `/theme white` (`light` is a white alias); terminal-default and monochrome
+  remain available. The composer uses a native blinking block cursor. `NO_COLOR`
   disables color, and an ASCII fallback supports terminals without block glyphs.
-  Slate and light request the reference RGB palette; terminal-default inherits the
-  user's terminal colors.
 
 ## Commands and supporting views
 

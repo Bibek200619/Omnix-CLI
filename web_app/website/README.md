@@ -55,6 +55,11 @@ ignored under `test-results/` and `playwright-report/`.
 - `components/marketing/install-section.tsx`: verified source setup and explicit
   release/failure states. The async route resolves public GitHub metadata server-side;
   the home route revalidates hourly and preserves setup if GitHub is unavailable.
+- The website remains a Next.js/React/TypeScript application. Separately, the CLI's
+  interactive frontend has a Rust/Ratatui/Crossterm prototype; the current Python AI
+  engine remains responsible for agents, providers, state, and execution. The UI
+  prototype has no engine bridge and is not the default CLI. The website build does
+  not include either runtime. See `../../CLI_ARCHITECTURE.md`.
 - `app/design-system/`: noindex review page and a small client button example;
   excluded from the sitemap and marketing navigation.
 - `public/brand/omnix-logo.png`: byte-identical copy of `../ref /logo/img.png`.

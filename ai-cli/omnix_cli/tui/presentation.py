@@ -31,7 +31,7 @@ PIXEL_MARK = (
     "      BAAAAAAAAAAAAAAB      ",
     "          BBBBBBBB          ",
 )
-THEMES = ("slate", "light", "terminal", "mono")
+THEMES = ("black", "blue", "white", "light", "terminal", "mono", "slate")
 # Strip complete ANSI/OSC sequences, then remaining terminal control characters.
 ESCAPES = re.compile(r"\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b\[[0-?]*[ -/]*[@-~]")
 CONTROLS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f-\x9f]")
@@ -74,7 +74,27 @@ def theme_style(theme: str, no_color: bool = False) -> Style:
                 "warning": "ansiyellow",
             }
         )
-    light = theme == "light"
+    light = theme in {"light", "white"}
+    black = theme == "black"
+    if black:
+        return Style.from_dict(
+            {
+                "": "bg:#000000 #f2f2f2",
+                "base": "bg:#000000 #f2f2f2",
+                "input": "bg:#111111 #f2f2f2",
+                "context": "bg:#111111 #f2f2f2",
+                "muted": "#a6a6a6",
+                "accent": "#e4e4e7",
+                "heading": "bold #ffffff",
+                "selected": "noreverse bg:#303030 #ffffff",
+                "add": "bg:#183322 #a9e4ba",
+                "delete": "bg:#3a2226 #f0b2ba",
+                "error": "#f0adb6",
+                "warning": "#eacb93",
+                "logo.light": "#f2f2f2",
+                "logo.shadow": "#777777",
+            }
+        )
     return Style.from_dict(
         {
             "": "bg:#eef2f7 #17273d" if light else "bg:#182333 #eaf1fc",

@@ -6,6 +6,14 @@ Use a lightweight Keep-a-Changelog style.
 
 ## [Unreleased]
 
+### Rust terminal frontend migration — 2026-10-30
+- Recorded the Rust/Ratatui/Crossterm frontend target with the Python AI engine retained behind a planned versioned local protocol. Created migration issues #69–#73.
+- Added the initial `rust-tui/` shell prototype; it is not wired to the engine or used as the default CLI entrypoint. Kept the Python TUI as the working fallback.
+
+### Terminal demo and TUI appearance — 2026-10-30
+- Added a reduced-motion-aware blinking block cursor to website terminal transcripts and a keyboard-accessible Black/Blue/White appearance selector, defaulting to black.
+- Changed the interactive CLI TUI default to a true black palette, kept blue and light options, and use the terminal's native blinking block cursor in the composer. Documented the theme commands.
+
 ### Approved website deployment — 2026-10-30
 - Deployed and promoted tested redesign commit `5768c9a` from a clean website archive to the existing Vercel CLI project. Published only the two reviewed `www.omni-x.co.in/cli` routing rules; preserved the parent deployment, homepage/login, DNS, apex redirect and main branch.
 - Repaired the catch-all destination's literal wildcard, purged only the CLI asset cache, and appended `no-transform` to prevent Cloudflare beacon injection without relaxing CSP or changing parent analytics.

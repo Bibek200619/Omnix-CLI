@@ -11,13 +11,16 @@ from typer.core import TyperGroup
 
 
 class Theme(StrEnum):
+    BLACK = "black"
+    BLUE = "blue"
+    WHITE = "white"
     SLATE = "slate"
     LIGHT = "light"
     TERMINAL = "terminal"
     MONO = "mono"
 
 
-def open_terminal(workspace: Path, theme: str = "slate", plain: bool = False) -> None:
+def open_terminal(workspace: Path, theme: str = "black", plain: bool = False) -> None:
     from typer.main import get_command
 
     from omnix_cli.cli.main import app
@@ -30,7 +33,7 @@ def open_terminal(workspace: Path, theme: str = "slate", plain: bool = False) ->
 
 def tui_command(
     workspace: Annotated[Path, typer.Option("--workspace", "-w", file_okay=False)] = Path("."),
-    theme: Annotated[Theme, typer.Option(help="Terminal color theme.")] = Theme.SLATE,
+    theme: Annotated[Theme, typer.Option(help="Terminal color theme.")] = Theme.BLACK,
     plain: Annotated[
         bool, typer.Option(help="Linear output without screen redraw or color.")
     ] = False,

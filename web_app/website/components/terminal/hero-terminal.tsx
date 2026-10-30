@@ -13,6 +13,9 @@ const serverSnapshot = () => false;
 
 export function HeroTerminal() {
   const [current, setCurrent] = useState(0);
+  const [terminalTheme, setTerminalTheme] = useState<
+    "black" | "blue" | "light"
+  >("black");
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const ready = useSyncExternalStore(subscribe, clientSnapshot, serverSnapshot);
 
@@ -28,6 +31,22 @@ export function HeroTerminal() {
         <h2 id="terminal-title">A real starting point.</h2>
         <span aria-hidden="true">0{current + 1} / 03</span>
       </div>
+      <label className={styles.themePicker}>
+        Terminal appearance
+        <select
+          value={terminalTheme}
+          onChange={(event) => {
+            const value = event.currentTarget.value;
+            if (value === "black" || value === "blue" || value === "light") {
+              setTerminalTheme(value);
+            }
+          }}
+        >
+          <option value="black">Black</option>
+          <option value="blue">Blue</option>
+          <option value="light">White</option>
+        </select>
+      </label>
       <div
         className={styles.tabs}
         role="tablist"
@@ -75,7 +94,7 @@ export function HeroTerminal() {
           hidden={current !== index}
           className={styles.panel}
         >
-          <Transcript state={state} />
+          <Transcript state={state} theme={terminalTheme} />
           <p data-theme="dark" className={styles.caption}>
             {state.caption}
           </p>

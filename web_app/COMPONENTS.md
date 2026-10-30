@@ -120,7 +120,7 @@ Must return focus to trigger on close.
 Phase 3 uses a button with `aria-expanded`/`aria-controls` and a labelled navigation disclosure (not a modal or ARIA menu). Opening retains trigger focus; Tab enters the links. Escape or closing restores trigger focus. Internal link activation closes the menu and focuses the destination. Leaving the disclosure with Tab closes it without stealing focus. Desktop breakpoint changes reset it. A no-JavaScript fallback exposes the same links.
 
 ### `HeroTerminal`
-Phase 3: Server Component with a labelled figure and ordered command rows. Each row contains selectable `pre/code` and an explicit website note. It owns this domain-specific annotated layout rather than nesting generic CodeBlocks. CopyButton copies only the five commands, without prompts or narration. The explicit configuration command uses the CLI README's OpenAI/gpt-5 example; availability depends on the user's provider account. No invented output, live provider calls, timers, streaming announcements, or playback controls. The prerequisites name source setup and the Architect's OpenAI API key requirement. Source evidence lives beside the content in `content/hero.ts`.
+The existing three-state transcript selector remains keyboard-operable and deterministic. Each transcript defaults to a black terminal surface with a visible blinking block after its command; a labelled native select switches the terminal to blue or white. The cursor is decorative to assistive technology and remains visible when reduced motion is requested. Transcript text remains selectable DOM `pre/code`; there is no fake live input, provider call, or streamed output.
 
 Purpose:
 Demonstrate Omnix with a deterministic sequence.

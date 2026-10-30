@@ -13,6 +13,17 @@ The site must feel like a premium developer product, not a generic AI landing-pa
 
 Omnix CLI is a terminal-based AI software-engineering orchestration platform. The user can converse with a Master Agent and invoke specialized workflows through explicit commands or the separate build orchestrator.
 
+### CLI implementation status
+
+The current command-line runtime and AI engine are implemented in Python 3.12+. The
+approved migration target uses a Rust terminal frontend built with Ratatui and
+Crossterm, connected to the existing Python engine through a versioned structured
+local interface. A Rust UI prototype exists but is not connected to the engine or
+the default `omnix` entrypoint; this is not a claim that the target application or
+bridge has shipped. See the repository's
+[CLI architecture migration](../CLI_ARCHITECTURE.md) and
+[tracking issue #69](https://github.com/Bibek200619/Omnix-CLI/issues/69).
+
 The currently implemented product includes:
 
 - `omnix init`

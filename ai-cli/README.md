@@ -3,6 +3,17 @@
 `omnix` is a terminal-based AI orchestration platform where the user talks to a
 single Master Agent while specialized agents collaborate behind the scenes.
 
+## Runtime and frontend migration
+
+This directory contains the current Python 3.12+ CLI, terminal UI and AI engine.
+The Rust frontend prototype lives in `../rust-tui/` and uses Ratatui/Crossterm. It is
+not the default `omnix` entrypoint and is not connected to this engine yet. Agents,
+providers, project state, command handlers and engineering execution stay in this
+Python engine during the migration. The versioned structured local protocol is still
+under design. Keep the Python terminal UI available until the Rust frontend reaches
+functional and packaging parity. See the [migration architecture](../CLI_ARCHITECTURE.md)
+and [tracking issue #69](https://github.com/Bibek200619/Omnix-CLI/issues/69).
+
 Phase 0 is implemented. It provides:
 
 - `omnix init`
@@ -61,11 +72,31 @@ Saved generated-artifact changes have green `+` additions, red `-` deletions,
 line numbers and expandable details (`/changes`). These are artifact-content
 comparisons, not a new source-code apply feature.
 
-Use `omnix tui --plain` for linear output without redraw, `--theme light` or
-`--theme terminal` for alternate themes, `NO_COLOR=1` to disable colors, and
-`OMNIX_ASCII=1` to use ASCII logo blocks. Ctrl+C interrupts work; twice at idle
-exits. Workspace selection and remote-session approval retain their native prompts.
+The TUI opens with a blinking block cursor and a black theme. Use `/theme blue` or
+`/theme white` to switch palettes for the current session. `omnix tui --theme blue`
+and `omnix tui --theme white` select them at launch (`light` remains an alias for
+white). `--theme terminal` inherits terminal colors, `--theme mono` uses monochrome,
+and `NO_COLOR=1` disables color. `OMNIX_ASCII=1` uses ASCII logo blocks. Ctrl+C
+interrupts work; twice at idle exits. Workspace selection and remote-session approval
+retain their native prompts.
 See [the interaction contract](docs/TUI.md) for details.
+
+## Install the `omnix` command
+
+Python 3.12+ is required. From a checkout of this repository, install the CLI as a
+standalone `uv` tool:
+
+```bash
+uv tool install ./ai-cli
+uv tool update-shell
+omnix --version
+omnix
+```
+
+`uv tool update-shell` adds uv's executable directory to supported shell startup
+files when needed. Restart the terminal if `omnix` is not found. The package
+defines the `omnix` console entry point; a public package-index release is not
+available yet.
 
 ## Development
 
