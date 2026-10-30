@@ -41,6 +41,7 @@ it("documents local conversation slash commands separately from shell commands",
   const cli = screen.getByRole("region", {
     name: "The CLI is the product surface.",
   });
+  fireEvent.click(within(cli).getByText("Conversation controls · TUI"));
   expect(within(cli).getByText(/not registered/)).toBeVisible();
   for (const command of tuiCommands)
     expect(within(cli).getByText(command.syntax)).toBeVisible();

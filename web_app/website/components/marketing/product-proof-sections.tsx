@@ -219,7 +219,7 @@ export function CliSection() {
             <p>{orchestration.description}</p>
             <CommandRows groupId={orchestration.id} />
           </details>
-          <details open className={styles.moreCommands}>
+          <details className={styles.moreCommands}>
             <summary>
               <span>Conversation controls · TUI</span>
               <span>{tuiCommands.length} local controls</span>
