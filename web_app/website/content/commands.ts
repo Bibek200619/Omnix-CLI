@@ -1,6 +1,6 @@
 export type Command = { name: string; syntax: string; summary: string };
 
-// Registered in ai-cli/omnix_cli/cli/main.py at 99d72d9. Arguments from handlers.
+// Verified against ai-cli/omnix_cli/cli/main.py at bce0d02. Arguments from handlers.
 export const commands = [
   {
     name: "init",
@@ -145,9 +145,15 @@ export const commands = [
   },
   {
     name: "sessions work",
-    syntax: "omnix sessions work [-w --workspace] [--yes]",
+    syntax: "omnix sessions work [--workspace PATH] [--yes]",
     summary:
       "Poll and locally run explicitly approved Omnix capability sessions.",
+  },
+  {
+    name: "sessions history",
+    syntax: "omnix sessions history [--workspace PATH] [--limit INTEGER]",
+    summary:
+      "Read recent session outcomes and sync state from local history offline.",
   },
   {
     name: "link",

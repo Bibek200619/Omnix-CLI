@@ -18,8 +18,16 @@ describe("product truth against the repository", () => {
     const registered = [...main.matchAll(/^app\.command\("([^"]+)"\)/gm)].map(
       (match) => match[1],
     );
-    if (main.includes('sessions_app.command("work")'))
-      registered.push("sessions work");
+    for (const [, appName, groupName] of main.matchAll(
+      /^app\.add_typer\((\w+), name="([^"]+)"\)/gm,
+    )) {
+      const subcommands = new RegExp(
+        `^${appName}\\.command\\("([^"]+)"\\)`,
+        "gm",
+      );
+      for (const [, name] of main.matchAll(subcommands))
+        registered.push(`${groupName} ${name}`);
+    }
     expect(commands.map((command) => command.name).sort()).toEqual(
       registered.sort(),
     );

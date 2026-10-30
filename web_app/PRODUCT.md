@@ -84,6 +84,30 @@ It should position itself as:
 
 The website may advertise these as **Available in source preview**. Availability means implemented source behavior, not production readiness or a published release.
 
+### Current-source recheck — 2026-10-30
+
+Inspected main at `bce0d02`. Version `0.1.0`, Python `>=3.12`, and provider
+implementation boundaries remain unchanged. The executable command index now has
+33 entries: 31 top-level commands plus `sessions work` and `sessions history`.
+The `sessions` parent is a command group, not a separate executable workflow.
+
+Optional account commands (`login`, `logout`, `link`, `unlink`, `status`) use
+browser-approved device authorization and an OS credential store. Standalone
+workflows do not require an Omnix account. `sessions work` polls once for typed
+`plan`, `build`, `qa`, and `repair` requests; it requires a linked, authorized
+device and a compatible server with sessions enabled, and asks for local
+confirmation unless `--yes` is supplied. `sessions history` reads local outcomes
+and sync state offline. This does not establish arbitrary remote shell execution
+or a generally available hosted service. See `cli/main.py`,
+`cli/commands/omnix_account.py`, `integrations/omnix_sessions.py`, and
+`ai-cli/docs/omnix-integration-v1.md` for the source-backed boundaries.
+
+The public GitHub release list is still empty. A release-triggered artifact and
+provenance workflow now exists at `.github/workflows/cli-release-artifacts.yml`,
+using tags named `vVERSION`; workflow presence is not a published or verified
+distribution. Earlier discovery counts and workflow observations below describe
+their dated snapshots, not current main.
+
 ### Project foundation
 - initialize an Omnix project;
 - configure models/providers;

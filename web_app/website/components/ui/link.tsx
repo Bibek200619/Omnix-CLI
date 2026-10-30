@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef } from "react";
 import type { ButtonVariant } from "./button";
+import { appPath } from "@/lib/paths";
 import styles from "./primitives.module.css";
 
 type LinkProps = Omit<ComponentPropsWithRef<"a">, "href" | "target"> & {
@@ -27,7 +28,7 @@ export function Link({
   return (
     <a
       {...props}
-      href={href}
+      href={appPath(href)}
       target={newTab ? "_blank" : undefined}
       rel={newTab ? `${rel ?? ""} noopener noreferrer`.trim() : rel}
       data-variant={variant}

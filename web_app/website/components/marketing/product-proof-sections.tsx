@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/container";
 import { CopyButton } from "@/components/ui/copy-button";
 import { Section } from "@/components/ui/section";
 import { providers } from "@/content/providers";
+import { commands } from "@/content/commands";
 import {
   architectFlow,
   commandGroups,
@@ -169,12 +170,12 @@ export function CliSection() {
       >
         <div className={styles.commandIntro}>
           <p className={styles.lead}>
-            Thirty-one registered commands cover setup, persistent context,
-            architecture, source-preview orchestration, and secure Omnix account
-            linking.
+            Commands cover setup, persistent context, architecture,
+            source-preview orchestration, optional Omnix account linking, and
+            remote-session work and history.
           </p>
           <p className={styles.commandCount}>
-            <span>31</span> registered commands
+            <span>{commands.length}</span> registered commands
           </p>
         </div>
         <div className={styles.commandGroups}>

@@ -3,7 +3,10 @@ import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
 import { resolveIndexing, resolveSiteUrl } from "@/lib/site";
 
-afterEach(() => vi.unstubAllEnvs());
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.resetModules();
+});
 
 it("keeps preview indexing disabled even with a configured origin", () => {
   const origin = resolveSiteUrl("https://example.com");
@@ -26,3 +29,33 @@ it("requires an explicit launch flag and HTTPS origin for indexing", () => {
   });
   expect(sitemap()).toEqual([{ url: "https://example.com/" }]);
 });
+
+it.each(["false", "true"])(
+  "scopes subpath robots and sitemap when indexing is %s",
+  async (indexing) => {
+    vi.stubEnv("SITE_URL", "https://www.omni-x.co.in");
+    vi.stubEnv("NEXT_PUBLIC_BASE_PATH", "/cli");
+    vi.stubEnv("SITE_INDEXABLE", indexing);
+    vi.resetModules();
+    const { default: scopedRobots } = await import("@/app/robots");
+    const { default: scopedSitemap } = await import("@/app/sitemap");
+    if (indexing === "false") {
+      expect(scopedRobots()).toEqual({
+        rules: { userAgent: "*", disallow: ["/cli$", "/cli/"] },
+      });
+      expect(scopedSitemap()).toEqual([]);
+    } else {
+      expect(scopedRobots()).toEqual({
+        rules: {
+          userAgent: "*",
+          allow: ["/cli$", "/cli/"],
+          disallow: "/cli/design-system",
+        },
+        sitemap: "https://www.omni-x.co.in/cli/sitemap.xml",
+      });
+      expect(scopedSitemap()).toEqual([
+        { url: "https://www.omni-x.co.in/cli" },
+      ]);
+    }
+  },
+);

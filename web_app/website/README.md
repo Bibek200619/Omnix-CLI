@@ -25,13 +25,16 @@ npm run check
 ```
 
 `check` runs formatting, lint, strict typecheck, Vitest/Testing Library, a production
-build, and Playwright against its own production server on port 3100. Keep that
-port free. Unit content checks intentionally read `../../ai-cli`: run them from a
+build, and Playwright against its own root-mode production server on port 3100.
+It then rebuilds for `/cli` and runs a separate four-browser deployment rehearsal
+on port 3102. Keep both ports free. Unit content checks intentionally read `../../ai-cli`: run them from a
 full repository checkout. Logo integrity uses the verified official checksum and
 also compares the local reference when present. Website builds never import Python.
 
 Individual commands: `lint`, `typecheck`, `test`, `build`, `test:e2e`, and
-`format:check`. `review:build` scans built browser assets for credential patterns
+`format:check`. `test:subpath` runs only the prefixed build/browser rehearsal;
+it leaves `.next` compiled for `/cli`, so rebuild before returning to root mode.
+`review:build` scans built browser assets for credential patterns
 and reports all-route JavaScript sizes. Run `build` before standalone `test:e2e`. Browser artifacts are
 ignored under `test-results/` and `playwright-report/`.
 
@@ -58,7 +61,13 @@ ignored under `test-results/` and `playwright-report/`.
 - No database, analytics, animation library, or browser provider credentials.
 
 Optional `SITE_URL` is an HTTPS origin for canonical/social metadata and sitemap
-entries. There is no guessed production domain. Indexing remains disabled until
+entries. The confirmed launch is `https://omni-x.co.in/cli`; the existing Vercel
+apex redirect makes `https://www.omni-x.co.in/cli` the canonical destination.
+Set the origin alone in `SITE_URL` and `NEXT_PUBLIC_BASE_PATH=/cli` at build time.
+Without the prefix the application continues to run at `/`. Shared links, brand
+assets, metadata and recovery respect the prefix. See `../DEPLOYMENT.md` for the
+parent project's routing and robots ownership; adding a path does not require
+moving the GoDaddy domain. Indexing remains disabled until
 `SITE_INDEXABLE=true` is deliberately set after the launch checklist. It requires
 an HTTPS origin and consistently controls page metadata, response headers, robots,
 and sitemap. Review fixtures/404 stay noindex. The production CSP restricts
@@ -68,9 +77,16 @@ static-rendering exception. See `../SECURITY.md` for the tradeoff and host HSTS 
 The repository's read-only GitHub workflow runs audit and these checks on PRs.
 No build secrets, browser provider keys, or release-publish credentials are needed.
 
-GitHub Releases returned no records on 2026-10-24. `0.1.0` is the source package
+GitHub Releases returned no records on 2026-10-30. `0.1.0` is the source package
 version. Ten agents exist in preview source; workers store artifacts and QA scores
 are model reports. Master chat does not invoke the separate build orchestrator.
+
+Current main exposes 33 executable command entries, including optional Omnix
+account linking and `sessions work` / `sessions history`. Remote work requires an
+authorized link and compatible server with sessions enabled; history is readable
+offline. The website documents these commands but does not execute them or store
+account credentials. Content tests compare top-level and grouped registrations
+against the Python source so omitted subcommands fail CI.
 
 The source-install commands were verified with Python 3.12.13. See
 `../RELEASE.md` for the candidate verification script and tagged-release process.

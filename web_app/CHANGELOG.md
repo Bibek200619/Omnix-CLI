@@ -6,6 +6,18 @@ Use a lightweight Keep-a-Changelog style.
 
 ## [Unreleased]
 
+### Vercel subpath launch preparation — 2026-10-30
+- Created a protected Vercel preview from the exact tested commit after owner authentication; verified hosted assets, headers, metadata, mobile navigation, and recovery. Recorded deployment evidence and pending public-domain routing in `DEPLOYMENT.md`.
+- Added a build-time path prefix for the requested `/cli` destination, shared by navigation, public assets, metadata, sitemap, and recovery links.
+- Added an isolated production subpath browser rehearsal alongside root-mode checks, preserving default noindex behavior.
+- Corrected canonical URL serialization and Safari pointer-open menu focus so Escape dismissal works consistently under the deployed path.
+- Documented the Vercel multi-project routing contract and existing apex-to-www redirect without transferring the parent domain or changing DNS.
+
+### Current CLI reconciliation — 2026-10-30
+- Rechecked main after account-linking and remote-session integration; added the missing offline session-history command and corrected session option syntax.
+- Derived the command count from product data and extended source-registration checks to every registered subcommand, closing a test gap that missed session history.
+- Documented optional account/server requirements and reconciled release instructions with the actual `vVERSION` artifact/attestation workflow. Source preview and public indexing gates remain unchanged.
+
 ### Final quality and launch readiness — 2026-10-24
 - Completed full-page responsive, keyboard, reduced-motion, high-contrast, accessibility-tree, and cross-browser review; included WCAG 2.1/2.2 A tags and fixed visible-label naming on roadmap links.
 - Patched Next.js/config and Vitest plus compatible transitive dependencies; audit now reports zero vulnerabilities. Added production CSP resource restrictions with a documented static-rendering exception.

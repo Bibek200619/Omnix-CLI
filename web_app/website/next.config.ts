@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import { fileURLToPath } from "node:url";
 import { resolveIndexing, resolveSiteUrl } from "./lib/site";
+import { basePath } from "./lib/paths";
 
 const indexable = resolveIndexing(
   resolveSiteUrl(process.env.SITE_URL),
@@ -22,6 +23,7 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  basePath,
   turbopack: { root: fileURLToPath(new URL(".", import.meta.url)) },
   outputFileTracingRoot: fileURLToPath(new URL(".", import.meta.url)),
   poweredByHeader: false,

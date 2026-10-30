@@ -1,5 +1,23 @@
 # Execution Plan
 
+Vercel path preparation (2026-10-30): the owner confirmed `omni-x.co.in/cli`.
+The optional build-time `/cli` prefix, scoped metadata/assets/native links, and
+separate 20-test deployment rehearsal are complete. The existing Vercel apex-to-www
+redirect is preserved. The owner-authenticated CLI created an isolated Vercel
+project, and hosted preview QA passes for the exact tested website commit.
+`DEPLOYMENT.md` records its URL and evidence, the routing/build contract, and
+pending public-domain acceptance. Do not mark the public website launched from
+the isolated preview results.
+
+Current-source reconciliation (2026-10-30): the website phases below are implemented
+and the reviewed work is merged through PR #61. Newer CLI integrations on main
+required a follow-up command-index correction: all 33 executable entries, including
+offline session history, are now represented, with optional account/server gates.
+The website and current Python package checks pass; current release instructions
+follow the actual artifact workflow. Remaining launch work is the human/device,
+real HTTPS deployment, indexing, and public distribution acceptance in `LAUNCH.md`
+and `RELEASE.md`, not additional homepage sections.
+
 ## Working Model
 
 The implementation agent does not redesign the product while coding.

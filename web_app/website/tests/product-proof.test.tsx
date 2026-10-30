@@ -28,6 +28,9 @@ it("renders all registered commands once in source-backed groups", () => {
     commands.map((command) => command.name).sort(),
   );
   expect(within(cli).getAllByRole("listitem")).toHaveLength(commands.length);
+  expect(within(cli).getByText("registered commands")).toHaveTextContent(
+    `${commands.length} registered commands`,
+  );
   for (const command of commands)
     expect(within(cli).getByText(command.syntax)).toBeInTheDocument();
 });

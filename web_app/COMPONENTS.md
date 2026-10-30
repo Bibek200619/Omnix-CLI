@@ -23,6 +23,11 @@ Import primitives directly from `website/components/ui/<name>`; no barrel export
 | `CodeBlock` | Required string `code` and accessible `label`; semantic `pre/code` within a labelled figure. Preserves whitespace, scrolls internally, supports keyboard scrolling, and optionally includes `copyable` CopyButton with a visible `copyLabel`. No HTML injection or syntax-highlighter dependency. |
 | `CopyButton` | Required `text`; optional visible `label` defaults to `Copy command`. Writes only after a user click, prevents duplicate pending requests, announces success politely, and allows retry. Denied/missing Clipboard API reveals a labelled read-only text area with exact text, focuses/selects it, and gives keyboard/touch manual-copy instructions. No deprecated clipboard fallback or clipboard reads. |
 
+Deployment paths: `Link` keeps native anchors and HTTPS destinations unchanged,
+and prefixes app-relative paths with the build-time `NEXT_PUBLIC_BASE_PATH`.
+Brand image and metadata paths use the same resolver. This keeps home/recovery
+links inside `/cli` when deployed alongside the main Omnix app.
+
 Only `CopyButton` requires a Client Component boundary. Other primitives work in Server Components; interactive consumers import Button into their own client boundary. Native loading/disabled buttons are excluded from tab order. Tabs and Disclosure are deferred until parallel or collapsible content is required.
 
 The noindex `/design-system` route is a component review fixture, excluded from sitemap and marketing navigation. It displays real source-preview labels and CLI commands without executing them. A small client-only control example demonstrates all button variants and actual loading/disabled behavior. It is not a product landing section.
@@ -166,7 +171,7 @@ Each command:
 - optional example;
 - copy button.
 
-Phase 5: `CliSection` presents all 26 registered commands from `content/commands.ts`. Ten core commands are grouped by setup, context, and architecture. Sixteen preview-orchestration commands remain in a native `details` disclosure. Every row uses the shared CopyButton and remains present in server-rendered HTML. Copying preserves documented syntax; uppercase arguments are explicitly marked as placeholders to replace before running.
+`CliSection` presents all executable commands from `content/commands.ts` and derives its visible count from that data. As of 2026-10-30 this is 33 entries, including five optional account commands and two session subcommands alongside the original ten core commands. Sixteen preview-orchestration commands remain in a native `details` disclosure. Session copy explains server/link/compatibility requirements and offline history. Every row uses the shared CopyButton and remains present in server-rendered HTML. Copying preserves documented syntax; uppercase arguments are explicitly marked as placeholders to replace before running.
 
 ### `ArchitectFlow`
 Step narrative:

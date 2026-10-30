@@ -4,6 +4,17 @@ The implementation supports a truthful source-preview launch. Public release and
 deployment acceptance remain deliberate actions; no production domain or stable
 CLI distribution is invented.
 
+The owner has now confirmed Vercel plus the GoDaddy domain `omni-x.co.in/cli`.
+Vercel's existing apex-to-www redirect is preserved, so the canonical target is
+`https://www.omni-x.co.in/cli`. `DEPLOYMENT.md` records the separate-project
+rewrites, build-time prefix, and parent robots ownership. Live acceptance is still
+required; a confirmed intended URL is not evidence of a completed deployment.
+
+An isolated protected Vercel preview is now verified against the tested website
+commit; see `DEPLOYMENT.md` for its URL, deployment ID, and hosted QA evidence.
+Public `omni-x.co.in/cli` routing, production origin/promotion, and parent robots
+acceptance are still pending. Indexing stays disabled.
+
 ## Verified locally — 2026-10-24
 
 - Source-backed product copy, commands, agents, provider states, and source setup.
@@ -24,15 +35,20 @@ See `QUALITY_REPORT.md` and `TESTING.md` for evidence and limits.
 
 ## Before enabling public indexing
 
-1. Merge the reviewed feature PRs in dependency order. Never push directly to main.
+1. Merge reviewed feature PRs through GitHub. The initial website branch repair
+   was completed through PR #61; subsequent fixes still require their own PR.
+   Never push directly to main.
 2. Complete a human VoiceOver or NVDA listening pass, including menu dismissal,
    journey selection, provider table, command disclosure, copy feedback/manual
    fallback, and source-setup help. Browser accessibility trees are useful evidence
    but do not certify the spoken experience. Check a real mobile device too.
-3. Configure the actual verified HTTPS origin as `SITE_URL`. Confirm the deployed
+3. Configure `SITE_URL=https://www.omni-x.co.in` and build with
+   `NEXT_PUBLIC_BASE_PATH=/cli`. Confirm the deployed
    host's TLS, redirects, HSTS, security headers, release fallback, and source links.
-4. Check the deployed canonical URL, `/social-preview` image, favicon, 404,
-   `/robots.txt`, and `/sitemap.xml`. Measure the deployed page's performance.
+4. Check the deployed canonical URL, `/cli/social-preview` image, favicon, 404,
+   `/cli/robots.txt`, and `/cli/sitemap.xml`. Review the parent `/robots.txt` too;
+   crawlers do not treat a nested robots file as domain policy. Measure the
+   deployed page's performance.
 5. Set `SITE_INDEXABLE=true` only after those checks pass, rebuild/redeploy, and
    confirm the live page is indexable. With the flag absent or false, metadata,
    headers, robots, and sitemap remain in preview mode. The design-system route

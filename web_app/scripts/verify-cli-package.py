@@ -32,7 +32,7 @@ def run(*args: str, cwd: Path, capture: bool = False) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--ref", default="HEAD", help="Reviewed commit or existing cli-vVERSION tag"
+        "--ref", default="HEAD", help="Reviewed commit or existing vVERSION tag"
     )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
@@ -62,7 +62,11 @@ def main() -> None:
         source = workspace / "ai-cli"
         package = tomllib.loads((source / "pyproject.toml").read_text())["project"]
         version = package["version"]
-        if args.ref.startswith("cli-v") and args.ref != f"cli-v{version}":
+        tag = args.ref.removeprefix("refs/tags/")
+        if tag.startswith(("v", "cli-v")) and tag not in (
+            f"v{version}",
+            f"cli-v{version}",
+        ):
             parser.error("Tag must match the Python package version exactly.")
         run("uv", "sync", "--frozen", "--python", "3.12", "--extra", "dev", cwd=source)
         run("uv", "run", "--frozen", "pytest", "-q", cwd=source)

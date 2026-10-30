@@ -1,5 +1,45 @@
 # Testing Strategy
 
+## Vercel subpath rehearsal — 2026-10-30
+
+`npm run check` passed formatting, lint, strict typecheck, 84 unit/component tests,
+the root-mode production build and 208 browser tests, then a second `/cli`
+production build and 20 deployment tests across Chromium, mobile Chromium,
+Firefox, and WebKit. Deployment tests cover real prefixed asset responses, clean
+browser consoles, canonical/social/icon paths, mobile Escape/focus, anchor focus,
+scoped preview robots/sitemap, recovery, and isolation from the parent root.
+
+The rehearsal reproduced two defects before repair: Next.js canonical resolution
+treated a URL instance as a base and dropped `/cli`; serializing the absolute URL
+fixes it. Safari pointer clicks did not focus the menu trigger, leaving Escape
+outside the disclosure handler; explicitly focusing the trigger on opening fixes
+that behavior. Build review scanned 63 text files and found no credential-pattern
+matches. A subsequent protected Vercel deployment of the exact tested commit also
+passed hosted Chromium QA at 390 and 1440 px, with 30 successful asset responses,
+zero browser console errors, correct canonical/noindex/CSP/HSTS headers, mobile
+navigation, installation anchor, social image, and 404 recovery. The optional
+Vercel preview toolbar was disabled and the same source redeployed to fix its
+injected-script CSP violation. Temporary review access was revoked afterward.
+Public-domain routing and human acceptance remain under `DEPLOYMENT.md`.
+
+## Current-source reconciliation — 2026-10-30
+
+At main snapshot `bce0d02`, `npm run check` passed formatting, lint, strict
+typecheck, 71 unit/component tests, production build, and all 208 Playwright
+tests. Desktop/mobile command-index screenshots were reviewed. The source-backed
+command test now reads every registered Typer subgroup instead of special-casing
+`sessions work`; it reproduced the omitted history command before the fix.
+Component/browser assertions reproduced the stale count and now verify the
+data-derived count and exact session-history clipboard syntax.
+
+Candidate verification of the same CLI source passed 171 Python tests on Python
+3.12.13, wheel/source builds, separate installations, help, and local initialization.
+Seven isolated tag/ref validation cases checked commit refs, `vVERSION`, qualified
+tag refs, legacy candidate tags, and version-mismatch rejection. Build review
+found zero credential-pattern matches; dependency installation reported zero
+vulnerabilities. These local checks do not certify hosted integration behavior,
+human screen-reader/device acceptance, or public release/deployment.
+
 ## 1. Philosophy
 
 The website is small enough that quality should be high.
