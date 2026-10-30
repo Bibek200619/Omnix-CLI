@@ -12,15 +12,21 @@ interactive prompt; existing explicit commands and their JSON output remain supp
 - `omnix tui --plain` provides a linear, unstyled session for assistive technology,
   limited terminals and readable scrollback. `TERM=dumb` selects it automatically.
 - The welcome mark uses block glyphs, never the app PNG. First input or output hides
-  it for the session. The 28 × 11 mark, centered welcome copy, two-cell gutter,
+  it while the conversation is active; an empty draft restores the mark. The 28 × 11 mark, centered welcome copy, two-cell gutter,
   three-row composer and compact status strip follow the R2 terminal frame.
   Existing conversations open directly in the transcript.
+- The empty welcome state reports whether this project has local Omnix account
+  credentials and points to `/login` when none are connected. Provider configuration
+  remains separate and is not described as account connectivity.
 - A persistent composer sits below the transcript. The optional context panel uses
   a rail at 110 columns and a separate view at narrower widths.
-- Slate, light, terminal-default and monochrome themes use semantic colors. `NO_COLOR`
-  disables color, and an ASCII fallback supports terminals without block glyphs.
-  Slate and light request the reference RGB palette; terminal-default inherits the
-  user's terminal colors.
+- The command catalog is anchored immediately above the composer, with at most eight
+  suggestions visible. Longer results scroll with Up/Down, without leaving a gap
+  between the final suggestion and the input.
+- Terminal-default colors are the default theme. `/theme blue` and `/theme white`
+  (`light` is a white alias) remain optional. Black and monochrome modes are also
+  available. The composer uses a native blinking block cursor. `NO_COLOR` disables
+  semantic colors, and an ASCII fallback supports terminals without block glyphs.
 
 ## Commands and supporting views
 
@@ -30,19 +36,30 @@ memory, blueprint, task, artifact, integration, QA, repair, build, history and a
 views invoke the existing handlers. They retain the handlers' validation and product
 boundaries. Typing a normal message invokes Master chat, not specialist dispatch.
 
-Local UI commands provide help, context, change expansion, theme selection and exit.
-They are labelled separately from project commands. A leading `//` escapes an absolute
-path into a chat message. Slashes within normal messages remain literal.
+Local UI commands provide help, context, change expansion, theme selection, conversation
+creation/resumption and exit. They are labelled separately from project commands. A
+leading `//` escapes an absolute path into a chat message. Slashes within normal messages
+remain literal.
 
 ## Keyboard contract
 
-- `/` opens the catalog; typing filters names and descriptions. Up/Down moves through
-  every result, keeping the selected item visible. Enter or Tab inserts a command;
-  a second Enter executes it. Escape dismisses and restores the pre-catalog draft.
-  A blank catalog lists the 33 registered CLI actions. Filtering also finds local
-  terminal controls such as `/context`, `/changes` and `/theme`.
-- Enter sends; Ctrl+J inserts a newline. Editing supports normal cursor movement,
-  Unicode, paste, selection and history through prompt_toolkit.
+- `/` opens the command catalog above the composer. Typing filters names and
+  descriptions. Up/Down moves through results, keeping the selected item visible.
+  Enter or Tab inserts a command; a second Enter executes it. Escape dismisses and
+  restores the pre-catalog draft. Removing `/` also closes the catalog immediately.
+  A blank catalog lists 33 registered CLI actions and seven local controls.
+- `/new` archives the active conversation and clears only conversation history;
+  long-term goals, decisions and other project memory stay intact. `/resume` restores
+  the most recently saved prior conversation. Archives are stored under
+  `.project/tui_sessions/` and shared with the Rust bridge. Existing conversation
+  memory without session boundaries migrates as one resumable legacy conversation.
+  New conversations do not change project identity, provider configuration, or
+  OS-stored Omnix credentials.
+- Enter sends; Shift+Return inserts a newline. Ctrl+J remains a fallback for terminals
+  that do not report modified Enter. With an empty composer, Up/Down scroll the
+  transcript; Ctrl+P/Ctrl+N browse submitted input history. Mouse-wheel scrolling
+  also moves the transcript. Editing supports normal cursor movement, Unicode, paste,
+  selection and history through prompt_toolkit.
 - Tab/Shift+Tab moves focus between available regions. PageUp/PageDown scrolls the
   transcript; output does not move focus away from the composer.
 - Ctrl+C requests interruption of running work. At idle, a second Ctrl+C exits after
@@ -75,6 +92,17 @@ QA, repair and build state. A stored artifact or model-assisted report does not 
 tests ran or an application was deployed. Provider/model labels reflect local
 configuration, not a verified live connection. Credential storage and account
 authorization remain in the existing integration code.
+
+## Rust frontend migration
+
+The separate `rust-tui/` binary uses the same registered Python command handlers via
+the versioned JSON Lines bridge in `omnix_cli.bridge`. It loads recent conversation
+memory, project/model context and the command catalog at startup; streams output;
+supports cancellation and native terminal handoff; and displays collapsible,
+line-numbered changes to saved generated artifacts. It is not yet the default `omnix`
+entry point; Python remains the production runtime while command parity and platform
+packaging are completed. Run it from the repository with
+`cargo run --manifest-path rust-tui/Cargo.toml`.
 
 ## Verification
 

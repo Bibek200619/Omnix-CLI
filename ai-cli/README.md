@@ -3,6 +3,17 @@
 `omnix` is a terminal-based AI orchestration platform where the user talks to a
 single Master Agent while specialized agents collaborate behind the scenes.
 
+## Runtime and frontend migration
+
+This directory contains the current Python 3.12+ CLI, terminal UI and AI engine.
+The Rust frontend lives in `../rust-tui/` and uses Ratatui/Crossterm. It is a separate
+`omnix-tui` binary, connected to this engine through the versioned JSON Lines bridge
+in `omnix_cli.bridge`. It is not the default `omnix` entrypoint yet. Agents, providers,
+project state, command handlers and engineering execution remain in this Python engine
+during the migration. Keep the Python terminal UI available until command parity and
+platform packaging are complete. See the [migration architecture](../CLI_ARCHITECTURE.md)
+and [tracking issue #69](https://github.com/Bibek200619/Omnix-CLI/issues/69).
+
 Phase 0 is implemented. It provides:
 
 - `omnix init`
@@ -52,8 +63,12 @@ Run `omnix` in a terminal to open the new conversation interface, or use
 the same interface. Existing commands and JSON output remain scriptable.
 
 The block/pixel welcome mark disappears on the first input or output. Type `/`
-for a searchable command catalog; arrows select, Enter/Tab inserts, and a second
-Enter runs. Normal messages talk to Master. Project setup, models, memory,
+for a searchable command catalog immediately above the composer; arrows select,
+Enter/Tab inserts, and a second Enter runs. Shift+Return adds a message line.
+With an empty composer, Up/Down scroll the transcript; Ctrl+P/Ctrl+N browse sent
+input history. `/new` starts a separate conversation and `/resume` restores the
+latest saved conversation. These controls preserve project settings and account
+credentials. Normal messages talk to Master. Project setup, models, memory,
 blueprints, tasks, artifacts, reports and account commands use their existing
 handlers. `/context` opens project context; `/help` lists keyboard guidance.
 
@@ -61,11 +76,32 @@ Saved generated-artifact changes have green `+` additions, red `-` deletions,
 line numbers and expandable details (`/changes`). These are artifact-content
 comparisons, not a new source-code apply feature.
 
-Use `omnix tui --plain` for linear output without redraw, `--theme light` or
-`--theme terminal` for alternate themes, `NO_COLOR=1` to disable colors, and
-`OMNIX_ASCII=1` to use ASCII logo blocks. Ctrl+C interrupts work; twice at idle
-exits. Workspace selection and remote-session approval retain their native prompts.
+The TUI opens with a blinking block cursor and terminal-default colors. Use
+`/theme blue` or `/theme white` to switch palettes for the current session.
+`omnix tui --theme blue` and `omnix tui --theme white` select them at launch
+(`light` remains an alias for white). `--theme terminal` inherits terminal colors,
+`--theme mono` uses monochrome,
+and `NO_COLOR=1` disables color. `OMNIX_ASCII=1` uses ASCII logo blocks. Ctrl+C
+interrupts work; twice at idle exits. Workspace selection and remote-session approval
+retain their native prompts.
 See [the interaction contract](docs/TUI.md) for details.
+
+## Install the `omnix` command
+
+Python 3.12+ is required. From a checkout of this repository, install the CLI as a
+standalone `uv` tool:
+
+```bash
+uv tool install ./ai-cli
+uv tool update-shell
+omnix --version
+omnix
+```
+
+`uv tool update-shell` adds uv's executable directory to supported shell startup
+files when needed. Restart the terminal if `omnix` is not found. The package
+defines the `omnix` console entry point; a public package-index release is not
+available yet.
 
 ## Development
 

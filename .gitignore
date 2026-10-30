@@ -9,6 +9,7 @@
 node_modules/
 dist/
 coverage/
+rust-tui/target/
 .env
 .env.*
 !.env.example

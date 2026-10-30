@@ -3,14 +3,18 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import os
 import shlex
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
+from uuid import uuid4
 
 import typer
 from prompt_toolkit.application import Application, run_in_terminal
 from prompt_toolkit.buffer import Buffer
+from prompt_toolkit.cursor_shapes import CursorShape
 from prompt_toolkit.document import Document
 from prompt_toolkit.filters import Condition, has_focus
 from prompt_toolkit.formatted_text import StyleAndTextTuples
@@ -18,7 +22,6 @@ from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.input import Input
 from prompt_toolkit.key_binding import KeyBindings, KeyPressEvent
 from prompt_toolkit.layout import (
-    ConditionalContainer,
     Dimension,
     DynamicContainer,
     HSplit,
@@ -38,6 +41,8 @@ from typer.core import TyperGroup
 from omnix_cli import __version__
 from omnix_cli.core.exceptions import OmnixError
 from omnix_cli.core.state_manager import StateManager
+from omnix_cli.integrations.omnix_auth import CredentialStore, OmnixAuthError
+from omnix_cli.schemas.memory import ConversationEntry
 from omnix_cli.tui.catalog import Command, command_path, commands_for, matches
 from omnix_cli.tui.presentation import (
     THEMES,
@@ -54,7 +59,7 @@ from omnix_cli.tui.presentation import (
 from omnix_cli.tui.runner import CommandRunner, needs_terminal, run_terminal_command
 
 HELP = (
-    "Enter Send / Run     Ctrl+J Newline     / Commands\n"
+    "Enter Send / Run     Shift+Return Newline     / Commands\n"
     "Up/Down Select command     Enter/Tab Insert (Enter again to run)\n"
     "Escape Restore draft / Close context     Tab/Shift+Tab Focus\n"
     "PageUp/PageDown Scroll transcript     Space Toggle patch when transcript focused\n"
@@ -62,7 +67,7 @@ HELP = (
     "Plain messages go to Master. Specialists run only when invoked.\n"
     "Generated artifacts are not applied application source or executed tests.\n"
     "Use // at the start to send an absolute path as a message.\n"
-    "/theme slate|light|terminal|mono changes this session's theme."
+    "/theme terminal|black|blue|white|mono changes this session's theme."
 )
 
 
@@ -94,7 +99,7 @@ class TerminalApp:
         self,
         group: TyperGroup,
         workspace: Path,
-        theme: str = "slate",
+        theme: str = "terminal",
         *,
         input: Input | None = None,
         output: Output | None = None,
@@ -120,6 +125,7 @@ class TerminalApp:
         self.last_patches: list[Patch] = []
         self.patch_index = 0
         self.project, self.model, details = project_context(self.workspace)
+        self.account_status = self._account_status()
         self.transcript = TextArea(
             read_only=True,
             scrollbar=False,
@@ -158,19 +164,10 @@ class TerminalApp:
         )
         self.composer.buffer.on_text_changed += self._edited
         self._load_conversation()
-        palette = ConditionalContainer(
-            Window(
-                FormattedTextControl(self._catalog),
-                height=self._palette_height,
-                style="class:context",
-                wrap_lines=False,
-            ),
-            Condition(lambda: self.palette_open),
-        )
         header = Window(FormattedTextControl(self._header), height=2)
         footer = Window(FormattedTextControl(self._footer), height=2, wrap_lines=True)
         content = HSplit(
-            [header, DynamicContainer(self._body), palette, self.composer, footer],
+            [header, DynamicContainer(self._body), self.composer, footer],
             style="class:base",
             window_too_small=Window(
                 FormattedTextControl("Terminal too small. Enlarge it or use omnix tui --plain."),
@@ -182,18 +179,19 @@ class TerminalApp:
             layout=Layout(root, focused_element=self.composer),
             key_bindings=self._bindings(),
             full_screen=True,
+            cursor=CursorShape.BLINKING_BLOCK,
             style=DynamicStyle(lambda: theme_style(self.theme, self.no_color)),
             color_depth=(
                 ColorDepth.DEPTH_1_BIT
                 if self.no_color or theme == "mono"
                 else ColorDepth.DEPTH_24_BIT
-                if theme in {"slate", "light"}
+                if theme in {"black", "blue", "white", "slate", "light"}
                 else None
             ),
             input=input,
             output=self.output,
             min_redraw_interval=0.05,
-            mouse_support=False,
+            mouse_support=True,
         )
         self.app.ttimeoutlen = 0.1
 
@@ -211,7 +209,44 @@ class TerminalApp:
             self.welcome = False
         self._refresh_transcript()
 
+    def _account_status(self) -> str:
+        """Check local Omnix credentials without making a network request."""
+        state = StateManager(self.workspace)
+        if not state.omnix_project_path.exists():
+            return "disconnected"
+        try:
+            project = json.loads(state.omnix_project_path.read_text(encoding="utf-8"))
+            project_id = project.get("project_id")
+            if not isinstance(project_id, str):
+                return "unknown"
+            return "connected" if CredentialStore().read(project_id) else "disconnected"
+        except (OSError, ValueError, AttributeError, OmnixAuthError):
+            return "unknown"
+
     def _body(self) -> Container:
+        if self.palette_open:
+            return HSplit(
+                [
+                    Window(height=Dimension(weight=1)),
+                    Window(
+                        FormattedTextControl(self._catalog_header),
+                        height=1,
+                        style="class:context",
+                    ),
+                    Window(
+                        FormattedTextControl(self._catalog),
+                        height=self._catalog_list_height,
+                        style="class:context",
+                        wrap_lines=False,
+                    ),
+                    Window(
+                        FormattedTextControl(self._catalog_footer),
+                        height=1,
+                        style="class:context",
+                    ),
+                ],
+                style="class:context",
+            )
         if self.context_open:
             if self.output.get_size().columns < 110:
                 return self.context.__pt_container__()
@@ -235,7 +270,7 @@ class TerminalApp:
                     ),
                     Window(
                         FormattedTextControl("One conversation. Your project."),
-                        height=3,
+                        height=1 if small else 3,
                         align=WindowAlign.CENTER,
                         style="class:muted",
                     ),
@@ -245,10 +280,25 @@ class TerminalApp:
                         align=WindowAlign.CENTER,
                         style="class:muted",
                     ),
+                    Window(
+                        FormattedTextControl(self._account_message()),
+                        height=1,
+                        align=WindowAlign.CENTER,
+                        style="class:muted",
+                    ),
                     Window(),
                 ]
             )
         return self.transcript.__pt_container__()
+
+    def _account_message(self) -> str:
+        if self.account_status == "connected":
+            return "Omnix account connected · /status for details"
+        if self.account_status == "unknown":
+            return "Omnix account status unavailable · /login to connect"
+        if not StateManager(self.workspace).blueprint_path.exists():
+            return "No Omnix account connected · /init to begin"
+        return "No Omnix account connected · /login to sign in"
 
     def _header(self) -> StyleAndTextTuples:
         available = max(0, self.output.get_size().columns - 4)
@@ -270,17 +320,19 @@ class TerminalApp:
 
     def _footer(self) -> StyleAndTextTuples:
         columns = max(0, self.output.get_size().columns - 4)
-        if columns < 70:
-            keys = "Enter Send  / Commands  Esc Back"
+        if columns < 45:
+            keys = "Enter Send  Shift+Enter Newline  /"
+        elif columns < 70:
+            keys = "Enter Send  Shift+Return Newline  / Commands"
         else:
-            keys = "Enter Send  Ctrl+J Newline  / Commands  Esc Back"
+            keys = "Enter Send  Shift+Return Newline  / Commands  Esc Back"
         if self.exit_armed:
             status = "Press Ctrl+C again to exit. Project files will be retained."
             return [("class:muted", keys + "\n"), ("class:warning", status)]
         if self.palette_open:
-            command_count = sum(not item.local for item in self.commands)
+            command_count = len(self.suggestions())
             status = (
-                f"Catalog / {command_count} source-backed actions"
+                f"Catalog / {command_count} matching actions"
                 if columns >= 60
                 else f"Catalog / {command_count} actions"
             )
@@ -301,14 +353,18 @@ class TerminalApp:
             ("class:accent", _fit_line(clean(status), columns)),
         ]
 
-    def _palette_height(self) -> int:
-        return min(11, max(3, self.output.get_size().rows // 2))
-
     def suggestions(self) -> list[Command]:
-        choices = matches(self.commands, self.composer.text)
-        if self.composer.text.strip() == "/":
-            return [command for command in choices if not command.local]
-        return choices
+        return matches(self.commands, self.composer.text)
+
+    def _catalog_list_height(self) -> int:
+        available = max(1, self.output.get_size().rows - 11)
+        return min(8, available, max(1, len(self.suggestions())))
+
+    def _catalog_header(self) -> StyleAndTextTuples:
+        return [("class:heading", "Commands  ·  type to filter")]
+
+    def _catalog_footer(self) -> StyleAndTextTuples:
+        return [("class:muted", "↑/↓ Select   Enter/Tab Insert   Esc Close")]
 
     def _catalog(self) -> StyleAndTextTuples:
         choices = self.suggestions()
@@ -317,15 +373,10 @@ class TerminalApp:
                 ("class:muted", "No matching commands. Backspace to filter; Esc restores draft.")
             ]
         self.selection = min(self.selection, len(choices) - 1)
-        count = max(1, self._palette_height() - 2)
+        count = self._catalog_list_height()
         offset = max(0, self.selection - count + 1)
         width = max(0, self.output.get_size().columns - 4)
-        result: StyleAndTextTuples = [
-            (
-                "class:muted",
-                f"Commands {offset + 1}-{min(offset + count, len(choices))} of {len(choices)}\n",
-            )
-        ]
+        result: StyleAndTextTuples = []
         for i, command in enumerate(choices[offset : offset + count], start=offset):
             label = " [UI]" if command.local else ""
             prefix = "> " if i == self.selection else "  "
@@ -333,13 +384,14 @@ class TerminalApp:
             row = f"{prefix}/{command.name:<18}{description}"
             row += " " * max(0, width - get_cwidth(row))
             result.append(("class:selected" if i == self.selection else "", row + "\n"))
-        result.append(("class:muted", "Up/Down Select  Enter/Tab Insert  Esc Close"))
         return result
 
     def _edited(self, buffer: Buffer) -> None:
         text = buffer.text
         if text:
             self.welcome = False
+        elif not self.entries:
+            self.welcome = True
         self.exit_armed = False
         if not self.inserting:
             path = command_path(self.commands, text.removeprefix("/").strip())
@@ -352,6 +404,11 @@ class TerminalApp:
                 self.selection = 0
             else:
                 self.palette_open = False
+                if not text.startswith("/"):
+                    self.selection = 0
+        elif self.previous_text.startswith("/"):
+            self.palette_open = False
+            self.selection = 0
         self.previous_text = text
 
     def insert_command(self) -> None:
@@ -401,8 +458,13 @@ class TerminalApp:
             else:
                 self.hint = "Work is running. Ctrl+C interrupts; your draft is retained."
 
-        @keys.add("c-j", filter=has_focus(self.composer))
+        @keys.add("escape", "enter", filter=has_focus(self.composer))
+        @keys.add("escape", "[", "1", "3", ";", "2", "u", filter=has_focus(self.composer))
         def newline(event: KeyPressEvent) -> None:
+            self.composer.buffer.insert_text("\n")
+
+        @keys.add("c-j", filter=has_focus(self.composer))
+        def newline_legacy(event: KeyPressEvent) -> None:
             self.composer.buffer.insert_text("\n")
 
         @keys.add("up", filter=palette)
@@ -410,6 +472,31 @@ class TerminalApp:
         def select(event: KeyPressEvent) -> None:
             delta = -1 if event.key_sequence[-1].key == "up" else 1
             self.selection = max(0, min(len(self.suggestions()) - 1, self.selection + delta))
+
+        transcript_when_empty = (
+            has_focus(self.composer)
+            & Condition(lambda: not self.palette_open and not self.composer.text)
+        )
+
+        @keys.add("up", filter=transcript_when_empty)
+        @keys.add("down", filter=transcript_when_empty)
+        def scroll_transcript(event: KeyPressEvent) -> None:
+            if not self.entries:
+                return
+            self.welcome = False
+            self.app.layout.focus(self.transcript)
+            if event.key_sequence[-1].key == "up":
+                self.transcript.buffer.cursor_up(1)
+            else:
+                self.transcript.buffer.cursor_down(1)
+
+        @keys.add("c-p", filter=has_focus(self.composer))
+        def previous_input(event: KeyPressEvent) -> None:
+            self.composer.buffer.history_backward()
+
+        @keys.add("c-n", filter=has_focus(self.composer))
+        def next_input(event: KeyPressEvent) -> None:
+            self.composer.buffer.history_forward()
 
         @keys.add("tab")
         @keys.add("s-tab")
@@ -490,7 +577,7 @@ class TerminalApp:
                 self.app.layout.focus(self.composer)
         elif command.name == "theme":
             if len(args) != 1 or args[0] not in THEMES:
-                self.entries.append(Entry("Theme", "Use /theme slate|light|terminal|mono."))
+                self.entries.append(Entry("Theme", "Use /theme black|blue|white|terminal|mono."))
             else:
                 self.theme = args[0]
                 self.hint = f"Theme: {self.theme} (this session)."
@@ -506,6 +593,29 @@ class TerminalApp:
                 self.toggle_patch()
                 self.context_open = False
                 self.app.layout.focus(self.transcript)
+        elif command.name in {"new", "resume"}:
+            try:
+                message, resumed = self._change_session(self.workspace, command.name)
+                if command.name == "resume" and not resumed:
+                    self.hint = message
+                    return
+                if command.name == "new":
+                    self.entries.clear()
+                    self.last_patches.clear()
+                    self.patch_index = 0
+                    self.welcome = True
+                else:
+                    self.entries = [
+                        Entry("You" if item.role.value == "user" else "Master", item.content)
+                        for item in resumed[-40:]
+                    ]
+                    self.welcome = not self.entries
+                self.hint = message
+                self.project, self.model, details = project_context(self.workspace)
+                self.context.text = details
+                self.account_status = self._account_status()
+            except (OSError, ValueError, OmnixError) as exc:
+                self.entries.append(Entry(f"Failed /{command.name}", str(exc)))
         else:
             listing = "\n".join(f"/{c.name:<18} {c.description}" for c in self.commands)
             self.entries.append(Entry("Keyboard and command help", HELP + "\n\n" + listing))
@@ -578,8 +688,91 @@ class TerminalApp:
             self.busy = False
             self.project, self.model, details = project_context(self.workspace)
             self.context.text = details
+            self.account_status = self._account_status()
             self.hint = self.default_hint
             self._refresh_transcript()
+
+    @staticmethod
+    def _change_session(
+        workspace: Path, action: str
+    ) -> tuple[str, list[ConversationEntry]]:
+        state = StateManager(workspace)
+        memory = state.load_memory()
+        session_dir = state.project_dir / "tui_sessions"
+        active_path = session_dir / "active.json"
+        try:
+            active_id = json.loads(active_path.read_text(encoding="utf-8")).get("id")
+        except (OSError, ValueError, AttributeError):
+            active_id = None
+        has_archives = any(path != active_path for path in session_dir.glob("*.json"))
+        if memory.conversations and not has_archives:
+            TerminalApp._save_session(
+                session_dir,
+                f"legacy-{uuid4()}",
+                memory.conversations,
+            )
+        if not isinstance(active_id, str):
+            active_id = str(uuid4())
+            TerminalApp._write_session_json(active_path, {"id": active_id})
+
+        if memory.conversations:
+            TerminalApp._save_session(session_dir, active_id, memory.conversations)
+
+        if action == "new":
+            memory.conversations = []
+            state.save_memory(memory)
+            TerminalApp._write_session_json(active_path, {"id": str(uuid4())})
+            return "New conversation started. The previous conversation is saved.", []
+
+        sessions = []
+        if session_dir.exists():
+            for path in session_dir.glob("*.json"):
+                if path == active_path:
+                    continue
+                try:
+                    session = json.loads(path.read_text(encoding="utf-8"))
+                except (OSError, ValueError):
+                    continue
+                if session.get("id") != active_id and isinstance(
+                    session.get("conversations"), list
+                ):
+                    sessions.append(session)
+        sessions.sort(key=lambda item: str(item.get("updated_at", "")), reverse=True)
+        if not sessions:
+            return "No previous conversation is available to resume.", []
+        session = sessions[0]
+        restored = [ConversationEntry.model_validate(item) for item in session["conversations"]]
+        memory.conversations = restored
+        state.save_memory(memory)
+        TerminalApp._write_session_json(active_path, {"id": session["id"]})
+        title = session.get("title") or "Untitled conversation"
+        return f"Resumed conversation: {title}", restored
+
+    @classmethod
+    def _save_session(
+        cls, session_dir: Path, session_id: str, conversations: list[ConversationEntry]
+    ) -> None:
+        first_user = next((item.content for item in conversations if item.role.value == "user"), "")
+        title = first_user.splitlines()[0][:72] if first_user else "Untitled conversation"
+        cls._write_session_json(
+            session_dir / f"{session_id}.json",
+            {
+                "id": session_id,
+                "title": title,
+                "updated_at": datetime.now(UTC).isoformat(),
+                "conversations": [item.model_dump(mode="json") for item in conversations],
+            },
+        )
+
+    @staticmethod
+    def _write_session_json(path: Path, payload: dict[str, object]) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_suffix(".tmp")
+        temporary.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        temporary.replace(path)
 
     def run(self) -> None:
         self.app.run()
@@ -611,6 +804,12 @@ def run_plain(group: TyperGroup, workspace: Path) -> None:
                     typer.echo("\n".join(patch.lines()))
             elif command.name == "theme":
                 typer.echo("Linear mode uses your terminal defaults without added colors.")
+            elif command.name in {"new", "resume"}:
+                try:
+                    message, _ = TerminalApp._change_session(workspace, command.name)
+                    typer.echo(message)
+                except (OSError, ValueError, OmnixError) as exc:
+                    typer.echo(f"Failed /{command.name}: {clean(str(exc))}")
             else:
                 typer.echo(
                     "Enter sends one line. /context shows project state; /changes shows the latest "
@@ -646,7 +845,12 @@ def run_plain(group: TyperGroup, workspace: Path) -> None:
             typer.echo("Interrupted. Inspect project state before retrying.")
 
 
-def launch(group: TyperGroup, workspace: Path, theme: str = "slate", plain: bool = False) -> None:
+def launch(
+    group: TyperGroup,
+    workspace: Path,
+    theme: str = "terminal",
+    plain: bool = False,
+) -> None:
     workspace = workspace.expanduser().resolve()
     if not workspace.is_dir():
         raise typer.BadParameter(

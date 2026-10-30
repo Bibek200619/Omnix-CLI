@@ -18,7 +18,9 @@ LOCAL_COMMANDS = (
     Command("help", "Keyboard help and all available commands", True),
     Command("context", "Show or hide local project context", True),
     Command("changes", "Expand saved artifact changes; optional patch number", True),
-    Command("theme", "Choose slate, light, terminal or mono", True),
+    Command("theme", "Choose black, blue, white, terminal or mono", True),
+    Command("new", "Start a new conversation and save the current one", True),
+    Command("resume", "Resume the most recent previous conversation", True),
     Command("exit", "Close the terminal interface", True),
 )
 

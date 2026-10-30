@@ -19,6 +19,7 @@ from typer.testing import CliRunner
 from omnix_cli.cli.main import app
 from omnix_cli.core.state_manager import StateManager
 from omnix_cli.schemas.artifacts import Artifact, ArtifactType
+from omnix_cli.schemas.memory import ConversationEntry, ConversationRole, ProjectGoal
 from omnix_cli.tui.app import TerminalApp, _fit_line
 from omnix_cli.tui.catalog import command_path, commands_for, matches
 from omnix_cli.tui.presentation import (
@@ -62,7 +63,15 @@ def test_catalog_contains_real_workflows_and_separate_ui_actions() -> None:
     assert len(source) == 33
     assert {"architect", "build", "repair", "sessions work", "sessions history"} <= source
     assert "tui" not in source
-    assert {c.name for c in commands if c.local} == {"help", "context", "changes", "theme", "exit"}
+    assert {c.name for c in commands if c.local} == {
+        "help",
+        "context",
+        "changes",
+        "theme",
+        "new",
+        "resume",
+        "exit",
+    }
     assert matches(commands, "/arch")[0].name == "architect"
     assert matches(commands, "/workspace")
     assert matches(commands, "/does-not-exist") == []
@@ -70,8 +79,8 @@ def test_catalog_contains_real_workflows_and_separate_ui_actions() -> None:
     assert command_path(commands, "architectural") is None
     ui = TerminalApp(group(), Path.cwd(), output=SizedOutput())
     ui.composer.text = "/"
-    assert len(ui.suggestions()) == 33
-    assert all(not command.local for command in ui.suggestions())
+    assert len(ui.suggestions()) == 40
+    assert {"new", "resume"} <= {command.name for command in ui.suggestions()}
     ui.composer.text = "/context"
     assert [command.name for command in ui.suggestions()] == ["context"]
 
@@ -83,6 +92,16 @@ def test_logo_is_terminal_text_with_ascii_fallback(monkeypatch: pytest.MonkeyPat
     monkeypatch.setenv("OMNIX_ASCII", "1")
     rendered = "".join(t for _, t in logo())
     assert "#" in rendered and "█" not in rendered
+
+
+def test_empty_welcome_explains_account_and_provider_setup_separately(tmp_path: Path) -> None:
+    ui = TerminalApp(group(), tmp_path, output=SizedOutput())
+    assert ui.account_status == "disconnected"
+    assert "/init to begin" in ui._account_message()
+    ui.project = "Atlas"
+    (tmp_path / ".project").mkdir()
+    (tmp_path / ".project" / "project.blueprint.json").touch()
+    assert "/login to sign in" in ui._account_message()
 
 
 def test_no_color_has_no_color_styles_and_terminal_theme_inherits_background() -> None:
@@ -236,16 +255,13 @@ def test_palette_keyboard_inserts_without_running_and_reaches_last_action(tmp_pa
                 pipe.send_text("/")
                 await eventually(lambda: ui.palette_open)
                 assert not ui.welcome
-                source_count = sum(not item.local for item in ui.commands)
-                pipe.send_bytes(b"\x1b[B" * (source_count - 1))
-                await eventually(lambda: ui.selection == source_count - 1)
-                assert "/builds" in "".join(t for _, t in ui._catalog())
-                assert "exit" not in "".join(t for _, t in ui._catalog())
-                pipe.send_text("exit")
-                await eventually(lambda: "exit" in "".join(t for _, t in ui._catalog()))
-                pipe.send_bytes(b"\x1b")
+                command_count = len(ui.suggestions())
+                pipe.send_bytes(b"\x1b[B" * (command_count - 1))
+                await eventually(lambda: ui.selection == command_count - 1)
+                assert "/exit" in "".join(t for _, t in ui._catalog())
+                pipe.send_bytes(b"\x7f")
                 await eventually(lambda: not ui.palette_open)
-                assert ui.composer.text == "" and not ui.welcome
+                assert ui.composer.text == "" and ui.welcome
                 pipe.send_text("/ini")
                 await eventually(lambda: ui.composer.text == "/ini")
                 pipe.send_bytes(b"\r")
@@ -256,6 +272,110 @@ def test_palette_keyboard_inserts_without_running_and_reaches_last_action(tmp_pa
                 await eventually(lambda: not ui.busy)
                 assert "Initialized Omnix CLI" in ui.transcript.text
                 pipe.send_bytes(b"\x04")
+                await asyncio.wait_for(task, 3)
+            finally:
+                if not task.done():
+                    ui.app.exit()
+                    await task
+
+    asyncio.run(scenario())
+
+
+def test_new_archives_conversation_and_resume_restores_it(tmp_path: Path) -> None:
+    state = StateManager(tmp_path)
+    state.init_project(project_name="Atlas")
+    state.ensure_project_id()
+    model_settings_before = state.models_path.read_bytes()
+    project_identity_before = state.omnix_project_path.read_bytes()
+    memory = state.load_memory()
+    memory.goals.append(ProjectGoal(id="goal-1", title="Keep project context"))
+    memory.conversations = [
+        ConversationEntry(role=ConversationRole.USER, content="Design authentication"),
+        ConversationEntry(role=ConversationRole.ASSISTANT, content="Use a session boundary."),
+    ]
+    state.save_memory(memory)
+
+    with create_pipe_input() as pipe:
+        ui = TerminalApp(group(), tmp_path, input=pipe, output=DummyOutput())
+        asyncio.run(ui.submit("/new"))
+        assert "previous conversation is saved" in ui.hint
+        assert ui.welcome and not ui.entries
+    assert state.load_memory().conversations == []
+    assert state.load_memory().goals[0].title == "Keep project context"
+    assert state.models_path.read_bytes() == model_settings_before
+    assert state.omnix_project_path.read_bytes() == project_identity_before
+
+    next_memory = state.load_memory()
+    next_memory.conversations = [
+        ConversationEntry(role=ConversationRole.USER, content="A later chat"),
+    ]
+    state.save_memory(next_memory)
+    with create_pipe_input() as pipe:
+        ui = TerminalApp(group(), tmp_path, input=pipe, output=DummyOutput())
+        asyncio.run(ui.submit("/resume"))
+        assert ui.hint == "Resumed conversation: Design authentication"
+        assert [entry.text for entry in ui.entries] == [
+            "Design authentication",
+            "Use a session boundary.",
+        ]
+    assert state.load_memory().goals[0].title == "Keep project context"
+
+
+def test_resume_migrates_existing_unsegmented_conversation_history(
+    tmp_path: Path,
+) -> None:
+    state = StateManager(tmp_path)
+    state.init_project(project_name="Atlas")
+    memory = state.load_memory()
+    memory.conversations = [
+        ConversationEntry(role=ConversationRole.USER, content="Current chat"),
+    ]
+    state.save_memory(memory)
+    with create_pipe_input() as pipe:
+        ui = TerminalApp(group(), tmp_path, input=pipe, output=DummyOutput())
+        asyncio.run(ui.submit("/resume"))
+        assert not ui.welcome
+        assert "You\nCurrent chat" in ui.transcript.text
+        assert ui.hint == "Resumed conversation: Current chat"
+
+
+def test_empty_composer_arrows_scroll_transcript_instead_of_recalling_history(
+    tmp_path: Path,
+) -> None:
+    async def scenario() -> None:
+        with create_pipe_input() as pipe:
+            ui = TerminalApp(group(), tmp_path, input=pipe, output=SizedOutput())
+            ui.entries = [Entry("Output", "\n".join(f"line {i}" for i in range(30)))]
+            ui.welcome = False
+            ui._refresh_transcript()
+            initial_cursor = ui.transcript.buffer.cursor_position
+            task = asyncio.create_task(ui.app.run_async())
+            try:
+                pipe.send_bytes(b"\x1b[A")
+                await eventually(lambda: ui.app.layout.has_focus(ui.transcript))
+                assert ui.transcript.buffer.cursor_position < initial_cursor
+                assert ui.composer.text == ""
+                assert not ui.palette_open
+                ui.app.exit()
+                await asyncio.wait_for(task, 3)
+            finally:
+                if not task.done():
+                    ui.app.exit()
+                    await task
+
+    asyncio.run(scenario())
+
+
+def test_shift_return_inserts_a_newline_in_the_composer(tmp_path: Path) -> None:
+    async def scenario() -> None:
+        with create_pipe_input() as pipe:
+            ui = TerminalApp(group(), tmp_path, input=pipe, output=SizedOutput())
+            task = asyncio.create_task(ui.app.run_async())
+            try:
+                pipe.send_bytes(b"\x1b[13;2u")
+                await eventually(lambda: ui.composer.text == "\n")
+                assert not ui.busy
+                ui.app.exit()
                 await asyncio.wait_for(task, 3)
             finally:
                 if not task.done():

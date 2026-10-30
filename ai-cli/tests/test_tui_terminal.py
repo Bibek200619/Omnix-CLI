@@ -142,26 +142,21 @@ def test_real_terminal_welcome_catalog_resize_and_clean_exit(
         if rows >= 24:
             ui.wait(lambda: "█" in ui.text)
         ui.send(b"/")
-        ui.wait(lambda: "Commands 1-" in ui.text)
-        assert any(
-            cell.bg == "304c75"
-            for row in ui.screen.buffer.values()
-            for cell in row.values()
-        )
+        ui.wait(lambda: "Commands  ·  type to filter" in ui.text)
         if columns - 4 >= 60:
-            assert "Catalog / 33 source-backed actions" in ui.text
+            assert "Catalog / 40 matching actions" in ui.text
         else:
-            assert "Catalog / 33 actions" in ui.text
+            assert "Catalog / 40 actions" in ui.text
         assert "█" not in ui.text
         ui.send(b"\x1b[B" * 32)
         ui.wait(lambda: "/sessions history" in ui.text)
         assert "/exit" not in ui.text
         ui.send(b"\x1b")
-        ui.wait(lambda: "Commands 1-" not in ui.text and "/exit" not in ui.text)
+        ui.wait(lambda: "Commands  ·  type to filter" not in ui.text and "/exit" not in ui.text)
         ui.send(b"/exit")
         ui.wait(lambda: "/exit" in ui.text)
         ui.send(b"\x1b")
-        ui.wait(lambda: "Commands 1-" not in ui.text)
+        ui.wait(lambda: "Commands  ·  type to filter" not in ui.text)
         ui.resize(60, 20)
         ui.wait(lambda: len(ui.screen.display) == 20 and "source preview" in ui.text)
         ui.send(b"\x03")
