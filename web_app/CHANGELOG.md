@@ -6,6 +6,11 @@ Use a lightweight Keep-a-Changelog style.
 
 ## [Unreleased]
 
+### Approved website deployment — 2026-10-30
+- Deployed and promoted tested redesign commit `5768c9a` from a clean website archive to the existing Vercel CLI project. Published only the two reviewed `www.omni-x.co.in/cli` routing rules; preserved the parent deployment, homepage/login, DNS, apex redirect and main branch.
+- Repaired the catch-all destination's literal wildcard, purged only the CLI asset cache, and appended `no-transform` to prevent Cloudflare beacon injection without relaxing CSP or changing parent analytics.
+- Verified public desktop/mobile assets, terminal/download keyboard flows, metadata, security headers, branding, recovery and apex redirect with zero browser console errors. Runtime error scan returned zero records; temporary automation access was revoked. Recorded IDs, evidence, monitoring scope and rollback in `DEPLOYMENT.md`. Indexing remains disabled pending launch acceptance.
+
 ### Approved Figma redesign — 2026-10-30
 - Recorded owner approval of revision 2: a colorful editorial opening that continuously deepens through slate and graphite to near-black, with local product-detail surfaces and authentic terminal transcripts.
 - Specified locally bundled Manrope/IBM Plex Mono, user-controlled terminal states, accessible Download Omnix availability and CLI source setup, and the explicitly planned future Omnix app.
