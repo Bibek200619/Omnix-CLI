@@ -12,11 +12,15 @@ interactive prompt; existing explicit commands and their JSON output remain supp
 - `omnix tui --plain` provides a linear, unstyled session for assistive technology,
   limited terminals and readable scrollback. `TERM=dumb` selects it automatically.
 - The welcome mark uses block glyphs, never the app PNG. First input or output hides
-  it for the session. Existing conversations open directly in the transcript.
+  it for the session. The 28 × 11 mark, centered welcome copy, two-cell gutter,
+  three-row composer and compact status strip follow the R2 terminal frame.
+  Existing conversations open directly in the transcript.
 - A persistent composer sits below the transcript. The optional context panel uses
   a rail at 110 columns and a separate view at narrower widths.
 - Slate, light, terminal-default and monochrome themes use semantic colors. `NO_COLOR`
   disables color, and an ASCII fallback supports terminals without block glyphs.
+  Slate and light request the reference RGB palette; terminal-default inherits the
+  user's terminal colors.
 
 ## Commands and supporting views
 
@@ -35,6 +39,8 @@ path into a chat message. Slashes within normal messages remain literal.
 - `/` opens the catalog; typing filters names and descriptions. Up/Down moves through
   every result, keeping the selected item visible. Enter or Tab inserts a command;
   a second Enter executes it. Escape dismisses and restores the pre-catalog draft.
+  A blank catalog lists the 33 registered CLI actions. Filtering also finds local
+  terminal controls such as `/context`, `/changes` and `/theme`.
 - Enter sends; Ctrl+J inserts a newline. Editing supports normal cursor movement,
   Unicode, paste, selection and history through prompt_toolkit.
 - Tab/Shift+Tab moves focus between available regions. PageUp/PageDown scrolls the

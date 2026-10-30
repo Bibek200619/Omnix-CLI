@@ -78,6 +78,7 @@ def theme_style(theme: str, no_color: bool = False) -> Style:
     return Style.from_dict(
         {
             "": "bg:#eef2f7 #17273d" if light else "bg:#182333 #eaf1fc",
+            "base": "bg:#eef2f7 #17273d" if light else "bg:#182333 #eaf1fc",
             "input": "bg:#dce5ef #17273d" if light else "bg:#223246 #eaf1fc",
             "context": "bg:#dce5ef #17273d" if light else "bg:#223246 #eaf1fc",
             "muted": "#435975" if light else "#b2c2d8",
@@ -191,7 +192,8 @@ def project_context(workspace: Path) -> tuple[str, str, str]:
     """Read configuration without contacting providers or creating account state."""
     state = StateManager(workspace)
     if not state.project_dir.exists():
-        return workspace.name, "Local / unconfigured", "Not initialized. Start with /init."
+        details = f"Not initialized. Start with /init.\n\nPath\n{workspace}"
+        return workspace.name, "Unconfigured", details
     try:
         blueprint = state.load_blueprint()
         memory = state.load_memory()
@@ -199,7 +201,7 @@ def project_context(workspace: Path) -> tuple[str, str, str]:
         model = models.master
         assignment = f"{model.provider or 'unset'}:{model.model or 'unset'}" if model else "Local"
         details = (
-            f"Project\n{blueprint.project_name or workspace.name}\n\n"
+            f"Project\n{blueprint.project_name or workspace.name}\n\nPath\n{workspace}\n\n"
             f"Agent\nMaster\n\nModel\n{assignment}\n\n"
             f"Context\n{len(memory.goals)} goals\n{len(memory.decisions)} decisions\n"
             f"{len(memory.conversations)} messages\n\n"

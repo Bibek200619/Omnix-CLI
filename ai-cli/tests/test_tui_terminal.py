@@ -128,15 +128,40 @@ def test_real_terminal_welcome_catalog_resize_and_clean_exit(
     with terminal(tmp_path, columns, rows) as ui:
         ui.wait(lambda: "source preview" in ui.text)
         assert "Window too small" not in ui.text
+        assert "One conversation. Your project." in ui.text
+        assert "Type a goal or / to begin." in ui.text
+        assert "Describe what you want to work on" in ui.text
+        assert "Master / Unconfigured / Local" in ui.text
+        assert ui.screen.display[0].startswith("  Omnix CLI")
+        assert ui.screen.buffer[0][0].bg == "182333"
+        assert any(
+            cell.bg == "223246"
+            for row in ui.screen.buffer.values()
+            for cell in row.values()
+        )
         if rows >= 24:
             ui.wait(lambda: "█" in ui.text)
         ui.send(b"/")
         ui.wait(lambda: "Commands 1-" in ui.text)
+        assert any(
+            cell.bg == "304c75"
+            for row in ui.screen.buffer.values()
+            for cell in row.values()
+        )
+        if columns - 4 >= 60:
+            assert "Catalog / 33 source-backed actions" in ui.text
+        else:
+            assert "Catalog / 33 actions" in ui.text
         assert "█" not in ui.text
-        ui.send(b"\x1b[B" * 37)
-        ui.wait(lambda: "/exit" in ui.text)
+        ui.send(b"\x1b[B" * 32)
+        ui.wait(lambda: "/sessions history" in ui.text)
+        assert "/exit" not in ui.text
         ui.send(b"\x1b")
         ui.wait(lambda: "Commands 1-" not in ui.text and "/exit" not in ui.text)
+        ui.send(b"/exit")
+        ui.wait(lambda: "/exit" in ui.text)
+        ui.send(b"\x1b")
+        ui.wait(lambda: "Commands 1-" not in ui.text)
         ui.resize(60, 20)
         ui.wait(lambda: len(ui.screen.display) == 20 and "source preview" in ui.text)
         ui.send(b"\x03")
@@ -154,12 +179,20 @@ def test_real_terminal_runs_commands_and_recovers_from_error(tmp_path: Path) -> 
     with terminal(tmp_path, 120, 36) as ui:
         ui.wait(lambda: "█" in ui.text)
         ui.send(b'/init --project-name "Atlas"\r')
-        ui.wait(lambda: "Initialized Omnix CLI" in ui.text and "/ Ready /" in ui.text)
+        ui.wait(
+            lambda: "Initialized Omnix CLI" in ui.text
+            and "Master / Local / Atlas / Local" in ui.text
+        )
         assert StateManager(tmp_path).load_blueprint().project_name == "Atlas"
         ui.send(b"/artifact missing\r")
-        ui.wait(lambda: "not found" in ui.text and "/ Ready /" in ui.text)
+        ui.wait(
+            lambda: "not found" in ui.text and "Master / Local / Atlas / Local" in ui.text
+        )
         ui.send(b"Remember this project decision: use SQLite.\r")
-        ui.wait(lambda: "Master Agent recorded" in ui.text and "/ Ready /" in ui.text)
+        ui.wait(
+            lambda: "Master Agent recorded" in ui.text
+            and "Master / Local / Atlas / Local" in ui.text
+        )
         memory = StateManager(tmp_path).load_memory()
         assert memory.conversations[-2].content == "Remember this project decision: use SQLite."
         assert "█" not in ui.text
@@ -172,5 +205,7 @@ def test_real_terminal_themes_render_without_traceback(tmp_path: Path, theme: st
     with terminal(tmp_path, 80, 24, theme) as ui:
         ui.wait(lambda: "█" in ui.text)
         assert "Traceback" not in ui.text
+        if theme == "light":
+            assert ui.screen.buffer[0][0].bg == "eef2f7"
         ui.send(b"\x04")
         assert ui.wait_for_exit() == 0
