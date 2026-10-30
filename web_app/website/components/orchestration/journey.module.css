@@ -2,7 +2,9 @@
   --anchor-offset: var(--header-anchor-offset);
   --journey-rail: var(--border-strong);
   --journey-marker-size: var(--touch-target);
-  border-top: var(--border-width) solid var(--border-subtle);
+}
+.journey > h2 {
+  max-width: 26ch;
 }
 .introduction {
   display: grid;
@@ -10,15 +12,16 @@
   margin-bottom: var(--space-8);
 }
 .lead {
-  max-width: var(--hero-copy-measure);
+  max-width: var(--text-measure);
   margin: 0;
   color: var(--text-secondary);
   font-size: var(--text-lead);
 }
 .boundary {
-  max-width: var(--hero-copy-measure);
+  max-width: var(--text-measure);
   margin: 0;
   color: var(--text-secondary);
+  font-size: var(--text-small);
 }
 .caption {
   display: flex;
@@ -41,11 +44,32 @@
   border-top: var(--border-width) solid var(--journey-rail);
   vertical-align: middle;
 }
+.story {
+  display: grid;
+  gap: var(--space-8);
+  margin-top: var(--space-8);
+}
+.story > div {
+  min-width: 0;
+}
+.evidence {
+  min-width: 0;
+  align-self: start;
+}
+.evidence h3 {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-lead);
+}
+.evidence > p:last-child {
+  margin-top: var(--space-4);
+  color: var(--text-secondary);
+  font-size: var(--text-small);
+}
 .route {
   display: grid;
   list-style: none;
   padding: 0;
-  margin: var(--space-8) 0;
+  margin: 0;
 }
 .stage {
   position: relative;
@@ -63,7 +87,7 @@
 .stageTitle {
   overflow-wrap: anywhere;
   position: relative;
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-3);
   font-size: var(--text-body);
   line-height: var(--leading-control);
   font-weight: var(--weight-heading);
@@ -91,13 +115,13 @@
   height: var(--journey-marker-size);
   border: var(--border-width) solid var(--journey-rail);
   border-radius: var(--radius-control);
-  background: var(--background);
+  background: var(--surface-1);
   font-family: var(--font-mono);
   font-weight: var(--weight-regular);
 }
 .stage[data-current="true"] .number {
   border-color: var(--accent);
-  background: var(--accent);
+  background: var(--action);
   color: var(--on-accent);
   outline: var(--focus-width) solid var(--accent);
   outline-offset: var(--space-1);
@@ -108,7 +132,7 @@
   overflow-wrap: anywhere;
 }
 .stageBody p {
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-3);
   color: var(--text-secondary);
 }
 .stageBody > code {
@@ -154,18 +178,17 @@
   flex-wrap: wrap;
   gap: var(--space-2);
 }
+.actions button {
+  font-size: var(--text-small);
+}
 .explanation {
   min-width: 0;
-  min-height: calc(var(--space-16) * 2);
 }
 .inlineExplanation {
   margin-left: calc(var(--journey-marker-size) + var(--space-3));
   margin-top: var(--space-6);
   padding-block: var(--space-4);
   border-top: var(--border-width) solid var(--border-subtle);
-}
-.inlineExplanation .explanation {
-  min-height: 0;
 }
 .detail {
   overflow-wrap: anywhere;
@@ -179,6 +202,7 @@
   max-width: var(--text-measure);
   margin: 0;
   color: var(--text-secondary);
+  font-size: var(--text-small);
 }
 .branches {
   display: grid;
@@ -201,6 +225,8 @@
   gap: var(--space-3);
 }
 .branchTitle h3 {
+  min-width: 0;
+  overflow-wrap: anywhere;
   margin: 0;
   font-size: var(--text-lead);
   font-weight: var(--weight-heading);
@@ -229,40 +255,13 @@
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
     gap: var(--space-12);
   }
-  .inspector {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-    gap: var(--space-8);
+  .story {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--space-12);
   }
-}
-@media (min-width: 75rem) {
-  .route {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: var(--space-6);
-    margin-block: var(--space-12) var(--space-8);
-  }
-  .stage {
-    padding-bottom: 0;
-  }
-  .stage:not(:last-child)::before {
-    width: calc(100% + var(--space-6));
-    height: auto;
-    border-left: 0;
-    border-top: var(--border-width) solid var(--journey-rail);
-  }
-  .stageButton,
-  .stageLabel {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-4);
-  }
-  .number {
-    width: var(--journey-marker-size);
-  }
-  .stageBody {
-    margin-left: 0;
-  }
-  .stageTitle {
-    margin-bottom: var(--space-6);
+  .evidence {
+    position: sticky;
+    top: var(--header-anchor-offset);
   }
 }
 @media (forced-colors: active) {

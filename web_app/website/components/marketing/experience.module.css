@@ -1,0 +1,20 @@
+.narrative {
+  background: linear-gradient(
+    180deg,
+    var(--journey-start) 0%,
+    var(--journey-mid) 12%,
+    var(--memory-ground) 27%,
+    var(--provider-ground) 40%,
+    var(--graphite) 68%,
+    var(--ending) 100%
+  );
+}
+.footer {
+  background: var(--ending);
+}
+@media (forced-colors: active) {
+  .narrative,
+  .footer {
+    background: Canvas;
+  }
+}

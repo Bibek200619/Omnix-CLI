@@ -80,7 +80,7 @@ export const journeySteps = [
 ] as const satisfies readonly JourneyStep[];
 
 export const journey = {
-  title: "One project. Context that carries forward.",
+  title: "A clear path from intent to blueprint.",
   introduction:
     "Talk through the goal. Keep the decisions. Bring that context to the next specialist when you’re ready.",
   availability: "Available in source preview",

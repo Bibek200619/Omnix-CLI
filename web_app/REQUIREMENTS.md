@@ -60,6 +60,8 @@ The site must expose:
 
 Until a proper release exists, the UI must say **Preview / source install** rather than pretending a production binary is available.
 
+Approved redesign: a Download Omnix entry point may open an explicitly labelled availability dialog. Its sole install action is View CLI setup (source preview); Omnix app is Coming later with a disabled action. Without JavaScript, the source installation destination remains available. This is not a direct binary-download CTA.
+
 ### FR-007 — GitHub
 GitHub source access must be available in the navigation and footer.
 

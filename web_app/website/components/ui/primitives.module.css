@@ -46,7 +46,7 @@
 }
 .control[data-variant="primary"] {
   color: var(--on-accent);
-  background: var(--accent);
+  background: var(--action);
 }
 .control[data-variant="secondary"] {
   color: var(--text-primary);
@@ -59,7 +59,7 @@
 }
 .control[data-variant="primary"]:hover:not(:disabled) {
   color: var(--on-accent);
-  background: var(--accent-strong);
+  background: var(--action-hover);
 }
 .control:is([data-variant="secondary"], [data-variant="ghost"]):hover:not(
     :disabled

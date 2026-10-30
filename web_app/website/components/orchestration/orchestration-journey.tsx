@@ -5,6 +5,8 @@ import { Code } from "@/components/ui/code";
 import { journey, journeySteps, type JourneyStep } from "@/content/journey";
 import { roadmap } from "@/content/roadmap";
 import { JourneyExplorer } from "./journey-explorer";
+import { Transcript } from "@/components/terminal/transcript";
+import { terminalDemo } from "@/content/terminal-demo";
 import styles from "./journey.module.css";
 
 function StageBody({ step }: { step: JourneyStep }) {
@@ -35,6 +37,7 @@ export function OrchestrationJourney() {
       <Section
         id="how-it-works"
         title={journey.title}
+        eyebrow="01 / Context before execution"
         tabIndex={-1}
         className={styles.journey}
       >
@@ -46,16 +49,31 @@ export function OrchestrationJourney() {
           <span className={styles.available}>{journey.availability}</span>
           <span>Illustrated workflow · no commands run in your browser</span>
         </div>
-        <JourneyExplorer
-          stages={journeySteps.map((step) => ({
-            id: step.id,
-            title: step.title,
-            kind: step.kind,
-            handoff: step.handoff,
-            detail: step.detail,
-            content: <StageBody step={step} />,
-          }))}
-        />
+        <div className={styles.story}>
+          <JourneyExplorer
+            stages={journeySteps.map((step) => ({
+              id: step.id,
+              title: step.title,
+              kind: step.kind,
+              handoff: step.handoff,
+              detail: step.detail,
+              content: <StageBody step={step} />,
+            }))}
+          />
+          <aside
+            className={styles.evidence}
+            aria-label="Workflow terminal evidence"
+          >
+            <p className="section-label">Source-verified transcript excerpt</p>
+            <h3>One project. An explicit next step.</h3>
+            <Transcript state={terminalDemo[0]} />
+            <p>
+              Initialize local state, talk through the goal, then choose when to
+              invoke a specialist. The diagram explains the workflow; it does
+              not execute it.
+            </p>
+          </aside>
+        </div>
         <div className={styles.branches}>
           <div className={styles.build}>
             <div className={styles.branchTitle}>

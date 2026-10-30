@@ -55,7 +55,7 @@ test("supports keyboard focus and skip navigation", async ({ page }) => {
     name: "Preview installation",
   });
   await expect(source).toBeFocused();
-  await expect(source).toHaveCSS("outline-width", "2px");
+  await expect(source).toHaveCSS("outline-width", "3px");
   expect((await source.boundingBox())?.height).toBeGreaterThanOrEqual(44);
 });
 
@@ -79,8 +79,24 @@ test("reflows at 320px and enlarged text with reduced motion", async ({
   const pageWidth = await page.evaluate(() => ({
     content: document.documentElement.scrollWidth,
     viewport: window.innerWidth,
+    overflow: [...document.querySelectorAll<HTMLElement>("body *")]
+      .filter(
+        (element) =>
+          element.getBoundingClientRect().right > innerWidth + 1 &&
+          !element.closest("pre, table"),
+      )
+      .map((element) => ({
+        tag: element.tagName,
+        class: element.className,
+        text: element.textContent?.slice(0, 90),
+        right: element.getBoundingClientRect().right,
+      }))
+      .slice(0, 20),
   }));
-  expect(pageWidth.content).toBeLessThanOrEqual(pageWidth.viewport);
+  expect(
+    pageWidth.content,
+    JSON.stringify(pageWidth.overflow),
+  ).toBeLessThanOrEqual(pageWidth.viewport);
   expect(
     await page.evaluate(() => getComputedStyle(document.body).animationName),
   ).toBe("none");

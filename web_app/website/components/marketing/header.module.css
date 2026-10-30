@@ -1,5 +1,6 @@
 .header {
-  background: var(--background);
+  background: var(--surface-1);
+  color: var(--text-primary);
   border-bottom: var(--border-width) solid var(--border-subtle);
   position: relative;
   z-index: var(--layer-header);
@@ -10,7 +11,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  padding-block: var(--space-3);
+  padding-block: var(--space-4);
 }
 .brand {
   display: inline-flex;
@@ -28,6 +29,10 @@
 }
 .desktop {
   display: none;
+}
+.desktop > a,
+.desktop > button {
+  font-size: var(--text-small);
 }
 .mobile {
   display: contents;

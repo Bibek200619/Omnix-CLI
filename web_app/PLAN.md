@@ -1,5 +1,14 @@
 # Execution Plan
 
+## Approved Figma implementation — 2026-10-30
+
+The owner approved revision 2 and requested implementation of the complete existing homepage redesign. Preserve product truth and launch/deployment gates; this is not authorization to publish a stable CLI/app or push directly to main.
+
+1. Document the approved tokens, light-to-black composition, transcript controls and CLI-now/app-later availability flow.
+2. Implement in the existing website on a feature branch, preserving unrelated user changes and the original reference assets.
+3. Verify lint/typecheck/components/build plus root/subpath browser regressions, real desktop/mobile screenshots, keyboard/dialog/tab behavior, reduced motion, no-JavaScript fallbacks and contrast.
+4. Review the complete diff and commit the website changes only. Public deployment remains a separate launch step.
+
 Vercel path preparation (2026-10-30): the owner confirmed `omni-x.co.in/cli`.
 The optional build-time `/cli` prefix, scoped metadata/assets/native links, and
 separate 20-test deployment rehearsal are complete. The existing Vercel apex-to-www

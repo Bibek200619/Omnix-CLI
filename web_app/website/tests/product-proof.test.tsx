@@ -21,7 +21,7 @@ afterEach(() => vi.unstubAllGlobals());
 it("renders all registered commands once in source-backed groups", () => {
   render(<Home />);
   const cli = screen.getByRole("region", {
-    name: "The CLI is the product surface.",
+    name: "Command explorer.",
   });
   const grouped = commandGroups.flatMap((group) => group.commands);
   expect(grouped.map((command) => command.name).sort()).toEqual(
@@ -38,7 +38,7 @@ it("renders all registered commands once in source-backed groups", () => {
 it("keeps live and roadmap provider states explicit in text", () => {
   render(<Home />);
   const section = screen.getByRole("region", {
-    name: "Roles choose models through one provider layer.",
+    name: "Know what each role is configured to use.",
   });
   const rows = within(section).getAllByRole("row").slice(1);
   expect(rows).toHaveLength(providers.length);
@@ -58,7 +58,7 @@ it("keeps live and roadmap provider states explicit in text", () => {
 it("shows local memory boundaries and the complete Architect process", () => {
   render(<Home />);
   const memory = screen.getByRole("region", {
-    name: "Project context lives with the project.",
+    name: "Context is a file. Not a fleeting tab.",
   });
   expect(within(memory).getByText("project.memory.json")).toBeVisible();
   const memoryFile = within(memory).getByRole("region", {
@@ -73,7 +73,7 @@ it("shows local memory boundaries and the complete Architect process", () => {
   expect(within(memory).getByText(/does not automatically/i)).toBeVisible();
 
   const architect = screen.getByRole("region", {
-    name: "The Architect evolves a source of truth.",
+    name: "Architecture you explicitly ask for.",
   });
   expect(within(architect).getAllByRole("listitem")).toHaveLength(
     architectFlow.length,
@@ -91,7 +91,7 @@ it("copies an exact command through the shared control", async () => {
   });
   render(<Home />);
   const cli = screen.getByRole("region", {
-    name: "The CLI is the product surface.",
+    name: "Command explorer.",
   });
   const firstRow = within(cli).getAllByRole("listitem")[0]!;
   fireEvent.click(

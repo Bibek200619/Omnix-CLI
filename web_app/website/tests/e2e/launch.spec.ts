@@ -61,7 +61,7 @@ test("browser accessibility tree exposes the complete story and state", async ({
   expect(tree).toContain("Build software with an AI engineering team.");
   expect(tree).toContain("Master Agent");
   expect(tree).toContain("Roadmap");
-  expect(tree).toContain("Try the source preview.");
+  expect(tree).toContain("Start with the source.");
   await testInfo.attach("accessibility-tree", {
     body: tree,
     contentType: "text/plain",

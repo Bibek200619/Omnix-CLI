@@ -11,25 +11,28 @@ export function HeroSection() {
       id="product"
       aria-labelledby="hero-heading"
       tabIndex={-1}
+      data-theme="light"
       className={styles.hero}
     >
       <Container className={styles.layout}>
         <div className={styles.message}>
-          <p className={styles.eyebrow}>{hero.eyebrow}</p>
+          <p className={styles.eyebrow}>
+            Source preview v{product.version}{" "}
+            <span aria-hidden="true"> / </span> Python {product.minimumPython}+
+          </p>
           <h1 id="hero-heading">{hero.headline}</h1>
           <p className={styles.supporting}>{hero.supporting}</p>
           <div className={styles.actions}>
             <Link variant="primary" href={hero.primary.href}>
               {hero.primary.label}
+              <span aria-hidden="true">→</span>
             </Link>
             <Link variant="secondary" href={hero.secondary.href}>
               {hero.secondary.label}
             </Link>
           </div>
           <p className={styles.release}>
-            Source preview v{product.version}. Python {product.minimumPython}+.
-            <br />
-            Specialist workflows produce blueprints, artifacts, and reports.
+            Run from source. No stable download is available.
           </p>
         </div>
         <HeroTerminal />

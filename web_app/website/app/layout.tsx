@@ -6,14 +6,15 @@ import { appPath } from "@/lib/paths";
 import "./globals.css";
 
 const sans = localFont({
-  src: "../node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2",
-  variable: "--font-geist",
+  src: "../node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2",
+  variable: "--font-manrope",
   display: "swap",
 });
 const mono = localFont({
-  src: "../node_modules/@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2",
-  variable: "--font-geist-mono",
+  src: "../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2",
+  variable: "--font-ibm-plex-mono",
   display: "swap",
+  weight: "400",
 });
 const siteUrl = resolveSiteUrl(process.env.SITE_URL);
 const homeUrl = siteUrl ? new URL(appPath("/"), siteUrl).href : undefined;

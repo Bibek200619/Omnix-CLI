@@ -1,27 +1,55 @@
 .hero {
-  padding-block: var(--hero-space);
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  color: var(--text-primary);
+  padding-block: var(--hero-space) var(--space-16);
   scroll-margin-block-start: var(--header-anchor-offset);
+  background: linear-gradient(
+    180deg,
+    var(--opening-start) 0%,
+    var(--opening-ice) 35%,
+    var(--opening-teal) 56%,
+    var(--journey-start) 100%
+  );
+}
+.hero::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 15%,
+    var(--opening-signal) 55%,
+    transparent 85%
+  );
 }
 .layout {
   display: grid;
-  gap: var(--space-12);
+  gap: var(--space-16);
   align-items: start;
 }
 .message {
   min-width: 0;
 }
 .eyebrow {
-  margin: 0 0 var(--space-6);
-  font-weight: var(--weight-medium);
+  margin: 0 0 var(--space-8);
+  color: var(--accent);
+  font: var(--text-meta) var(--font-mono);
+}
+.eyebrow > span {
+  margin-inline: var(--space-3);
 }
 .message h1 {
   margin: 0;
   max-width: var(--hero-heading-measure);
   font-size: var(--text-hero);
   font-weight: var(--weight-heading);
-  line-height: var(--leading-title);
+  line-height: 1.12;
   letter-spacing: var(--tracking-title);
-  text-wrap: balance;
+  text-wrap: pretty;
   overflow-wrap: anywhere;
 }
 .supporting {
@@ -37,13 +65,44 @@
 }
 .release {
   color: var(--text-tertiary);
-  font-size: var(--text-small);
-  max-width: var(--hero-copy-measure);
+  font: var(--text-meta) / var(--leading-body) var(--font-mono);
   margin: var(--space-6) 0 0;
 }
-@media (min-width: 64rem) {
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero::before {
+      animation: background-recede linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+  }
+}
+@keyframes background-recede {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(calc(-1 * var(--background-drift)));
+    opacity: 0;
+  }
+}
+@media (max-width: 30rem) {
   .layout {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
     gap: var(--space-12);
+  }
+  .actions > a {
+    flex: 1 1 auto;
+  }
+  .eyebrow {
+    line-height: 1.8;
+  }
+}
+@media (forced-colors: active) {
+  .hero {
+    background: Canvas;
+  }
+  .hero::before {
+    display: none;
   }
 }

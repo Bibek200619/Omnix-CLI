@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@/components/ui/link";
 import { hero, navigation } from "@/content/hero";
 import styles from "./header.module.css";
+import { DownloadAction } from "./download-action";
 
 const subscribe = () => () => {};
 const hydratedSnapshot = () => true;
@@ -28,6 +29,7 @@ export function MobileNav() {
     const reset = () => {
       const shouldRestoreFocus =
         openRef.current || root.current?.contains(document.activeElement);
+      root.current?.querySelector<HTMLDialogElement>("dialog[open]")?.close();
       openRef.current = false;
       restoreFocusRef.current = Boolean(shouldRestoreFocus);
       focusTargetRef.current = desktop.matches ? "brand" : "trigger";
@@ -82,7 +84,11 @@ export function MobileNav() {
       ref={root}
       className={styles.mobile}
       onKeyDown={(event) => {
-        if (event.key === "Escape" && open) {
+        if (
+          event.key === "Escape" &&
+          open &&
+          !(event.target as HTMLElement).closest("dialog")
+        ) {
           event.preventDefault();
           close();
         }
@@ -144,6 +150,7 @@ export function MobileNav() {
             {item.label}
           </Link>
         ))}
+        <DownloadAction />
       </nav>
       <noscript>
         <nav aria-label="Mobile" className={styles.fallback}>

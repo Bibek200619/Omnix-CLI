@@ -1,0 +1,102 @@
+.trigger {
+  white-space: nowrap;
+}
+.trigger[data-ready="false"] {
+  visibility: hidden;
+}
+.dialog {
+  width: min(40rem, calc(100% - var(--page-gutter) * 2));
+  max-width: none;
+  max-height: calc(100dvh - var(--space-8));
+  margin: auto;
+  padding: clamp(var(--space-6), 4vw, var(--space-12));
+  overflow: auto;
+  overscroll-behavior: contain;
+  color: var(--text-primary);
+  background: var(--surface-1);
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-terminal);
+  box-shadow: var(--panel-shadow);
+}
+.dialog::backdrop {
+  background: var(--dialog-backdrop);
+}
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.eyebrow {
+  margin: 0 0 var(--space-2);
+  color: var(--text-secondary);
+  font: var(--text-meta) var(--font-mono);
+}
+.top h2 {
+  margin: 0;
+  font-size: var(--text-title);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--leading-title);
+}
+.intro {
+  margin-block: var(--space-6) var(--space-8);
+  color: var(--text-secondary);
+}
+.option {
+  border-top: var(--border-width) solid var(--border-subtle);
+  padding-block: var(--space-6);
+}
+.optionHeading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.optionHeading h3 {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: var(--weight-heading);
+}
+.preview,
+.future {
+  padding: var(--space-1) var(--space-2);
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--space-1);
+  color: var(--text-secondary);
+  font: var(--text-meta) var(--font-mono);
+}
+.preview {
+  color: var(--accent);
+  background: var(--surface-2);
+}
+.future {
+  border-style: dashed;
+}
+.option > p {
+  color: var(--text-secondary);
+  margin-block: var(--space-3) var(--space-4);
+}
+.note {
+  margin: 0;
+  color: var(--text-tertiary);
+  font-size: var(--text-small);
+}
+@media (max-width: 40rem) {
+  .dialog {
+    margin-block: auto var(--space-4);
+  }
+  .option > a,
+  .option > button {
+    width: 100%;
+  }
+}
+@media (forced-colors: active) {
+  .dialog {
+    border-color: CanvasText;
+  }
+  .dialog::backdrop {
+    background: Canvas;
+    opacity: 0.8;
+  }
+}

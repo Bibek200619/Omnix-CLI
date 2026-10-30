@@ -1,14 +1,15 @@
 import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { Link } from "@/components/ui/link";
-import { hero, navigation } from "@/content/hero";
+import { navigation } from "@/content/hero";
 import { brand } from "@/lib/constants";
 import { MobileNav } from "./mobile-nav";
+import { DownloadAction } from "./download-action";
 import styles from "./header.module.css";
 
 export function SiteHeader() {
   return (
-    <header className={styles.header}>
+    <header className={styles.header} data-theme="light">
       <Container className={styles.inner}>
         <Link
           href="/"
@@ -22,7 +23,7 @@ export function SiteHeader() {
             height={brand.height}
             alt=""
           />
-          <span>Omnix</span>
+          <span>Omnix CLI</span>
         </Link>
         <nav aria-label="Primary" className={styles.desktop}>
           {navigation.map((item) => (
@@ -30,9 +31,7 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
-          <Link href={hero.primary.href} variant="secondary">
-            Preview setup
-          </Link>
+          <DownloadAction />
         </nav>
         <MobileNav />
       </Container>

@@ -8,6 +8,7 @@ import { sourceSetup } from "@/content/install";
 import { links, product } from "@/lib/constants";
 import type { ReleaseState } from "@/lib/release";
 import styles from "./install.module.css";
+import { DownloadAction } from "./download-action";
 
 function ReleaseNotice({ state }: { state: ReleaseState }) {
   switch (state.kind) {
@@ -63,7 +64,8 @@ export function InstallSection({
     <Container>
       <Section
         id="download"
-        title="Try the source preview."
+        title="Start with the source."
+        eyebrow="07 / Try the source preview"
         tabIndex={-1}
         className={styles.section}
       >
@@ -94,6 +96,10 @@ export function InstallSection({
               </div>
             </dl>
             <Link href={links.cliDocs}>Read the CLI documentation</Link>
+            <div className={styles.downloadAction}>
+              <DownloadAction />
+              <p>CLI setup is available now. The Omnix app is planned.</p>
+            </div>
           </div>
           <div className={styles.setup}>
             <CodeBlock

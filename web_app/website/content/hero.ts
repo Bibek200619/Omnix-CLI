@@ -13,43 +13,7 @@ export const hero = {
 export const navigation = [
   { label: "Product", href: "#product" },
   { label: "How it works", href: "#how-it-works" },
-  { label: "Memory", href: "#memory" },
   { label: "CLI", href: "#cli" },
-  { label: "Architect", href: "#architect" },
   { label: "Roadmap", href: "#roadmap" },
   { label: "GitHub", href: links.source },
 ] as const;
-
-// Notes are website narration, never claimed terminal output.
-// Signatures rechecked with the installed CLI help on 2026-09-15.
-export const terminalSteps = [
-  {
-    command: 'omnix init --project-name "Atlas"',
-    note: "Initialize local project state in .project/.",
-    evidence: "ai-cli/omnix_cli/cli/commands/init.py",
-  },
-  {
-    command: 'omnix chat "Build authentication for Atlas"',
-    note: "Discuss your goal with the Master Agent. Keep the conversation in memory.",
-    evidence: "ai-cli/omnix_cli/agents/master/agent.py",
-  },
-  {
-    command: "omnix config --set architect=openai:gpt-5",
-    note: "Assign the Architect’s model. This example uses OpenAI.",
-    evidence: "ai-cli/omnix_cli/cli/commands/config.py",
-  },
-  {
-    command: "omnix architect",
-    note: "Invoke the Architect to generate or refine a validated blueprint.",
-    evidence: "ai-cli/omnix_cli/agents/architect/agent.py",
-  },
-  {
-    command: "omnix blueprint",
-    note: "Read the saved architecture blueprint.",
-    evidence: "ai-cli/omnix_cli/cli/commands/blueprint.py",
-  },
-] as const;
-
-export const terminalCommands = terminalSteps
-  .map((step) => step.command)
-  .join("\n");

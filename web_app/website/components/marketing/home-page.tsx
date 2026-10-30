@@ -1,4 +1,5 @@
-import { links, product } from "@/lib/constants";
+import Image from "next/image";
+import { brand, links, product } from "@/lib/constants";
 import { Container } from "@/components/ui/container";
 import { Link } from "@/components/ui/link";
 import { Code } from "@/components/ui/code";
@@ -14,6 +15,7 @@ import {
   MemorySection,
   ProvidersSection,
 } from "@/components/marketing/product-proof-sections";
+import styles from "./experience.module.css";
 
 export default function HomePage({
   releaseState = releaseSnapshot.state,
@@ -25,28 +27,38 @@ export default function HomePage({
       <SiteHeader />
       <main id="main" tabIndex={-1}>
         <HeroSection />
-        <OrchestrationJourney />
-        <MemorySection />
-        <ProvidersSection />
-        <CliSection />
-        <ArchitectSection />
-        <RoadmapSection />
-        <InstallSection releaseState={releaseState} />
+        <div className={styles.narrative}>
+          <OrchestrationJourney />
+          <MemorySection />
+          <ProvidersSection />
+          <CliSection />
+          <ArchitectSection />
+          <RoadmapSection />
+          <InstallSection releaseState={releaseState} />
+        </div>
       </main>
-      <Container>
-        <footer className="site-meta">
-          <p>
-            {product.availability} <Code>v{product.version}</Code>
-            <br />
-            Python {product.minimumPython}+ required
-          </p>
-          <nav aria-label="Footer">
-            <Link href={links.source}>GitHub source</Link>
-            <Link href={links.cliDocs}>CLI documentation</Link>
-            <Link href={links.issues}>GitHub issues</Link>
-          </nav>
-        </footer>
-      </Container>
+      <div className={styles.footer}>
+        <Container>
+          <footer className="site-meta">
+            <div>
+              <div className="footer-brand">
+                <Image src={brand.logo} width={32} height={32} alt="" />
+                Omnix CLI
+              </div>
+              <p>
+                {product.availability} <Code>v{product.version}</Code>
+                <br />
+                Python {product.minimumPython}+ required
+              </p>
+            </div>
+            <nav aria-label="Footer">
+              <Link href={links.source}>GitHub source</Link>
+              <Link href={links.cliDocs}>CLI documentation</Link>
+              <Link href={links.issues}>GitHub issues</Link>
+            </nav>
+          </footer>
+        </Container>
+      </div>
     </>
   );
 }

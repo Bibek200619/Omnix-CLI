@@ -96,8 +96,9 @@ export default function DesignSystemPage() {
           className={styles.specimen}
         >
           <p className={styles.description}>
-            Geist carries the interface. Geist Mono distinguishes commands and
-            file paths, such as <Code>.project/project.blueprint.json</Code>.
+            Manrope carries the interface. IBM Plex Mono distinguishes commands
+            and file paths, such as <Code>.project/project.blueprint.json</Code>
+            .
           </p>
           <div className={styles.surfaces}>
             <div className={styles.surfaceOne}>

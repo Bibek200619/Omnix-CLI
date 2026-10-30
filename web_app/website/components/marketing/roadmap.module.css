@@ -1,6 +1,5 @@
 .section {
   --anchor-offset: var(--header-anchor-offset);
-  border-top: var(--border-width) solid var(--border-subtle);
 }
 
 .intro {
@@ -56,6 +55,7 @@
   border: var(--border-width) solid var(--border-strong);
   border-radius: var(--radius-control);
   color: var(--text-secondary);
+  background: var(--surface-1);
   font-family: var(--font-mono);
   font-size: var(--text-small);
 }
@@ -100,6 +100,10 @@
   align-self: start;
   padding-left: var(--space-6);
   border-left: var(--border-width) dashed var(--border-strong);
+  padding-block: var(--space-6);
+  padding-right: var(--space-6);
+  background: var(--surface-1);
+  border-radius: 0 var(--radius-surface) var(--radius-surface) 0;
   overflow-wrap: anywhere;
 }
 

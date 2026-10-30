@@ -2,7 +2,8 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import Home from "@/components/marketing/home-page";
 import { links } from "@/lib/constants";
-import { hero, terminalCommands, terminalSteps } from "@/content/hero";
+import { hero } from "@/content/hero";
+import { terminalDemo } from "@/content/terminal-demo";
 
 beforeEach(() => {
   vi.stubGlobal(
@@ -77,20 +78,43 @@ it("closes navigation and focuses the chosen anchor", () => {
   );
 });
 
-it("renders the complete annotated workflow without invented CLI output", () => {
+it("renders the source-verified terminal and selects every real transcript", () => {
   render(<Home />);
-  const terminal = screen.getByRole("figure", {
-    name: "From goal to blueprint",
+  const terminal = screen.getByRole("region", {
+    name: "A real starting point.",
   });
-  expect(within(terminal).getAllByRole("listitem")).toHaveLength(5);
-  for (const step of terminalSteps)
-    expect(within(terminal).getByText(step.command)).toBeVisible();
+  for (const state of terminalDemo) {
+    const tab = within(terminal).getByRole("tab", { name: state.label });
+    fireEvent.click(tab);
+    expect(tab).toHaveAttribute("aria-selected", "true");
+    const panel = within(terminal).getByRole("tabpanel", { name: state.label });
+    expect(panel.querySelector("code")?.textContent).toBe(
+      `$ ${state.command}\n${state.output}`,
+    );
+    expect(within(panel).getByText(state.caption)).toBeVisible();
+  }
   expect(
-    within(terminal).getByText(/website narration, not CLI output/),
+    within(terminal).getByText(/Source-verified transcript/),
   ).toBeVisible();
-  expect(within(terminal).getByText(/OpenAI API key/)).toBeVisible();
-  expect(terminalCommands).not.toMatch(
-    /\$|Blueprint updated|Initialized Omnix/,
-  );
   expect(terminal).not.toHaveAttribute("aria-live");
+});
+
+it("supports tab keyboard progression, wrapping and Home/End", () => {
+  render(<Home />);
+  const terminal = screen.getByRole("region", {
+    name: "A real starting point.",
+  });
+  const tabs = within(terminal).getAllByRole("tab");
+  tabs[0]!.focus();
+  fireEvent.keyDown(tabs[0]!, { key: "ArrowRight" });
+  expect(tabs[1]).toHaveFocus();
+  expect(tabs[1]).toHaveAttribute("aria-selected", "true");
+  fireEvent.keyDown(tabs[1]!, { key: "End" });
+  expect(tabs[2]).toHaveFocus();
+  fireEvent.keyDown(tabs[2]!, { key: "ArrowRight" });
+  expect(tabs[0]).toHaveFocus();
+  fireEvent.keyDown(tabs[0]!, { key: "ArrowLeft" });
+  expect(tabs[2]).toHaveFocus();
+  fireEvent.keyDown(tabs[2]!, { key: "Home" });
+  expect(tabs[0]).toHaveFocus();
 });

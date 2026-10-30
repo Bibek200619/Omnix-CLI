@@ -15,6 +15,8 @@ If the repository already chooses a different frontend stack before implementati
 
 ## 2. Architecture Goals
 
+Approved Figma migration (2026-10-30): retain the existing Server Component page/release boundary and static-first architecture. Add only terminal-selection and native download-dialog client islands. Use locally bundled Manrope/IBM Plex Mono and CSS gradients/optional CSS scroll timelines for the continuous light-to-black environment; no motion framework, video dependency, provider call or new backend is needed. Preserve root and `/cli` builds, metadata, source-install recovery, preview indexing and CSP.
+
 - static-first;
 - minimal client JavaScript;
 - excellent SEO;

@@ -36,7 +36,7 @@ test("command explorer exposes all commands and copies exact syntax", async ({
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/#cli");
   const cli = page.getByRole("region", {
-    name: "The CLI is the product surface.",
+    name: "Command explorer.",
   });
   await cli.getByText("Preview orchestration commands").click();
   await expect(cli.getByText("omnix build GOAL")).toBeVisible();
@@ -72,7 +72,7 @@ test("provider and Architect claims remain accessible and explicit", async ({
 }) => {
   await page.goto("/#providers");
   const providers = page.getByRole("region", {
-    name: "Roles choose models through one provider layer.",
+    name: "Know what each role is configured to use.",
   });
   await expect(providers.getByText("Available", { exact: true })).toHaveCount(
     1,
@@ -80,7 +80,7 @@ test("provider and Architect claims remain accessible and explicit", async ({
   await expect(providers.getByText("Roadmap", { exact: true })).toHaveCount(4);
   await expect(
     page.getByRole("region", {
-      name: "The Architect evolves a source of truth.",
+      name: "Architecture you explicitly ask for.",
     }),
   ).toContainText("not runtime code validation");
   expect(
@@ -107,7 +107,9 @@ test("command disclosure works without JavaScript", async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto("http://127.0.0.1:3100/#cli");
-  const disclosure = page.locator("#cli details");
+  const disclosure = page.locator("#cli details").filter({
+    has: page.getByText("Preview orchestration commands", { exact: true }),
+  });
   await disclosure.locator("summary").focus();
   await page.keyboard.press("Enter");
   await expect(disclosure.getByText("omnix build GOAL")).toBeVisible();

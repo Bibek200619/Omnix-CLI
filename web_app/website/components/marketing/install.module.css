@@ -1,6 +1,5 @@
 .section {
   --anchor-offset: var(--header-anchor-offset);
-  border-top: var(--border-width) solid var(--border-subtle);
 }
 
 .intro {
@@ -90,6 +89,13 @@
   margin: 0;
   padding: var(--space-4) 0 var(--space-4) var(--space-6);
   color: var(--text-secondary);
+}
+.downloadAction {
+  margin-top: var(--space-6);
+}
+.downloadAction > p {
+  color: var(--text-secondary);
+  font-size: var(--text-small);
 }
 
 @media (min-width: 64rem) {

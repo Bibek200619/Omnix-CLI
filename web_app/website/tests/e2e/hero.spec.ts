@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { terminalCommands, terminalSteps } from "../../content/hero";
+import { demoCommands, terminalDemo } from "../../content/terminal-demo";
 
 for (const width of [320, 375, 390, 768, 1024, 1280, 1440]) {
   test(`hero reflows at ${width}px with a complete terminal`, async ({
@@ -10,11 +10,13 @@ for (const width of [320, 375, 390, 768, 1024, 1280, 1440]) {
     await page.goto("/");
     const heading = page.getByRole("heading", { level: 1 });
     await expect(heading).toBeVisible();
-    const terminal = page.getByRole("figure", {
-      name: "From goal to blueprint",
-    });
-    for (const step of terminalSteps)
-      await expect(terminal.getByText(step.command)).toBeVisible();
+    const terminal = page.locator("#hero-cli");
+    for (const state of terminalDemo) {
+      await terminal.getByRole("tab", { name: state.label }).click();
+      await expect(
+        terminal.getByRole("tabpanel", { name: state.label }),
+      ).toContainText(state.command);
+    }
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -78,7 +80,7 @@ test("mobile menu supports keyboard, Escape, destination focus and outside tabbi
   await expect(page.locator("#cli")).toBeFocused();
   await expect(nav).toBeHidden();
   await menu.click();
-  await nav.getByRole("link", { name: "Preview setup" }).focus();
+  await nav.getByRole("button", { name: "Download Omnix" }).focus();
   await page.keyboard.press("Tab");
   await expect(nav).toBeHidden();
   await expect(
@@ -116,9 +118,13 @@ test("static reduced-motion workflow copies exact commands and retains source CT
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const terminal = page.getByRole("figure", { name: "From goal to blueprint" });
-  for (const step of terminalSteps)
-    await expect(terminal.getByText(step.command)).toBeVisible();
+  const terminal = page.locator("#hero-cli");
+  for (const state of terminalDemo) {
+    await terminal.getByRole("tab", { name: state.label }).click();
+    await expect(
+      terminal.getByRole("tabpanel", { name: state.label }),
+    ).toContainText(state.command);
+  }
   expect(
     await terminal.evaluate(
       (node) => node.getAnimations({ subtree: true }).length,
@@ -127,12 +133,12 @@ test("static reduced-motion workflow copies exact commands and retains source CT
   await expect(
     page.getByRole("link", { name: /^(download|install) omnix$/i }),
   ).toHaveCount(0);
-  const copy = page.getByRole("button", { name: "Copy commands" });
+  const copy = page.getByRole("button", { name: "Copy demo commands" });
   await copy.focus();
   await page.keyboard.press("Enter");
   await expect(terminal.getByRole("status")).toHaveText("Copied to clipboard.");
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    terminalCommands,
+    demoCommands,
   );
 });
 
@@ -150,8 +156,21 @@ test("mobile navigation and all commands are readable without JavaScript", async
     nav.getByRole("link", { name: "CLI", exact: true }),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Menu" })).toBeHidden();
-  const terminal = page.getByRole("figure", { name: "From goal to blueprint" });
-  await expect(terminal.locator("pre code")).toHaveCount(5);
+  const terminal = page.locator("#hero-cli");
+  await expect(
+    terminal.getByRole("region", { name: "Initialize terminal transcript" }),
+  ).toContainText(terminalDemo[0].output);
+  for (const state of terminalDemo.slice(1)) {
+    await terminal
+      .locator("noscript")
+      .getByText(state.label, { exact: true })
+      .click();
+    await expect(
+      terminal
+        .locator("noscript")
+        .getByRole("region", { name: `${state.label} terminal transcript` }),
+    ).toContainText(state.output);
+  }
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
@@ -166,7 +185,7 @@ test("primary hover and forced-color keyboard focus remain legible", async ({
   await page.goto("/");
   const primary = page.getByRole("link", { name: "Preview installation" });
   await primary.hover();
-  await expect(primary).toHaveCSS("background-color", "rgb(178, 245, 223)");
+  await expect(primary).toHaveCSS("background-color", "rgb(32, 85, 190)");
   await page.screenshot({
     path: test.info().outputPath("hero-hover.png"),
     fullPage: true,

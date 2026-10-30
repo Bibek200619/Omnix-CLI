@@ -1,73 +1,131 @@
-.terminal {
-  margin: 0;
+.demo {
   min-width: 0;
-  background: var(--surface-1);
-  border: var(--border-width) solid var(--border-subtle);
-  border-top-color: var(--border-strong);
-  border-radius: 0 0 var(--radius-terminal) var(--radius-terminal);
   scroll-margin-block-start: var(--header-anchor-offset);
 }
-.caption {
+.heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.heading h2 {
+  margin: 0;
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: var(--weight-heading);
+  letter-spacing: var(--tracking-title);
+}
+.heading > span {
+  font: var(--text-meta) var(--font-mono);
+  white-space: nowrap;
+}
+.tabs {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-2) var(--space-4);
+  gap: var(--space-2);
+  padding: var(--space-2);
+  margin-bottom: var(--space-4);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--surface-1);
+}
+.tabs[data-ready="false"] {
+  visibility: hidden;
+}
+.tabs button {
+  font-size: var(--text-small);
+}
+.panel[hidden] {
+  display: none;
+}
+.transcript {
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--surface-1);
+  color: var(--text-primary);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-terminal);
+}
+.chrome {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   padding: var(--space-4) var(--terminal-padding);
   border-bottom: var(--border-width) solid var(--border-subtle);
-  font-weight: var(--weight-medium);
-}
-.kind {
-  color: var(--text-tertiary);
-  font-size: var(--text-small);
-  font-weight: var(--weight-regular);
-}
-.description {
-  padding: var(--space-4) var(--terminal-padding) 0;
-  margin: 0;
   color: var(--text-secondary);
-  font-size: var(--text-small);
+  font: var(--text-small) var(--font-mono);
 }
-.steps {
+.chrome > span {
+  color: var(--accent);
+}
+.output {
+  overflow: auto;
+  max-width: 100%;
   margin: 0;
-  padding: var(--space-6) var(--terminal-padding);
-  list-style: none;
-  display: grid;
-  gap: var(--space-6);
-}
-.steps li {
-  display: grid;
-  grid-template-columns: var(--space-6) minmax(0, 1fr);
-  gap: var(--space-3);
-}
-.number {
-  color: var(--text-tertiary);
-  font-family: var(--font-mono);
+  padding: var(--terminal-padding);
+  white-space: pre;
+  tab-size: 2;
   font-size: var(--text-small);
+  line-height: 1.8;
 }
-.step {
-  min-width: 0;
-}
-.command {
-  margin: 0;
-  font-size: var(--text-small);
-  line-height: var(--leading-body);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+.panel .output {
+  height: var(--terminal-height);
 }
 .prompt {
   color: var(--accent);
 }
-.note {
-  margin: var(--space-2) 0 0;
+.caption {
+  margin: var(--space-4) 0 0;
+  color: var(--text-primary);
+  font-size: var(--text-small);
+}
+.notes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
   color: var(--text-secondary);
+}
+.notes > p {
+  max-width: 72ch;
+  margin: 0;
+  font-size: var(--text-meta);
+  line-height: var(--leading-body);
+}
+.notes button {
   font-size: var(--text-small);
 }
-.setup {
-  padding: var(--space-4) var(--terminal-padding);
-  border-top: var(--border-width) solid var(--border-subtle);
+.fallback details {
+  margin-top: var(--space-4);
 }
-.setup > p {
-  margin: 0 0 var(--space-4);
-  color: var(--text-tertiary);
+.fallback summary {
+  min-height: var(--touch-target);
+  padding-block: var(--space-3);
+  cursor: pointer;
+}
+.fallback p {
   font-size: var(--text-small);
+}
+@media (max-width: 30rem) {
+  .tabs {
+    gap: var(--space-1);
+  }
+  .tabs button {
+    flex: 1 1 auto;
+    padding-inline: var(--space-2);
+  }
+}
+@media (forced-colors: active) {
+  .transcript,
+  .tabs {
+    border-color: CanvasText;
+  }
+  .tabs [aria-selected="true"] {
+    outline: var(--focus-width) solid Highlight;
+    outline-offset: -4px;
+  }
 }

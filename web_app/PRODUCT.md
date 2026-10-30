@@ -145,6 +145,8 @@ their dated snapshots, not current main.
 
 ## 9. Roadmap Capabilities
 
+Owner decision, 2026-10-30: a future **Omnix app** is planned but does not exist yet. The approved website introduces it in a Get Omnix availability panel as Coming later, with a disabled action. Download Omnix currently leads to CLI source-setup instructions only; no desktop binary, supported OS list, release date, app version or registry publication is claimed. This app plan is separate from the source-backed provider roadmap below.
+
 Live generation adapters for Anthropic, Google, OpenRouter, and DeepSeek remain **Roadmap**: their registered provider classes explicitly reject generation as unimplemented. There are no additional confirmed roadmap agent roles in the inspected snapshot; do not invent roles or dates to fill a timeline.
 
 Automatic specialist dispatch from Master chat, runtime code validation, and production deployment are not established capabilities. Do not label them promised roadmap commitments without a product decision.

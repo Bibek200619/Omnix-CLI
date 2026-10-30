@@ -54,7 +54,7 @@ it.each(states)(
     render(await Home());
     expect(fetchReleaseState).toHaveBeenCalledOnce();
     const section = screen.getByRole("region", {
-      name: "Try the source preview.",
+      name: "Start with the source.",
     });
     expect(
       within(section).getByRole("heading", { name: heading }),

@@ -19,8 +19,9 @@ export async function GET() {
         width: "100%",
         height: "100%",
         padding: 72,
-        background: "#090a0c",
-        color: "#f4f6f8",
+        background:
+          "linear-gradient(135deg, #cadbfc 0%, #e8f1fb 65%, #c5dbde 100%)",
+        color: "#14233b",
         fontFamily: "sans-serif",
       }}
     >
@@ -50,7 +51,7 @@ export async function GET() {
       >
         {hero.headline}
       </div>
-      <div style={{ display: "flex", fontSize: 26, color: "#a7adb7" }}>
+      <div style={{ display: "flex", fontSize: 26, color: "#4c6281" }}>
         Source preview · Project memory · Specialist workflows
       </div>
     </div>,

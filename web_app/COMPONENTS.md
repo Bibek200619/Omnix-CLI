@@ -2,6 +2,15 @@
 
 ## 1. Component Strategy
 
+### Approved redesign contracts — 2026-10-30
+
+Keep existing primitives, source-backed product modules, release normalization and `/cli` path handling. The approved Figma revision supersedes historical visual descriptions below.
+
+- `HeroTerminal` becomes a small client island with three user-selected transcript states: Initialize, Assign models, Inspect blueprint. Real locally captured CLI output is selectable DOM `pre/code`, never generated narration. Tabs follow keyboard conventions; no autoplay/live-region streaming. No-JavaScript readers retain the transcripts. Supporting proof uses shared transcript data, with excerpts labelled when shortened.
+- `DownloadAction` uses a native modal dialog, real button trigger, initial focus, an explicit Tab loop, native Escape, Close, return focus, and View CLI setup navigation. Layout changes dismiss hidden header dialogs and restore a visible menu or brand target when the opener disappears. Disabled Coming later is not focusable. A no-JavaScript source-setup link remains. Header and final setup use the same component.
+- Server-rendered sections retain semantic headings, complete command data and explicit provider statuses. Journey retains its existing user-controlled state/focus behavior but is laid out as a vertical connected route alongside terminal evidence. Command groups use native disclosure and exact copy controls.
+- Pale file/model details have scoped light tokens; terminals, dialog and downstream content have dark tokens. Global primitives consume semantic tokens in either context. Decorative backgrounds never contain essential content.
+
 Build primitives first, domain components second, sections last.
 
 Pages should compose established components rather than creating local one-off styling.

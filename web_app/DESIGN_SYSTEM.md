@@ -2,6 +2,20 @@
 
 ## 1. Design Direction
 
+### Approved Figma redesign — 2026-10-30
+
+The owner approved revision 2 in [the editable Figma file](https://www.figma.com/design/rvBXxqcHxccTKZwv648gof?node-id=10-17608). This decision supersedes the historical dark/mint treatment described in the phase notes below.
+
+- Preserve the editorial opening: ice/cobalt/teal color, solid ink headline, broad authentic terminal, unchanged official logo. Use Manrope for display/body and IBM Plex Mono for commands, bundled locally.
+- Color anchors: opening `#CADBFC` / `#E8F1FB`, ink `#14233B`, action `#2864DC`, terminal `#101D30`, slate/teal `#304A55`, graphite `#0C1118`, ending `#030405`. Semantic tokens own these values. Blue remains the action family; teal communicates context/state rather than a second primary CTA.
+- Separate solid action/selection blue from the lighter dark-surface link/focus accent. Scoped light/dark themes recompute control and focus aliases locally, so nested controls preserve contrast rather than inheriting resolved parent surfaces.
+- The entire page progresses from light/color through slate and graphite to near-black. Adjacent gradient endpoints match. Never reset full sections to white, repeat the same blue rectangle, or turn the whole site black. Pale surfaces are local file/model detail panels.
+- Use a ~1200px inner content width, 20px mobile gutters, 64px maximum desktop headline and the existing spacing scale. A vertical connected journey, embedded memory ledger, role/provider/model rows, dense command disclosures and source-setup terminal provide varied composition.
+- Background-only drift may use a native CSS scroll timeline, capped at 24px. Content remains fully opaque, in document order, with native scrolling. No scroll interception, animation dependency, particles or autoplay. Reduced motion uses the same static gradients and user-controlled terminal states.
+- Download Omnix opens the availability dialog. The CLI is a source preview; the Omnix app is planned. Only View CLI setup is actionable; Coming later is visibly disabled. Do not imply an available app binary.
+
+The Figma storyboard and player frames were static proposals. Implementation supplies actual keyboard-operable controls and verifies them in browsers; no recorded product video exists.
+
 **Terminal × engineering diagram × editorial product page**
 
 The website should feel premium because it is coherent and precise, not because it contains many effects.

@@ -1,5 +1,13 @@
 # Testing Strategy
 
+## Approved redesign verification scope — 2026-10-30
+
+Retain product-source, release, metadata, path-prefix and copy recovery checks. Replace assertions specific to the historical mint palette/static five-command demo with approved blue controls and real three-state transcripts. Add meaningful tests for terminal tab keyboard navigation, literal `<unset>` output, reduced-motion/no-JavaScript readability, native modal focus containment/Escape/return focus, CLI setup navigation, disabled future-app action, root and `/cli` download behavior, responsive screenshots and accessibility in light/dark contexts. No automated test is a human screen-reader certification.
+
+Final `npm run check` passed formatting, lint, strict typecheck, 87 unit/component tests, root and `/cli` production builds, 237 homepage browser tests and all 24 subpath deployment tests. Three duplicate screenshot-only runs are intentionally skipped outside desktop Chromium; behavioral coverage runs in Chromium, mobile Chromium, Firefox and WebKit. Repairs were verified for scoped control contrast, 320px/200% text reflow, native dialog focus containment, dialog dismissal across responsive transitions, no-JavaScript disclosure and asynchronous logo decoding. Isolated per-transition browser cases avoid Firefox repeated-navigation interference while preserving every resize assertion. Build review found zero credential-pattern matches across 68 first-party/generated browser text assets.
+
+The redesigned production build's local mobile Lighthouse rehearsal scored Performance 100, Accessibility 100 and Best Practices 100 (LCP 1.1 s, CLS 0, TBT 20 ms). These are lab observations with default preview indexing preserved, not field measurements. Dependency audit found zero vulnerabilities. Manual Chrome review covered mobile navigation, availability, keyboard focus and resizing with a dialog open; temporary viewport overrides were reset. Browser artifacts cover 320/375/390/768/1024/1280/1440 px, with saved desktop/mobile opening, full-page and dialog screenshots.
+
 ## Vercel subpath rehearsal — 2026-10-30
 
 `npm run check` passed formatting, lint, strict typecheck, 84 unit/component tests,

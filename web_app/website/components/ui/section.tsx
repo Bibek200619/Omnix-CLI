@@ -9,6 +9,7 @@ type SectionProps = Omit<
   title: string;
   headingLevel?: 2 | 3;
   spacing?: "default" | "compact";
+  eyebrow?: string;
 };
 
 export function Section({
@@ -16,6 +17,7 @@ export function Section({
   title,
   headingLevel = 2,
   spacing = "default",
+  eyebrow,
   children,
   className = "",
   ...props
@@ -29,6 +31,7 @@ export function Section({
       data-spacing={spacing}
       className={`${styles.section} ${className}`}
     >
+      {eyebrow ? <p className="section-label">{eyebrow}</p> : null}
       <Heading id={`${id}-heading`} className={styles.sectionTitle}>
         {title}
       </Heading>

@@ -1,22 +1,58 @@
 @import "tailwindcss";
 
-:root {
+:root,
+[data-theme="dark"] {
   color-scheme: dark;
-  --background: #090a0c;
-  --surface-1: #0d0f12;
-  --surface-2: #12151a;
-  --surface-3: #181c22;
-  --text-primary: #f4f6f8;
-  --text-secondary: #a7adb7;
-  --text-tertiary: #9199a5;
-  --border-subtle: #ffffff1a;
-  --border-strong: #657080;
-  --accent: #8ee3c8;
-  --accent-strong: #b2f5df;
-  --success: #7dd3a7;
-  --warning: #e4c474;
-  --danger: #ec8e8e;
-  --on-accent: #090a0c;
+  --background: #030405;
+  --surface-1: #101d30;
+  --surface-2: #192c43;
+  --surface-3: #223850;
+  --text-primary: #edf3fc;
+  --text-secondary: #bccbde;
+  --text-tertiary: #a7bad2;
+  --border-subtle: #a9c6ed30;
+  --border-strong: #748da9;
+  --accent: #a5c9ff;
+  --accent-strong: #d4e4ff;
+  --action: #2864dc;
+  --action-hover: #2055be;
+  --success: #94decf;
+  --warning: #e9ce94;
+  --danger: #f4acb6;
+  --on-accent: #ffffff;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --background: #f5f7fb;
+  --surface-1: #ffffff;
+  --surface-2: #e8eef8;
+  --surface-3: #dce7f7;
+  --text-primary: #14233b;
+  --text-secondary: #4c6281;
+  --text-tertiary: #526887;
+  --border-subtle: #cddbf0;
+  --border-strong: #7185a2;
+  --accent: #2257c0;
+  --accent-strong: #19479f;
+  --success: #176754;
+  --warning: #75531a;
+  --danger: #ad3546;
+}
+
+:root {
+  --opening-start: #cadbfc;
+  --opening-ice: #e8f1fb;
+  --opening-teal: #c5dbde;
+  --opening-signal: #648bdc45;
+  --journey-start: #172d42;
+  --journey-mid: #304a55;
+  --memory-ground: #1e3544;
+  --provider-ground: #202d38;
+  --graphite: #0c1118;
+  --ending: #030405;
+  --panel-shadow: 0 24px 64px #07152418;
+  --dialog-backdrop: #030912b8;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -28,9 +64,9 @@
   --space-24: 6rem;
   --space-32: 8rem;
   --page-width: 80rem;
-  --page-gutter: clamp(var(--space-4), 4vw, var(--space-8));
+  --page-gutter: clamp(1.25rem, 4vw, 2.5rem);
   --text-measure: 68ch;
-  --radius-control: 0.5rem;
+  --radius-control: 0.375rem;
   --radius-surface: 0.75rem;
   --radius-terminal: 1rem;
   --text-small: 0.875rem;
@@ -44,7 +80,7 @@
   --weight-medium: 500;
   --weight-heading: 600;
   --border-width: 1px;
-  --focus-width: 2px;
+  --focus-width: 3px;
   --focus-offset: var(--space-1);
   --focus-ring: var(--focus-width) solid var(--accent);
   --touch-target: 2.75rem;
@@ -52,9 +88,9 @@
   --motion-fast: 160ms;
   --motion-surface: 240ms;
   --motion-narrative: 400ms;
-  --text-section: clamp(1.5rem, 3vw, 2rem);
+  --text-section: clamp(1.75rem, 3vw, 2.5rem);
   --leading-control: 1.4;
-  --section-space: var(--space-12);
+  --section-space: clamp(var(--space-16), 8vw, var(--space-32));
   --section-space-compact: var(--space-8);
   --anchor-offset: var(--space-8);
   --control-padding-block: var(--space-3);
@@ -65,15 +101,26 @@
   --control-disabled-surface: var(--surface-2);
   --code-padding: var(--space-4);
   --code-inline-padding-block: 0.125rem;
-  --text-hero: clamp(2.25rem, 4.4vw, 3.5rem);
-  --hero-heading-measure: 18ch;
-  --hero-copy-measure: 44ch;
+  --text-hero: clamp(2.25rem, 4.5vw, 4rem);
+  --hero-heading-measure: 25ch;
+  --hero-copy-measure: 68ch;
   --hero-space: clamp(var(--space-8), 6vw, var(--space-24));
   --terminal-padding: clamp(var(--space-4), 2vw, var(--space-6));
-  --header-logo-size: var(--space-12);
+  --header-logo-size: 2.25rem;
   --header-anchor-offset: var(--space-32);
   --layer-header: 10;
   --layer-skip: 20;
+  --text-meta: 0.75rem;
+  --terminal-height: 22rem;
+  --background-drift: 24px;
+}
+
+[data-theme] {
+  --control-surface: var(--surface-1);
+  --control-hover: var(--surface-3);
+  --control-disabled-text: var(--text-tertiary);
+  --control-disabled-surface: var(--surface-2);
+  --focus-ring: var(--focus-width) solid var(--accent);
 }
 
 @theme inline {
@@ -90,8 +137,8 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
-  --font-sans: var(--font-geist), Arial, sans-serif;
-  --font-mono: var(--font-geist-mono), "Courier New", monospace;
+  --font-sans: var(--font-manrope), Arial, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), "Courier New", monospace;
 }
 
 * {
@@ -105,8 +152,18 @@ body {
   font-size: var(--text-body);
   line-height: var(--leading-body);
 }
+html {
+  scrollbar-gutter: stable;
+}
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
 ::selection {
-  background: var(--accent);
+  background: var(--action);
   color: var(--on-accent);
 }
 :focus-visible {
@@ -132,7 +189,7 @@ pre {
   align-items: center;
   gap: var(--space-4);
   border-top: var(--border-width) solid var(--border-subtle);
-  padding-block: var(--space-6);
+  padding-block: var(--space-8);
   font-size: var(--text-small);
   color: var(--text-tertiary);
 }
@@ -140,6 +197,24 @@ pre {
   display: inline-flex;
   align-items: center;
   min-height: var(--touch-target);
+}
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  color: var(--text-primary);
+  font-weight: var(--weight-heading);
+}
+.footer-brand img {
+  width: var(--space-8);
+  height: auto;
+}
+.section-label {
+  margin: 0 0 var(--space-4);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
 }
 .site-meta nav {
   display: flex;
@@ -151,7 +226,7 @@ pre {
   top: var(--space-4);
   left: var(--page-gutter);
   padding: var(--space-3) var(--space-4);
-  background: var(--accent);
+  background: var(--action);
   color: var(--on-accent);
   transform: translateY(calc(-100% - var(--space-8)));
   z-index: var(--layer-skip);
@@ -171,6 +246,9 @@ pre {
   }
 }
 @media (forced-colors: active) {
+  body {
+    background: Canvas;
+  }
   :focus-visible {
     outline-color: Highlight;
   }

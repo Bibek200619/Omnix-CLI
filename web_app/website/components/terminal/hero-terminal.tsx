@@ -1,49 +1,105 @@
+"use client";
+
+import { useRef, useState, useSyncExternalStore } from "react";
+import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/ui/copy-button";
-import { terminalCommands, terminalSteps } from "@/content/hero";
+import { demoCommands, terminalDemo } from "@/content/terminal-demo";
+import { Transcript } from "./transcript";
 import styles from "./hero-terminal.module.css";
 
+const subscribe = () => () => {};
+const clientSnapshot = () => true;
+const serverSnapshot = () => false;
+
 export function HeroTerminal() {
+  const [current, setCurrent] = useState(0);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const ready = useSyncExternalStore(subscribe, clientSnapshot, serverSnapshot);
+
   return (
-    <figure
+    <div
       id="hero-cli"
-      tabIndex={-1}
+      role="region"
       aria-labelledby="terminal-title"
-      aria-describedby="terminal-description"
-      className={styles.terminal}
+      tabIndex={-1}
+      className={styles.demo}
     >
-      <figcaption className={styles.caption}>
-        <span id="terminal-title">From goal to blueprint</span>
-        <span className={styles.kind}>Command walkthrough</span>
-      </figcaption>
-      <p id="terminal-description" className={styles.description}>
-        Real commands. Notes below are website narration, not CLI output.
-      </p>
-      <ol className={styles.steps}>
-        {terminalSteps.map((step, index) => (
-          <li key={step.command}>
-            <span className={styles.number} aria-hidden="true">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <div className={styles.step}>
-              <pre className={styles.command}>
-                <span aria-hidden="true" className={styles.prompt}>
-                  ${" "}
-                </span>
-                <code>{step.command}</code>
-              </pre>
-              <p className={styles.note}>{step.note}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-      <div className={styles.setup}>
-        <p>
-          Requires source setup and an OpenAI API key with access to the example
-          model. Run in a fresh project directory. Copying does not execute
-          commands.
-        </p>
-        <CopyButton text={terminalCommands} label="Copy commands" />
+      <div className={styles.heading}>
+        <h2 id="terminal-title">A real starting point.</h2>
+        <span aria-hidden="true">0{current + 1} / 03</span>
       </div>
-    </figure>
+      <div
+        className={styles.tabs}
+        role="tablist"
+        aria-label="CLI demonstration"
+        data-ready={ready}
+      >
+        {terminalDemo.map((state, index) => (
+          <Button
+            key={state.id}
+            ref={(element) => {
+              tabs.current[index] = element;
+            }}
+            variant={current === index ? "primary" : "ghost"}
+            role="tab"
+            id={`demo-tab-${state.id}`}
+            aria-controls={`demo-panel-${state.id}`}
+            aria-selected={current === index}
+            tabIndex={current === index ? 0 : -1}
+            onClick={() => setCurrent(index)}
+            onKeyDown={(event) => {
+              let next: number;
+              if (event.key === "ArrowRight")
+                next = (index + 1) % terminalDemo.length;
+              else if (event.key === "ArrowLeft")
+                next = (index + terminalDemo.length - 1) % terminalDemo.length;
+              else if (event.key === "Home") next = 0;
+              else if (event.key === "End") next = terminalDemo.length - 1;
+              else return;
+              event.preventDefault();
+              setCurrent(next);
+              tabs.current[next]?.focus();
+            }}
+          >
+            {state.label}
+          </Button>
+        ))}
+      </div>
+      {terminalDemo.map((state, index) => (
+        <div
+          key={state.id}
+          id={`demo-panel-${state.id}`}
+          role="tabpanel"
+          aria-label={state.label}
+          aria-labelledby={`demo-tab-${state.id}`}
+          hidden={current !== index}
+          className={styles.panel}
+        >
+          <Transcript state={state} />
+          <p data-theme="dark" className={styles.caption}>
+            {state.caption}
+          </p>
+        </div>
+      ))}
+      <div data-theme="dark" className={styles.notes}>
+        <p>
+          Source-verified transcript. Executed locally in a scratch project; no
+          model API calls. These controls belong to the website. In a source
+          checkout, prefix each command with <code>uv run --frozen</code>.
+        </p>
+        <CopyButton text={demoCommands} label="Copy demo commands" />
+      </div>
+      <noscript>
+        <div data-theme="dark" className={styles.fallback}>
+          {terminalDemo.slice(1).map((state) => (
+            <details key={state.id}>
+              <summary>{state.label}</summary>
+              <Transcript state={state} />
+              <p>{state.caption}</p>
+            </details>
+          ))}
+        </div>
+      </noscript>
+    </div>
   );
 }

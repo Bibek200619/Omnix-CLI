@@ -1,5 +1,25 @@
 import { expect, test } from "@playwright/test";
 
+test("download chooser keeps CLI setup within the subpath and app unavailable", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/cli");
+  const trigger = page
+    .getByRole("navigation", { name: "Primary" })
+    .getByRole("button", { name: "Download Omnix" });
+  await trigger.click();
+  const dialog = page.getByRole("dialog", { name: "Get Omnix" });
+  await expect(
+    dialog.getByRole("button", { name: "Coming later" }),
+  ).toBeDisabled();
+  await dialog.getByRole("link", { name: "View CLI setup" }).click();
+  await expect(page).toHaveURL(/\/cli#download$/);
+  await expect(page.locator("#download")).toBeFocused();
+  await expect(dialog).toBeHidden();
+  await expect(page.locator("#download")).toContainText("uv sync --frozen");
+});
+
 test("loads prefixed assets and canonical metadata without browser errors", async ({
   page,
 }) => {
@@ -21,11 +41,13 @@ test("loads prefixed assets and canonical metadata without browser errors", asyn
   );
   const logo = page.getByRole("link", { name: "Omnix home" }).locator("img");
   await expect(logo).toBeVisible();
-  expect(
-    await logo.evaluate(
-      (image: HTMLImageElement) => image.complete && image.naturalWidth > 0,
-    ),
-  ).toBe(true);
+  await expect
+    .poll(() =>
+      logo.evaluate(
+        (image: HTMLImageElement) => image.complete && image.naturalWidth > 0,
+      ),
+    )
+    .toBe(true);
   await page.evaluate(() => document.fonts.ready);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",

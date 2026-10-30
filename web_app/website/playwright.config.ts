@@ -20,12 +20,12 @@ export default defineConfig({
     },
     {
       name: "firefox",
-      testMatch: ["journey.spec.ts", "launch.spec.ts"],
+      testMatch: ["journey.spec.ts", "launch.spec.ts", "redesign.spec.ts"],
       use: { ...devices["Desktop Firefox"] },
     },
     {
       name: "webkit",
-      testMatch: ["journey.spec.ts", "launch.spec.ts"],
+      testMatch: ["journey.spec.ts", "launch.spec.ts", "redesign.spec.ts"],
       use: { ...devices["Desktop Safari"] },
     },
   ],

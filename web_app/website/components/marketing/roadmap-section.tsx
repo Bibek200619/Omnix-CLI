@@ -11,7 +11,8 @@ export function RoadmapSection() {
     <Container>
       <Section
         id="roadmap"
-        title="The engineering workflow, stage by stage."
+        title="A preview with clear boundaries."
+        eyebrow="06 / Scope, without the hype"
         tabIndex={-1}
         className={styles.section}
       >

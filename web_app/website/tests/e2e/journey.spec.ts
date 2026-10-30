@@ -17,13 +17,8 @@ for (const width of [320, 375, 390, 768, 1024, 1280, 1440]) {
     const steps = route.locator(":scope > li");
     const first = (await steps.nth(0).boundingBox())!;
     const second = (await steps.nth(1).boundingBox())!;
-    if (width >= 1200) {
-      expect(second.y).toBe(first.y);
-      expect(second.x).toBeGreaterThan(first.x + first.width);
-    } else {
-      expect(second.x).toBe(first.x);
-      expect(second.y).toBeGreaterThan(first.y);
-    }
+    expect(second.x).toBe(first.x);
+    expect(second.y).toBeGreaterThan(first.y);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -203,7 +198,7 @@ test("forced colors retains current-step outlines and dashed roadmap boundaries"
   await page.keyboard.press("Enter");
   await expect(stage).toHaveAttribute("aria-current", "step");
   await expect(stage).toHaveCSS("outline-style", "solid");
-  await expect(stage.locator("span")).toHaveCSS("outline-width", "2px");
+  await expect(stage.locator("span")).toHaveCSS("outline-width", "3px");
   await expect(
     page.getByRole("complementary", { name: "More provider choices" }),
   ).toHaveCSS("border-left-style", "dashed");

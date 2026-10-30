@@ -6,6 +6,14 @@ Use a lightweight Keep-a-Changelog style.
 
 ## [Unreleased]
 
+### Approved Figma redesign — 2026-10-30
+- Recorded owner approval of revision 2: a colorful editorial opening that continuously deepens through slate and graphite to near-black, with local product-detail surfaces and authentic terminal transcripts.
+- Specified locally bundled Manrope/IBM Plex Mono, user-controlled terminal states, accessible Download Omnix availability and CLI source setup, and the explicitly planned future Omnix app.
+- Implemented the approved complete homepage on a feature branch: scoped semantic themes, continuous background, vertical engineering journey, local memory/model surfaces, native command disclosures, real three-state terminal and reusable native availability dialog. Kept the page server-rendered with small interaction islands and no animation framework.
+- Fixed nested control contrast, enlarged-text heading overflow, modal Tab containment and resize dismissal/focus recovery. Preserved source-backed claims, release/distribution boundaries, `/cli` deployment architecture, official logo and original references.
+- Final `npm run check`: formatting, lint, strict typecheck, 87 unit/component tests, root and `/cli` production builds, 237 homepage browser tests and 24 subpath deployment tests passed. Three duplicate screenshot-only engine runs are intentionally skipped; interaction coverage runs in Chromium, mobile Chromium, Firefox and WebKit.
+- Reviewed desktop/mobile screenshots and seven viewport widths; local production Lighthouse scored 100/100/100 for Performance/Accessibility/Best Practices. Audit found zero vulnerabilities; build review found zero credential-pattern matches across 68 text assets. These local checks do not certify real-device/screen-reader acceptance or publish the site.
+
 ### Vercel subpath launch preparation — 2026-10-30
 - Created a protected Vercel preview from the exact tested commit after owner authentication; verified hosted assets, headers, metadata, mobile navigation, and recovery. Recorded deployment evidence and pending public-domain routing in `DEPLOYMENT.md`.
 - Added a build-time path prefix for the requested `/cli` destination, shared by navigation, public assets, metadata, sitemap, and recovery links.

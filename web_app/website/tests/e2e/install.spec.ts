@@ -8,7 +8,7 @@ for (const width of [320, 375, 390, 768, 1024, 1280, 1440]) {
     await page.goto("/#download");
     const section = page.locator("#download");
     await expect(
-      section.getByRole("heading", { name: "Try the source preview." }),
+      section.getByRole("heading", { name: "Start with the source." }),
     ).toBeVisible();
     await expect(
       section.getByRole("figure", { name: sourceSetup.label }),
